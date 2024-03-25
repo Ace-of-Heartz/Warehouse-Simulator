@@ -12,11 +12,17 @@ public class UnityMap : MonoBehaviour
     [SerializeField] private Color emptyColor = Color.green;
 
     private Grid gridComponent;
+
+    private Map map;
     
     // Start is called before the first frame update
     void Start()
     {
         gridComponent = GetComponent<Grid>();
+        
+        //TODO: rm
+        map = new Map();
+        map.LoadMap("/Users/gergogalig/Library/CloudStorage/OneDrive-EotvosLorandTudomanyegyetem/FourthSemester/Szofttech/sample_files/maps/warehouse.map");
         
         GenerateMap();
     }
@@ -30,13 +36,13 @@ public class UnityMap : MonoBehaviour
 
     private void GenerateMap()
     {
-        for (int i = 0; i < 15; i++)
+        for (int i = 0; i < map.MapSize.x; i++)
         {
-            for (int j = 0; j < 3; j++)
+            for (int j = 0; j < map.MapSize.y; j++)
             {
                 GameObject ins = Instantiate(tilePrefab, Vector3.zero, Quaternion.identity, this.gameObject.transform);
                 ins.transform.position = gridComponent.GetCellCenterWorld(new Vector3Int(i, j));
-                if((i+j) % 2 == 0)
+                if(map.GetTileAt(new  Vector2Int(i, j)) == TileType.Wall)
                 {
                     ins.GetComponent<SpriteRenderer>().color = wallColor;
                 }
