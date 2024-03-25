@@ -1,4 +1,7 @@
-public enum TileType
+namespace WarehouseSimulator.Model
 {
-    Wall, Empty
+    public enum TileType
+    {
+        Wall, Empty
+    }
 }
