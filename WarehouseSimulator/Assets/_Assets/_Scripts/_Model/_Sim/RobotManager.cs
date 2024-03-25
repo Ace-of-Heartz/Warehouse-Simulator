@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using WarehouseSimulator.Model.Enums;
 
-namespace WarehouseSimulator.Model.Sim.AgentsAndGoals
+namespace WarehouseSimulator.Model.Sim
 {
     public class RobotManager
     {
-        public Dictionary<Robot, RobotAction> AllRobots;
+        public Dictionary<Robot, RobotDoing> AllRobots;
         private int nextId;
     
         public int NextId
@@ -18,8 +19,8 @@ namespace WarehouseSimulator.Model.Sim.AgentsAndGoals
     
         private void AddRobot(Vector2 pos, Direction h, int i)
         {
-            Robot newR = new(i, pos, h, null, ERobotState.Free);
-            AllRobots.Add(newR,RobotAction.Wait);
+            Robot newR = new(i, pos, h, null, RobotBeing.Free);
+            AllRobots.Add(newR,RobotDoing.Wait);
         }
     
         public void PerformRobotAction()
