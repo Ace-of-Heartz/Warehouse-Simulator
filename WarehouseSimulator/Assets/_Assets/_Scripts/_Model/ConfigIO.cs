@@ -4,25 +4,6 @@ using System.IO;
 using UnityEngine;
 using System.Threading.Tasks;
 
-public class ConfigIO : MonoBehaviour
+public class ConfigIO
 {
-    
-    
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    private void GoalRead(string path)
-    {
-        
-    }
 }
