@@ -4,49 +4,34 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
 
-namespace WarehouseSimulator.View {
+namespace WarehouseSimulator.View.MainMenu {
 public class MainMenuManager : MonoBehaviour
 {
-    private string _pathToConfigFile;
-    private string _pathToEventLog;
+    public string simScenePath;
+    public string pbScenePath;
 
-    private int _numberOfSteps;
     
 
-        
-    [SerializeField]
     public void StartSim()
     {
+        SceneManager.LoadSceneAsync(simScenePath);
     }
 
-    [SerializeField]
     public void StartPlayback()
     {
+        SceneManager.LoadSceneAsync(pbScenePath);
     }
-
-
-    [SerializeField]
+    
     public void ExitProgram()
     {
-        Debug.Log("ExitProgram called");
+        Debug.Log("Exiting program...");
         Application.Quit();
     }
-
-    public async void GetJsonContent(string file_path)
-    {
-        StreamReader inp_stm = new StreamReader(file_path);
-        while (!inp_stm.EndOfStream)
-        {
-            string file_content = await inp_stm.ReadToEndAsync();
-        }
-
-
-
-    }
-
+    
 
 }
 
