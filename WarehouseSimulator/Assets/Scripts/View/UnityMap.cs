@@ -27,13 +27,6 @@ public class UnityMap : MonoBehaviour
         GenerateMap();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-
     private void GenerateMap()
     {
         for (int i = 0; i < map.MapSize.x; i++)
