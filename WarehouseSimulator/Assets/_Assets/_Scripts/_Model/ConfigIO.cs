@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEngine;
 using System.Threading.Tasks;
-using WarehouseSimulator.Model.IO;
+using UnityEditor.PackageManager;
+using WarehouseSimulator.Model.Sim;
 using WarehouseSimulator.Model.Sim;
 
 namespace WarehouseSimulator.Model
@@ -30,9 +32,24 @@ namespace WarehouseSimulator.Model
             return simConfig;
         }
 
-        public void ParseToJson(string path)
+        public async Task<string> GetJsonContent(string path)
         {
+            StringBuilder buffer = new StringBuilder();
+            try
+            {
+                using (StreamReader sr = new StreamReader(path))
+                {
+                    buffer.EnsureCapacity((int)sr.BaseStream.Length);
+                    buffer.Append(await sr.ReadToEndAsync());
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Fatal error occured at JSON reading!");
+                
+            }
 
+            return buffer.ToString();
         }
     }
     
