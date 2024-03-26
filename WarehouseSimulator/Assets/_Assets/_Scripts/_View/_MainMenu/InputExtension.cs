@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Assets.Scripts.View.MainMenu
 {
+    /// <summary>
+    /// Struct for wrapping data for input fields
+    /// </summary>
     [Serializable]
     public struct InputExtension
     {
