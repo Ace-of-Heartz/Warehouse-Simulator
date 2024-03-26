@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using WarehouseSimulator.Model.Enum;
@@ -8,7 +7,7 @@ namespace WarehouseSimulator.Model
 {
     public class Map
     {
-        private List<TileType> mapRepresentaion;
+        private TileType[,] mapRepresentaion;
         private Vector2Int mapSize;
         
         public Vector2Int MapSize => mapSize;
@@ -17,22 +16,16 @@ namespace WarehouseSimulator.Model
         {
             if (position.x < 0 || position.x >= mapSize.x || position.y < 0 || position.y >= mapSize.y)
                 return TileType.Wall; //implied value outsize the map
-            return mapRepresentaion[position.y * mapSize.x + position.x];
+            return mapRepresentaion[position.y, position.x];
         }
         
         public TileType GetTileAt(int i)
         {
-            if(i < 0 || i >= mapRepresentaion.Count)
+            if(i < 0 || i >= mapRepresentaion.Length)
                 return TileType.Wall; //implied value outsize the map
-            return mapRepresentaion[i];
+            return mapRepresentaion[i / mapSize.x, i % mapSize.x];
         }
-        
-        
-        public Map()
-        {
-            mapRepresentaion = new List<TileType>();
-        }
-        
+
         public void LoadMap(string filePath)
         {
             using StreamReader reader = new(filePath);
@@ -40,8 +33,9 @@ namespace WarehouseSimulator.Model
 
             mapSize.y = int.Parse(reader.ReadLine()?.Split(' ')[1] ?? throw new InvalidOperationException());
             mapSize.x = int.Parse(reader.ReadLine()?.Split(' ')[1] ?? throw new InvalidOperationException());
-            
+
             reader.ReadLine(); //"map". Not needed, throw away
+            mapRepresentaion = new TileType[mapSize.y, mapSize.x];
             for (int i = 0; i < mapSize.y; i++)
             {
                 string line = reader.ReadLine();
@@ -50,7 +44,7 @@ namespace WarehouseSimulator.Model
                 
                 for (int j = 0; j < mapSize.x; j++)
                 {
-                    mapRepresentaion.Add(line[j] == '.' ? TileType.Empty : TileType.Wall);
+                    mapRepresentaion[mapSize.y - 1 - i, j] = (line[j] == '.' ? TileType.Empty : TileType.Wall);
                 }
             }
             
