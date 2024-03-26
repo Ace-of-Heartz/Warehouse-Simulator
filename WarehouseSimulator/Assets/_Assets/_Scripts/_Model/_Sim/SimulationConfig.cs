@@ -1,4 +1,5 @@
 using System;
+using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
@@ -14,6 +15,18 @@ namespace WarehouseSimulator.Model.Sim
         public string taskFile;
         public int numTasksReveal;
         public string taskAssignmentStrategy;
+        
+        public TASK_ASSIGNMENT_STRATEGY TaskAssignmentStrategy
+        {
+            get
+            {
+                return taskAssignmentStrategy switch
+                {
+                    "roundrobin" => TASK_ASSIGNMENT_STRATEGY.ROUNDROBIN,
+                    _ => TASK_ASSIGNMENT_STRATEGY.ROUNDROBIN // default
+                };
+            }
+        }
     }
     
 }
