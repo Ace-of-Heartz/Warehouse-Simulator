@@ -14,11 +14,14 @@ namespace WarehouseSimulator.Model.Sim
         // private RobotManager robotManager;
         // private CentralController centralController;
 
+        
+        // Properties
+        public Map Map => map;
+        
         public void Setup(string configFilePath)
         {
-            ConfigIO configIO = new ();
-            config = configIO.ParseFromJson(configIO.GetJsonContent(configFilePath).Result).Result;
-            config.basePath = Path.GetDirectoryName(configFilePath) + Path.PathSeparator;
+            config = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(configFilePath));//todo: error handling
+            config.basePath = Path.GetDirectoryName(configFilePath) + Path.DirectorySeparatorChar;
             
             map = new Map();
             map.LoadMap(config.basePath + config.mapFile);
@@ -28,19 +31,19 @@ namespace WarehouseSimulator.Model.Sim
             // TODO: centralController (preprocess)
         }
         
-        // simulation tick
+        // info: simulation tick
         public void Tick()
         {
             //TODO: centralController timeToMove and planNextSteps
         }
 
-        // simulation completed
+        // info: simulation completed
         public void Finished()
         {
             
         }
 
-        // exit simultaion before completion
+        // info: exit simultaion before completion
         public void Abort()
         {
             

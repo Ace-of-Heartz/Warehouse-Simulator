@@ -8,7 +8,6 @@ namespace WarehouseSimulator.View
 {
     public class UnityMap : MonoBehaviour
     {
-        
         [SerializeField]
         private GameObject tilePrefab;
 
@@ -19,19 +18,17 @@ namespace WarehouseSimulator.View
 
         private Map map;
         
-        // Start is called before the first frame update
         void Start()
         {
             gridComponent = GetComponent<Grid>();
-            
-            //TODO: rm
-            map = new Map();
-            map.LoadMap("/Users/gergogalig/Library/CloudStorage/OneDrive-EotvosLorandTudomanyegyetem/FourthSemester/Szofttech/sample_files/maps/warehouse.map");
-            
-            GenerateMap();
+        }
+        
+        public void AssignMap(Map map)
+        {
+            this.map = map;
         }
 
-        private void GenerateMap()
+        public void GenerateMap()
         {
             for (int i = 0; i < map.MapSize.x; i++)
             {

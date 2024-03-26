@@ -1,55 +1,41 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using UnityEngine;
-using System.Threading.Tasks;
-using UnityEditor.PackageManager;
-using WarehouseSimulator.Model.Sim;
 using WarehouseSimulator.Model.Sim;
 
 namespace WarehouseSimulator.Model
 {
-    public class ConfigIO
+    public static class ConfigIO
     {
         
-        [SerializeField]
-        async public Task<SimulationConfig> ParseFromJson(string jsonContent)
+        public static SimulationConfig ParseFromJson(string jsonContent)
         {
-            SimulationConfig simConfig = new SimulationConfig();
+            SimulationConfig simConfig;
             try
             {
-                await Task.Run(() => simConfig = JsonUtility.FromJson<SimulationConfig>(jsonContent));
+                simConfig = JsonUtility.FromJson<SimulationConfig>(jsonContent);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Debug.Log("Fatal error occured at JSON parsing!");
-                throw e;
+                throw;
             }
-            
-            
             return simConfig;
         }
 
-        public async Task<string> GetJsonContent(string path)
+        public static string GetJsonContent(string path)
         {
-            StringBuilder buffer = new StringBuilder();
-            try
-            {
-                using (StreamReader sr = new StreamReader(path))
-                {
-                    buffer.EnsureCapacity((int)sr.BaseStream.Length);
-                    buffer.Append(await sr.ReadToEndAsync());
-                }
+            using StreamReader reader = new(path);
+            string json;
+            try {
+                json = reader.ReadToEnd();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.Log("Fatal error occured at JSON reading!");
-                
+                Debug.Log("Fatal error occured at JSON parsing!");
+                throw;
             }
-
-            return buffer.ToString();
+            return json;
         }
     }
     
