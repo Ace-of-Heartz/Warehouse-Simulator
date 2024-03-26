@@ -1,6 +1,4 @@
-
-//TODO Change this to WarehouseSimulator.Model.Enum
-namespace WarehouseSimulator.Model
+namespace WarehouseSimulator.Model.Enum
 {
     public enum TileType
     {
