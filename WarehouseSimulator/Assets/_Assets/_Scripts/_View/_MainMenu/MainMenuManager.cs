@@ -9,6 +9,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -32,9 +33,38 @@ public class MainMenuManager : MonoBehaviour
         GameObject.Find("Button_SimStart").GetComponent<Button>().interactable = false;
         GameObject.Find("Button_PbStart").GetComponent<Button>().interactable = false;
         
+        foreach (var field in inputFieldsForSim)
+        {
+            field.onValueChanged.AddListener(delegate
+            {
+                UpdateSimInputStatus();
+            });
+        }
+
+        foreach (var field in inputFieldsForPb)
+        {
+            field.onValueChanged.AddListener(delegate
+            {
+                UpdatePbInputStatus();
+            });
+        }
     }
 
-    private void Update()
+
+
+    private void UpdatePbInputStatus()
+    {
+        if (inputFieldsForPb.All(a => !string.IsNullOrEmpty(a.text)))
+        {
+            GameObject.Find("Button_PbStart").GetComponent<Button>().interactable = true;
+        }
+        else
+        {
+            GameObject.Find("Button_PbStart").GetComponent<Button>().interactable = false;
+        }
+    }
+
+    private void UpdateSimInputStatus()
     {
         if (inputFieldsForSim.All(a => !string.IsNullOrEmpty(a.text)))
         {
@@ -44,16 +74,6 @@ public class MainMenuManager : MonoBehaviour
         {
             GameObject.Find("Button_SimStart").GetComponent<Button>().interactable = false;
         }
-
-        if (inputFieldsForPb.All(a => !string.IsNullOrEmpty(a.text)))
-        {
-            GameObject.Find("Button_PbStart").GetComponent<Button>().interactable = true;
-        }
-        else
-        {
-            GameObject.Find("Button_PbStart").GetComponent<Button>().interactable = false;
-        }
-        
     }
 
 
@@ -83,7 +103,7 @@ public class MainMenuManager : MonoBehaviour
             simInputArgs.PreparationTime = float.Parse(GameObject.Find("InputField_PreparationTime").GetComponent<TMP_InputField>().text);
             simInputArgs.EventLogPath = GameObject.Find("InputField_SimPathToEventLog").GetComponent<TMP_InputField>().text;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             Debug.Log("Fatal error occured at input parsing for simulation.");
         }
@@ -107,11 +127,11 @@ public class MainMenuManager : MonoBehaviour
     private void CompletePbInputArgs()
     {
         try
-        {
-            simInputArgs.ConfigFilePath = GameObject.Find("InputField_PbConfigFileLocation").GetComponent<TMP_InputField>().text;
-            simInputArgs.EventLogPath = GameObject.Find("InputField_PbPathToEventLog").GetComponent<TMP_InputField>().text;
+        { 
+            pbInputArgs.ConfigFilePath = GameObject.Find("InputField_PbConfigFileLocation").GetComponent<TMP_InputField>().text;
+            pbInputArgs.EventLogPath = GameObject.Find("InputField_PbPathToEventLog").GetComponent<TMP_InputField>().text;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             Debug.Log("Fatal error occured at input parsing for playback.");
         }
