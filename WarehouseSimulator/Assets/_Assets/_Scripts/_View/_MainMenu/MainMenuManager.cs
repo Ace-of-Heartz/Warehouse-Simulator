@@ -2,13 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using _Assets._Scripts._View._MainMenu;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
 
@@ -20,7 +23,40 @@ public class MainMenuManager : MonoBehaviour
 
     public static SimInputArgs simInputArgs;
     public static PbInputArgs pbInputArgs;
-    
+
+    public List<TMP_InputField> inputFieldsForSim;
+    public List<TMP_InputField> inputFieldsForPb;
+
+    private void Start()
+    {
+        GameObject.Find("Button_SimStart").GetComponent<Button>().interactable = false;
+        GameObject.Find("Button_PbStart").GetComponent<Button>().interactable = false;
+        
+    }
+
+    private void Update()
+    {
+        if (inputFieldsForSim.All(a => !string.IsNullOrEmpty(a.text)))
+        {
+            GameObject.Find("Button_SimStart").GetComponent<Button>().interactable = true;
+        }
+        else 
+        {
+            GameObject.Find("Button_SimStart").GetComponent<Button>().interactable = false;
+        }
+
+        if (inputFieldsForPb.All(a => !string.IsNullOrEmpty(a.text)))
+        {
+            GameObject.Find("Button_PbStart").GetComponent<Button>().interactable = true;
+        }
+        else
+        {
+            GameObject.Find("Button_PbStart").GetComponent<Button>().interactable = false;
+        }
+        
+    }
+
+
     /// <summary>
     /// Starts the simulation 
     /// </summary>
@@ -34,6 +70,9 @@ public class MainMenuManager : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Completes the global static simInputArgs field
+    /// </summary>
     private void CompleteSimInputArgs()
     {
         try
@@ -60,17 +99,17 @@ public class MainMenuManager : MonoBehaviour
             throw new ArgumentException();
         else 
             SceneManager.LoadSceneAsync(_pbScenePath);
-        
     }
-
+    
+    /// <summary>
+    /// Completes the global static pbInputArgs field
+    /// </summary>
     private void CompletePbInputArgs()
     {
         try
         {
-            simInputArgs.ConfigFilePath =
-                GameObject.Find("InputField_PbConfigFileLocation").GetComponent<TMP_InputField>().text;
-            simInputArgs.EventLogPath =
-                GameObject.Find("InputField_SimPathToEventLog").GetComponent<TMP_InputField>().text;
+            simInputArgs.ConfigFilePath = GameObject.Find("InputField_PbConfigFileLocation").GetComponent<TMP_InputField>().text;
+            simInputArgs.EventLogPath = GameObject.Find("InputField_PbPathToEventLog").GetComponent<TMP_InputField>().text;
         }
         catch (Exception e)
         {

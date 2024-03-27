@@ -6,11 +6,11 @@ namespace WarehouseSimulator.View.MainMenu
 {
     public struct SimInputArgs
     {
-        [CanBeNull] public string ConfigFilePath { get; set; }
-        public int NumberOfSteps { get; set; }
-        public int IntervalOfSteps { get; set; }
-        public float PreparationTime { get; set; }
-        [CanBeNull] public string EventLogPath { get; set; }
+        public string ConfigFilePath;
+        public int NumberOfSteps;
+        public int IntervalOfSteps;
+        public float PreparationTime;
+        public string EventLogPath;
 
         public bool IsComplete()
         {
