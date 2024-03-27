@@ -8,6 +8,7 @@ namespace WarehouseSimulator.Model.Sim
     public class RobotManager
     {
         public Dictionary<Robot, RobotDoing> AllRobots;
+        private List<Robot> FreeRobots;
         
         private void AddRobot(int i, Vector2Int pos)
         {
@@ -23,9 +24,10 @@ namespace WarehouseSimulator.Model.Sim
             }
         }
     
-        public void AssignTasksToFreeRobots()
+        public void AssignTasksToFreeRobots(Goal dis) //calling this is the responsibility of the SimulationManager
         {
-            
+            FreeRobots[1].AssignGoal(dis);
+            FreeRobots.RemoveAt(1);
         }
         
         public void RoboRead(string from, Vector2Int mapSize)
@@ -51,7 +53,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
 
                 int quot = linPos / mapSize.y;
-                Vector2Int newRobPos = new(quot,linPos - mapSize.y * quot);
+                Vector2Int newRobPos = new(linPos - mapSize.y * quot,quot);
                 AddRobot(nextid,newRobPos);
                 
                 nextid++;
