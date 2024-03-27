@@ -1,4 +1,4 @@
-namespace WarehouseSimulator.Model
+namespace WarehouseSimulator.Model.Enums
 {
     public enum TileType
     {
