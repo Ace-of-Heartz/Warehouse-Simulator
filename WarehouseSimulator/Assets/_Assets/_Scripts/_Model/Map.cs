@@ -53,7 +53,15 @@ namespace WarehouseSimulator.Model
                     mapRepresentaion.Add(line[j] == '.' ? TileType.Empty : TileType.Wall);
                 }
             }
-            
+        }
+
+        public void OccupyTile(Vector2Int dis)
+        {
+            mapRepresentaion[dis.y * mapSize.x + dis.x] = TileType.RoboOccupied;
+        }
+        public void DeoccupyTile(Vector2Int dis)
+        {
+            mapRepresentaion[dis.y * mapSize.x + dis.x] = TileType.Empty;
         }
     }
 
