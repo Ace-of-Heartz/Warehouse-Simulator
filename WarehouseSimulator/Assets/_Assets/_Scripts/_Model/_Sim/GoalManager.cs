@@ -1,28 +1,36 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace WarehouseSimulator.Model.Sim
 {
     public class GoalManager
     {
-        private List<Goal> _goalsRemaining; //kérdés: ha ezek csak a még ki nem osztott célok, akkor már aktív célokat mi fogja tartalmazni?
+        private Queue<Goal> _goalsRemaining; //kérdés: ha ezek csak a még ki nem osztott célok, akkor már aktív célokat mi fogja tartalmazni?
 
         public GoalManager()
         {
-            _goalsRemaining = new List<Goal>();
+            _goalsRemaining = new Queue<Goal>();
         }
 
         public void AddNewGoal(Vector2Int hir)
         {
-            _goalsRemaining.Add(new Goal(hir));
+            _goalsRemaining.Enqueue(new Goal(hir));
         }
 
+        [CanBeNull]
         public Goal GetNext()
         {
-            var next = _goalsRemaining.First();
-            _goalsRemaining.Remove(next);
+            Goal next = null;
+            try
+            {
+                next = _goalsRemaining.Dequeue();
+            }
+            catch (Exception)
+            { }
             return next;
         }
 
@@ -48,7 +56,7 @@ namespace WarehouseSimulator.Model.Sim
 
                 int quot = linPos / mapSize.y;
                 Vector2Int newGoalPos = new(linPos - mapSize.y * quot,quot);
-                _goalsRemaining.Add(new Goal(newGoalPos));
+                _goalsRemaining.Enqueue(new Goal(newGoalPos));
 
                 runningGoaln++;
                 line = riiid.ReadLine();
