@@ -44,9 +44,8 @@ namespace WarehouseSimulator.Model.Sim
         }
         #endregion
 
-        public event EventHandler GoalChangedEvent;
-        public event EventHandler<RunIntoSomethingEventArgs> RunIntoWall;
-        public event EventHandler<RunIntoSomethingEventArgs> RunIntoRobot;
+        [CanBeNull] public event EventHandler GoalChangedEvent;
+        [CanBeNull] public event EventHandler<RobotHappenedEventArgs> RobotPosition;
 
         public Robot(int i, Vector2Int gPos, Direction h = Direction.North, Goal g = null, RobotBeing s = RobotBeing.Free)
         {
@@ -63,15 +62,10 @@ namespace WarehouseSimulator.Model.Sim
             Goal = goTo;
         }
 
-        public void GoalCompleted()
-        {
-            Goal?.FinishTask();
-            Goal = null;
-        }
 
-        public void PerformActionRequested(RobotDoing watt,Map mapie)
+        public void PerformActionRequested(RobotDoing watt, Map mapie)
         {
-            if (mapie == null) { throw new ArgumentNullException("The map does not exist"); }
+            if (mapie == null) { throw new ArgumentNullException($"The argument: {nameof(mapie)} as the map does not exist"); }
             switch (watt)
             {
                 case(RobotDoing.Timeout):
@@ -81,14 +75,24 @@ namespace WarehouseSimulator.Model.Sim
                     Vector2Int nextPos = WhereToMove();
                     if (mapie.GetTileAt(nextPos) == TileType.Wall)
                     {
-                        RunIntoWall?.Invoke(this,new RunIntoSomethingEventArgs(nextPos));
-                        //TODO => Blaaa: CC react and LOG
-                    } else if (mapie.GetTileAt(nextPos) == TileType.RoboOccupied)
-                    {
-                        RunIntoRobot?.Invoke(this, new RunIntoSomethingEventArgs(nextPos));
                         //TODO => Blaaa: CC react and LOG
                     } 
-                    else { _gridPosition = nextPos; }
+                    else if (mapie.GetTileAt(nextPos) == TileType.RoboOccupied)
+                    {
+                        //TODO => Blaaa: CC react and LOG
+                    }
+                    else
+                    {
+                        RobotPosition?.Invoke(this,new RobotHappenedEventArgs(nextPos));
+                        //TODO => Unity react
+                        mapie.DeoccupyTile(_gridPosition);
+                        _gridPosition = nextPos;
+                        mapie.OccupyTile(_gridPosition);
+                        if (nextPos == _goal?.GridPosition)
+                        {
+                            GoalCompleted();
+                        }
+                    }
                     break;
                 case(RobotDoing.Rotate90):
                     _heading = (Direction)( ((int)_heading + 1) % 4 );
@@ -99,14 +103,25 @@ namespace WarehouseSimulator.Model.Sim
             }
         }
 
+        public void CallRobotPosEvent(RobotManager caller)
+        {
+            RobotPosition?.Invoke(caller, new RobotHappenedEventArgs(_gridPosition));
+        }
+        
+        private void GoalCompleted()
+        {
+            Goal?.FinishTask();
+            Goal = null;
+        }
+
         private Vector2Int WhereToMove()
         {
             switch (_heading)
-            { //TODO => Blaaa: Ez így most szinkronban van a Map-pal vagy nem?
+            {
                 case(Direction.North):
-                    return _gridPosition + Vector2Int.up;
+                    return _gridPosition + Vector2Int.up; 
                 case(Direction.West):
-                    return _gridPosition + Vector2Int.left;
+                    return _gridPosition + Vector2Int.left; 
                 case(Direction.South):
                     return _gridPosition + Vector2Int.down;
                 case(Direction.East):
