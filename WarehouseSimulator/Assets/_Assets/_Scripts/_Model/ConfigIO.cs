@@ -1,28 +1,42 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using System.IO;
 using UnityEngine;
-using System.Threading.Tasks;
+using WarehouseSimulator.Model.Sim;
 
-public class ConfigIO : MonoBehaviour
+namespace WarehouseSimulator.Model
 {
-    
-    
-    
-    // Start is called before the first frame update
-    void Start()
+    public static class ConfigIO
     {
         
-    }
+        public static SimulationConfig ParseFromJson(string jsonContent)
+        {
+            SimulationConfig simConfig;
+            try
+            {
+                simConfig = JsonUtility.FromJson<SimulationConfig>(jsonContent);
+            }
+            catch (Exception)
+            {
+                Debug.Log("Fatal error occured at JSON parsing!");
+                throw;
+            }
+            return simConfig;
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
-
+        public static string GetJsonContent(string path)
+        {
+            using StreamReader reader = new(path);
+            string json;
+            try {
+                json = reader.ReadToEnd();
+            }
+            catch (Exception)
+            {
+                Debug.Log("Fatal error occured at JSON parsing!");
+                throw;
+            }
+            return json;
+        }
     }
-
-    private void GoalRead(string path)
-    {
-        
-    }
+    
 }
