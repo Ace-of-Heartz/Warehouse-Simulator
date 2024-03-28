@@ -1,20 +1,53 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
-    public class Robot : MonoBehaviour
+    public class Robot
     {
-        private int _id;
-        private Vector2 _gridPosition;
+        private readonly int _id;
+        private Vector2Int _gridPosition;
         private Direction _heading;
         [CanBeNull] private Goal _goal;
         private RobotBeing _state;
 
-        public Robot(int i, Vector2 gPos, Direction h, Goal g, RobotBeing s)
+        #region Properties
+        public int Id
+        {
+            get => _id;
+        }
+        public Vector2Int GridPosition
+        {
+            get => _gridPosition;
+        }
+        public Direction Heading
+        {
+            get => _heading;
+        }
+        public Goal Goal
+        {
+            get => _goal;
+            private set
+            {
+                GoalChangedEvent?.Invoke(this,EventArgs.Empty);
+                //TODO => Blaaa: Log later
+                _state = value == null ? RobotBeing.Free : RobotBeing.InTask;
+                _goal = value;
+            }
+        }
+
+        public RobotBeing State
+        {
+            get => _state;
+        }
+        #endregion
+
+        [CanBeNull] public event EventHandler GoalChangedEvent;
+        [CanBeNull] public event EventHandler<RobotHappenedEventArgs> RobotPosition;
+
+        public Robot(int i, Vector2Int gPos, Direction h = Direction.North, Goal g = null, RobotBeing s = RobotBeing.Free)
         {
             _id = i;
             _gridPosition = gPos;
@@ -23,17 +56,78 @@ namespace WarehouseSimulator.Model.Sim
             _state = s;
         }
 
-        // Start is called before the first frame update
-        void Start()
+        public void AssignGoal(Goal goTo)
         {
-
+            goTo.AssignedTo(this);
+            Goal = goTo;
         }
 
-        // Update is called once per frame
-        void Update()
-        {
 
+        public void PerformActionRequested(RobotDoing watt, Map mapie)
+        {
+            if (mapie == null) { throw new ArgumentNullException($"The argument: {nameof(mapie)} as the map does not exist"); }
+            switch (watt)
+            {
+                case(RobotDoing.Timeout):
+                case(RobotDoing.Wait):
+                    break;
+                case(RobotDoing.Forward):
+                    Vector2Int nextPos = WhereToMove();
+                    if (mapie.GetTileAt(nextPos) == TileType.Wall)
+                    {
+                        //TODO => Blaaa: CC react and LOG
+                    } 
+                    else if (mapie.GetTileAt(nextPos) == TileType.RoboOccupied)
+                    {
+                        //TODO => Blaaa: CC react and LOG
+                    }
+                    else
+                    {
+                        RobotPosition?.Invoke(this,new RobotHappenedEventArgs(nextPos));
+                        //TODO => Unity react
+                        mapie.DeoccupyTile(_gridPosition);
+                        _gridPosition = nextPos;
+                        mapie.OccupyTile(_gridPosition);
+                        if (nextPos == _goal?.GridPosition)
+                        {
+                            GoalCompleted();
+                        }
+                    }
+                    break;
+                case(RobotDoing.Rotate90):
+                    _heading = (Direction)( ((int)_heading + 1) % 4 );
+                    break;
+                case(RobotDoing.RotateNeg90):
+                    _heading = (Direction)( ((int)_heading - 1) % 4 );
+                    break;
+            }
         }
 
+        public void CallRobotPosEvent(RobotManager caller)
+        {
+            RobotPosition?.Invoke(caller, new RobotHappenedEventArgs(_gridPosition));
+        }
+        
+        private void GoalCompleted()
+        {
+            Goal?.FinishTask();
+            Goal = null;
+        }
+
+        private Vector2Int WhereToMove()
+        {
+            switch (_heading)
+            {
+                case(Direction.North):
+                    return _gridPosition + Vector2Int.up; 
+                case(Direction.West):
+                    return _gridPosition + Vector2Int.left; 
+                case(Direction.South):
+                    return _gridPosition + Vector2Int.down;
+                case(Direction.East):
+                    return _gridPosition + Vector2Int.right;
+                default: return new Vector2Int(-1, -1);
+            }
+        }
     }
 }

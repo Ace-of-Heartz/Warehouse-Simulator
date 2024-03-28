@@ -9,7 +9,7 @@ namespace WarehouseSimulator.Model
     {
         private TileType[,] mapRepresentaion;
         private Vector2Int mapSize;
-        
+
         public Vector2Int MapSize => mapSize;
         
         public TileType GetTileAt(Vector2Int position)
@@ -39,15 +39,24 @@ namespace WarehouseSimulator.Model
             for (int i = 0; i < mapSize.y; i++)
             {
                 string line = reader.ReadLine();
-                if(line?.Length != mapSize.x)
+                if (line?.Length != mapSize.x)
                     throw new InvalidDataException("The content of the file wasn't in the right format.");
-                
+
                 for (int j = 0; j < mapSize.x; j++)
                 {
                     mapRepresentaion[mapSize.y - 1 - i, j] = (line[j] == '.' ? TileType.Empty : TileType.Wall);
                 }
             }
-            
+
+        }
+
+        public void OccupyTile(Vector2Int dis)
+        {
+            mapRepresentaion[dis.y,dis.x] = TileType.RoboOccupied;
+        }
+        public void DeoccupyTile(Vector2Int dis)
+        {
+            mapRepresentaion[dis.y,dis.x] = TileType.Empty;
         }
     }
 
