@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using WarehouseSimulator.Model;
-using WarehouseSimulator.Model.Enum;
+using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.View
 {

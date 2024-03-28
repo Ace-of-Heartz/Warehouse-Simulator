@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using UnityEngine;
-using WarehouseSimulator.Model.Enum;
+using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model
 {
