@@ -1,10 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using JetBrains.Annotations;
-using UnityEditorInternal;
 using UnityEngine;
-using Vector2 = System.Numerics.Vector2;
 
 namespace WarehouseSimulator.Model.Sim
 {

@@ -1,14 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using UnityEngine.UI;
-using TMPro;
-using System.Runtime.CompilerServices;
 using Assets.Scripts.View.MainMenu;
 using JetBrains.Annotations;
-using Unity.VisualScripting;
 
 namespace WarehouseSimulator.View.MainMenu
 {

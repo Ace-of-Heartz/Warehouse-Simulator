@@ -1,8 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
-using UnityEngine;
-
-namespace WarehouseSimulator.View.MainMenu
+﻿namespace WarehouseSimulator.View.MainMenu
 {
     public struct SimInputArgs
     {

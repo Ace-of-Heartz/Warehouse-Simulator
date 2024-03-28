@@ -1,20 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using _Assets._Scripts._View._MainMenu;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-using WarehouseSimulator.Model;
-using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.View.MainMenu {
 public class MainMenuManager : MonoBehaviour
