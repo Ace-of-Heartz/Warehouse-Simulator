@@ -1,4 +1,5 @@
 using System.IO;
+using WarehouseSimulator.View.MainMenu;
 
 namespace WarehouseSimulator.Model.Sim
 {
@@ -18,10 +19,10 @@ namespace WarehouseSimulator.Model.Sim
         // Properties
         public Map Map => map;
         
-        public void Setup(string configFilePath)
+        public void Setup(SimInputArgs simulationArgs)
         {
-            config = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(configFilePath));//todo: error handling
-            config.basePath = Path.GetDirectoryName(configFilePath) + Path.DirectorySeparatorChar;
+            config = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(simulationArgs.ConfigFilePath));//todo: error handling
+            config.basePath = Path.GetDirectoryName(simulationArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
             
             map = new Map();
             map.LoadMap(config.basePath + config.mapFile);

@@ -1,5 +1,6 @@
 using UnityEngine;
 using WarehouseSimulator.Model.Sim;
+using WarehouseSimulator.View.MainMenu;
 
 namespace WarehouseSimulator.View.Sim
 {
@@ -13,7 +14,7 @@ namespace WarehouseSimulator.View.Sim
         void Start()
         {
             simulationManager = new SimulationManager();
-            simulationManager.Setup("/Users/gergogalig/Library/CloudStorage/OneDrive-EotvosLorandTudomanyegyetem/FourthSemester/Szofttech/sample_files/warehouse_100_config.json");
+            simulationManager.Setup(MainMenuManager.simInputArgs);
 
             unityMap.AssignMap(simulationManager.Map);
             unityMap.GenerateMap();
