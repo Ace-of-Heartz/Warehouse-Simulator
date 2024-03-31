@@ -9,6 +9,7 @@ namespace WarehouseSimulator.Model.Sim
         private SimulationConfig config;
         private int maxSteps;
         private float stepTime;
+        private float preparationTime;
 
         private Map map;
         // private GoalManager goalManager;
@@ -21,6 +22,10 @@ namespace WarehouseSimulator.Model.Sim
         
         public void Setup(SimInputArgs simulationArgs)
         {
+            maxSteps = simulationArgs.NumberOfSteps;
+            stepTime = simulationArgs.IntervalOfSteps;
+            preparationTime = simulationArgs.PreparationTime;
+            
             config = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(simulationArgs.ConfigFilePath));//todo: error handling
             config.basePath = Path.GetDirectoryName(simulationArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
             
