@@ -24,7 +24,13 @@ namespace WarehouseSimulator.View
             if (Input.GetKeyDown(KeyCode.Space))
                 ResetCamera();
             
-            
+            ZoomRequested(Input.mouseScrollDelta.y);
+        }
+        
+        private void ZoomRequested(float zoom)
+        {
+            Camera cam = GetComponent<Camera>();
+            cam.orthographicSize = Math.Max(1, cam.orthographicSize - zoom * zoomSpeed);
         }
         
         private void MoveRequested(Vector2 direction)
