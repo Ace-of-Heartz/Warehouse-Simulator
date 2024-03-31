@@ -16,6 +16,21 @@ namespace WarehouseSimulator.View
 
         private Map map;
         
+        
+        public Vector2 GetMapCentrer()
+        {
+            if(map is null) return Vector2.zero;
+            
+            return gridComponent.GetCellCenterWorld(new Vector3Int(map.MapSize.x / 2, map.MapSize.y / 2, 0));
+        }
+        
+        public Vector2 GetMapSize()
+        {
+            if(map is null) return Vector2.zero;
+            
+            return new Vector2(map.MapSize.x, map.MapSize.y);
+        }
+        
         void Start()
         {
             gridComponent = GetComponent<Grid>();
