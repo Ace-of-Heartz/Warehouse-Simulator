@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using WarehouseSimulator.View.Sim;
 
 namespace WarehouseSimulator.View.MainMenu {
 public class MainMenuManager : MonoBehaviour
@@ -22,6 +23,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void Start()
     {
+        
         GameObject.Find("Button_SimStart").GetComponent<Button>().interactable = false;
         GameObject.Find("Button_PbStart").GetComponent<Button>().interactable = false;
         
@@ -97,6 +99,11 @@ public class MainMenuManager : MonoBehaviour
         }
         catch (Exception)
         {
+            GameObject.Find("UIErrorManager").GetComponent<UIMessageManager>().MessageBox("Fatal error occured!", response =>
+                {
+                    
+                }
+            );
             Debug.Log("Fatal error occured at input parsing for simulation.");
         }
     }
@@ -125,6 +132,12 @@ public class MainMenuManager : MonoBehaviour
         }
         catch (Exception)
         {
+            
+            GameObject.Find("UIErrorManager").GetComponent<UIMessageManager>().MessageBox("Fatal error occured!", response =>
+                {
+                    
+                }
+            );
             Debug.Log("Fatal error occured at input parsing for playback.");
         }
     }
@@ -134,8 +147,18 @@ public class MainMenuManager : MonoBehaviour
     /// </summary>
     public void ExitProgram()
     {
-        Debug.Log("Exiting program...");
-        Application.Quit();
+        GameObject.Find("UIErrorManager").GetComponent<UIMessageManager>().MessageBox("Quit application?", response =>
+            {
+                switch (response)
+                {
+                    case MessageBoxResponse.Confirmed: 
+                        Application.Quit();
+                        break;
+                    default: break;
+                }
+            }
+            );
+        
     }
     
 

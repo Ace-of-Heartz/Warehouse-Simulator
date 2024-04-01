@@ -343,7 +343,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -58.28347, y: -74.80977}
+  m_AnchoredPosition: {x: -58.28347, y: -70}
   m_SizeDelta: {x: 1650, y: 1050}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &211301481
@@ -910,9 +910,10 @@ MonoBehaviour:
   m_OnSelect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: FileDialogManager, Assembly-CSharp
-        m_MethodName: SaveFileDialog
+      - m_Target: {fileID: 1844535163}
+        m_TargetAssemblyTypeName: WarehouseSimulator.View.MainMenu.MainMenuManager,
+          Assembly-CSharp
+        m_MethodName: ExitProgram
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2003,7 +2004,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -60, y: -120}
+  m_AnchoredPosition: {x: -60, y: -115.19025}
   m_SizeDelta: {x: -1600, y: 860}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &545475886
@@ -3037,7 +3038,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -60, y: -120}
+  m_AnchoredPosition: {x: -60, y: -115.19025}
   m_SizeDelta: {x: 1600, y: 860}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &846426379
@@ -3865,7 +3866,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -606, y: 359.99365}
+  m_AnchoredPosition: {x: -606, y: 364.8034}
   m_SizeDelta: {x: 500, y: 144.3464}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1102456136
@@ -5080,8 +5081,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+      - m_Target: {fileID: 1844535163}
+        m_TargetAssemblyTypeName: WarehouseSimulator.View.MainMenu.MainMenuManager,
+          Assembly-CSharp
         m_MethodName: ExitProgram
         m_Mode: 1
         m_Arguments:
@@ -5321,7 +5323,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -90, y: 359.99365}
+  m_AnchoredPosition: {x: -90, y: 364.8034}
   m_SizeDelta: {x: 500, y: 144.3464}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1644743909
@@ -6101,7 +6103,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1844535160}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 860.38226, y: 570.8322, z: -6.2978244}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7358,6 +7360,69 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_EffectDistance: {x: 7, y: -7}
   m_UseGraphicAlpha: 1
+--- !u!1 &2124009439
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2124009441}
+  - component: {fileID: 2124009443}
+  - component: {fileID: 2124009442}
+  m_Layer: 0
+  m_Name: UIErrorManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2124009441
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124009439}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 962.6594, y: 639.48303, z: 1.189505}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2124009442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124009439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PanelSettings: {fileID: 11400000, guid: 52a063dc4c80f8047b5c8153cd37b405, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 02ec21865f67a734bb30073c43ad531e, type: 3}
+  m_SortingOrder: 0
+--- !u!114 &2124009443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124009439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 255ea629a46641d688aa24e9007eaa5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UIDocument: {fileID: 2124009442}
+  m_messageBox: {fileID: 9197481963319205126, guid: abde2e042b5d27c44988b6aee9a2ee8c, type: 3}
 --- !u!1 &2133121164
 GameObject:
   m_ObjectHideFlags: 0
@@ -7419,3 +7484,4 @@ SceneRoots:
   - {fileID: 416316813}
   - {fileID: 1343777301}
   - {fileID: 1844535162}
+  - {fileID: 2124009441}
