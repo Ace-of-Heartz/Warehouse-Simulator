@@ -12,6 +12,7 @@ namespace WarehouseSimulator.Model.Sim
         public Dictionary<Robot, RobotDoing> AllRobots;
 
         [CanBeNull] public event EventHandler<RobotCreatedEventArgs> RobotAddedEvent;
+        [CanBeNull] public event EventHandler<GoalAssignedEventArgs> GoalAssignedEvent;
         
         private void AddRobot(int i, Vector2Int pos)
         {
@@ -38,6 +39,7 @@ namespace WarehouseSimulator.Model.Sim
                     Goal next = from.GetNext();
                     if (next == null) { break; }
                     robie.AssignGoal(next);
+                    GoalAssignedEvent?.Invoke(this, new(next));
                 }
             }
         }
