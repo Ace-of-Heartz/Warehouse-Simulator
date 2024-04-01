@@ -12,8 +12,8 @@ namespace WarehouseSimulator.Model.Sim
         private float preparationTime;
 
         private Map map;
-        // private GoalManager goalManager;
-        // private RobotManager robotManager;
+        private GoalManager goalManager;
+        private RobotManager robotManager;
         // private CentralController centralController;
 
         
@@ -32,8 +32,10 @@ namespace WarehouseSimulator.Model.Sim
             map = new Map();
             map.LoadMap(config.basePath + config.mapFile);
             
-            // TODO: goalManager(load)
-            // TODO: robotManager(load)
+            goalManager = new GoalManager();
+            goalManager.ReadGoals(config.basePath + config.taskFile, map.MapSize);
+            robotManager = new RobotManager();
+            robotManager.RoboRead(config.basePath + config.agentFile, map);
             // TODO: centralController (preprocess)
         }
         
