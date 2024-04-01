@@ -44,7 +44,7 @@ namespace WarehouseSimulator.Model
 
                 for (int j = 0; j < mapSize.x; j++)
                 {
-                    mapRepresentaion[mapSize.y - 1 - i, j] = (line[j] == '.' ? TileType.Empty : TileType.Wall);
+                    mapRepresentaion[i, j] = (line[j] == '.' ? TileType.Empty : TileType.Wall);
                 }
             }
 
