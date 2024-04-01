@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using WarehouseSimulator.Model.Sim;
 using WarehouseSimulator.View.MainMenu;
@@ -17,6 +18,7 @@ namespace WarehouseSimulator.View.Sim
         void Start()
         {
             simulationManager = new SimulationManager();
+            simulationManager.RobotManager.RobotAddedEvent += AddUnityRobot;
             if (DebugMode)
             {
                 DebugSetup();
@@ -37,6 +39,11 @@ namespace WarehouseSimulator.View.Sim
             debugSimInputArgs.NumberOfSteps = 100;
             debugSimInputArgs.EventLogPath = "/Users/gergogalig/log.log";
             
+        }
+
+        private void AddUnityRobot(object sender, RobotCreatedEventArgs e)
+        {
+            Debug.Log("Robot added to UnitySimulationManager. ID:" + e.robot.Id);
         }
     }   
 }

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -8,12 +10,15 @@ namespace WarehouseSimulator.Model.Sim
     public class RobotManager
     {
         public Dictionary<Robot, RobotDoing> AllRobots;
+
+        [CanBeNull] public event EventHandler<RobotCreatedEventArgs> RobotAddedEvent;
         
         private void AddRobot(int i, Vector2Int pos)
         {
             Robot newR = new(i, pos);
             AllRobots.Add(newR,RobotDoing.Wait);
             newR.CallRobotPosEvent(this);
+            RobotAddedEvent?.Invoke(this, new(newR));
         }
         
         public void PerformRobotAction(Map mapie)

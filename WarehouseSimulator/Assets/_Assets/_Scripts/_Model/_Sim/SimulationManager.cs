@@ -19,6 +19,16 @@ namespace WarehouseSimulator.Model.Sim
         
         // Properties
         public Map Map => map;
+        public GoalManager GoalManager => goalManager;
+        public RobotManager RobotManager => robotManager;
+
+        public SimulationManager()
+        {
+            map = new Map();
+            goalManager = new GoalManager();
+            robotManager = new RobotManager();
+            //create ceantralController
+        }
         
         public void Setup(SimInputArgs simulationArgs)
         {
@@ -29,12 +39,8 @@ namespace WarehouseSimulator.Model.Sim
             config = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(simulationArgs.ConfigFilePath));//todo: error handling
             config.basePath = Path.GetDirectoryName(simulationArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
             
-            map = new Map();
             map.LoadMap(config.basePath + config.mapFile);
-            
-            goalManager = new GoalManager();
             goalManager.ReadGoals(config.basePath + config.taskFile, map.MapSize);
-            robotManager = new RobotManager();
             robotManager.RoboRead(config.basePath + config.agentFile, map);
             // TODO: centralController (preprocess)
         }
