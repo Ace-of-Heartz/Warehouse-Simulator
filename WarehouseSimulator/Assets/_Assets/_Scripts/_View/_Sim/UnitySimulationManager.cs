@@ -36,6 +36,10 @@ namespace WarehouseSimulator.View.Sim
 
         void Update()
         {
+            //while preprocessing is in progress, we wait
+            if(!simulationManager.IsPreprocessDone)
+                return;
+            
             timeSinceLastTick += Time.deltaTime;
             if (timeSinceLastTick >= simulationManager.StepTime)
             {

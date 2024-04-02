@@ -9,9 +9,13 @@ namespace WarehouseSimulator.Model.Sim
     {
         private Dictionary<Robot, RobotDoing> plannedActions;
         
+        private bool isPreprocessDone;
+        public bool IsPreprocessDone => isPreprocessDone;
+        
         public CentralController()
         {
             plannedActions = new Dictionary<Robot, RobotDoing>();
+            isPreprocessDone = false;
         }
         
         public void AddRobotToPlanner(Robot robot)
@@ -24,6 +28,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             //TODO: async?
             Debug.Log("Preprocessing in central controller");
+            isPreprocessDone = true;
         }
 
         public void TimeToMove(Map map)

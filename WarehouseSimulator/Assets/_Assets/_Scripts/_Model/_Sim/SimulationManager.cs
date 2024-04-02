@@ -22,6 +22,7 @@ namespace WarehouseSimulator.Model.Sim
         public GoalManager GoalManager => goalManager;
         public RobotManager RobotManager => robotManager;
         public float StepTime => stepTime;
+        public bool IsPreprocessDone => centralController.IsPreprocessDone;
 
         public SimulationManager()
         {
