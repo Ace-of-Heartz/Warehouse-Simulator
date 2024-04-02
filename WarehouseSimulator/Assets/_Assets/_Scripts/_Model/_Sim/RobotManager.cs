@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
+using Unity.VisualScripting;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -9,7 +10,7 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class RobotManager
     {
-        public Dictionary<Robot, RobotDoing> AllRobots;
+        private Dictionary<Robot, RobotDoing> AllRobots;
 
         [CanBeNull] public event EventHandler<RobotCreatedEventArgs> RobotAddedEvent;
         [CanBeNull] public event EventHandler<GoalAssignedEventArgs> GoalAssignedEvent;
@@ -53,27 +54,27 @@ namespace WarehouseSimulator.Model.Sim
             }
 
             int nextid = 0;
-            string line = rid.ReadLine();
-            while (line != null)
-            {
-                if (nextid >= robn)
+            for (int i = 0; i < robn; i++)
+            {   
+                string line = rid.ReadLine();
+                if (line == null)
                 {
-                    throw new InvalidDataException("Invalid file format: there were too many lines");
-                }
-
-                if (!int.TryParse(rid.ReadLine(), out int linPos)) 
+                    throw new InvalidDataException("Invalid file format: there weren't enough lines");
+                } 
+                if (!int.TryParse(line, out int linPos))
                 {
                     throw new InvalidDataException($"Invalid file format: {nextid + 2}. line not a number");
                 }
-                
-                Vector2Int newRobPos = new(linPos / mapie.MapSize.x, linPos % mapie.MapSize.x);
-                if (mapie.GetTileAt(newRobPos) != TileType.Empty)
-                { throw new InvalidDataException($"Invalid file format: {nextid + 2}. position already occupied or is a wall"); }
-                mapie.OccupyTile(newRobPos);
-                AddRobot(nextid,newRobPos);
+                if (mapie.GetTileAt(linPos) != TileType.Empty)
+                {
+                    throw new InvalidDataException($"Invalid file format: {nextid + 2}. line does not provide a valid position");
+                }
+
+                Vector2Int nextRobPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
+                mapie.OccupyTile(nextRobPos);
+                AddRobot(nextid,nextRobPos);
                 
                 nextid++;
-                line = rid.ReadLine();
             }
         }
     }
