@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
-using Unity.VisualScripting;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -14,6 +13,11 @@ namespace WarehouseSimulator.Model.Sim
 
         [CanBeNull] public event EventHandler<RobotCreatedEventArgs> RobotAddedEvent;
         [CanBeNull] public event EventHandler<GoalAssignedEventArgs> GoalAssignedEvent;
+
+        public RobotManager()
+        {
+            AllRobots = new();
+        }
         
         private void AddRobot(int i, Vector2Int pos)
         {
@@ -48,7 +52,7 @@ namespace WarehouseSimulator.Model.Sim
         public void RoboRead(string from, Map mapie)
         {
             using StreamReader rid = new(from);
-            if (!int.TryParse(rid.ReadLine(), out int robn)) //
+            if (!int.TryParse(rid.ReadLine(), out int robn))
             {
                 throw new InvalidDataException("Invalid file format: First line not a number");
             }
