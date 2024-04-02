@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -37,14 +38,16 @@ namespace WarehouseSimulator.Model.Sim
 
         public void PlanNextMoves(Map map)
         {
-            foreach (var (robot, action) in plannedActions)
+            Debug.Log("Planning next moves");
+            var robots = plannedActions.Keys.ToList();
+            foreach (var robot in robots)
             {
                 plannedActions[robot] = RobotDoing.Timeout;
             }
             
             //TODO: make async
             // random moves for now
-            foreach (var (robot, _) in plannedActions)
+            foreach (var robot in robots)
             {
                 plannedActions[robot] = (RobotDoing) Random.Range(0, 4);
             }
