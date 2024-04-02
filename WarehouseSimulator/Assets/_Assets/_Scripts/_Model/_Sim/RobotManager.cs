@@ -9,7 +9,7 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class RobotManager
     {
-        private Dictionary<Robot, RobotDoing> AllRobots;
+        private List<Robot> AllRobots;
 
         [CanBeNull] public event EventHandler<RobotCreatedEventArgs> RobotAddedEvent;
         [CanBeNull] public event EventHandler<GoalAssignedEventArgs> GoalAssignedEvent;
@@ -22,22 +22,14 @@ namespace WarehouseSimulator.Model.Sim
         private void AddRobot(int i, Vector2Int pos)
         {
             Robot newR = new(i, pos);
-            AllRobots.Add(newR,RobotDoing.Wait);
+            AllRobots.Add(newR);
             //newR.CallRobotPosEvent(this);
             RobotAddedEvent?.Invoke(this, new(newR));
-        }
-        
-        public void PerformRobotAction(Map mapie)
-        {
-            foreach (var (robie, task) in AllRobots)
-            {
-                robie.PerformActionRequested(task, mapie);
-            }
         }
     
         public void AssignTasksToFreeRobots(GoalManager from)
         {
-            foreach (var (robie,_) in AllRobots)
+            foreach (var robie in AllRobots)
             {
                 if (robie.State == RobotBeing.Free)
                 {
