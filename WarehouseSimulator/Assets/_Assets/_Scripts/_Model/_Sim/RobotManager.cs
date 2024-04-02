@@ -23,7 +23,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             Robot newR = new(i, pos);
             AllRobots.Add(newR,RobotDoing.Wait);
-            newR.CallRobotPosEvent(this);
+            //newR.CallRobotPosEvent(this);
             RobotAddedEvent?.Invoke(this, new(newR));
         }
         

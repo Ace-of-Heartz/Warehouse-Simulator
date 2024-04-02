@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 using WarehouseSimulator.Model.Sim;
 using WarehouseSimulator.View.MainMenu;
@@ -7,6 +7,9 @@ namespace WarehouseSimulator.View.Sim
 {
     public class UnitySimulationManager : MonoBehaviour
     {
+        [SerializeField] private GameObject robie;
+        [SerializeField] private GameObject golie;
+        
         [SerializeField]
         private UnityMap unityMap;
     
@@ -45,11 +48,13 @@ namespace WarehouseSimulator.View.Sim
         private void AddUnityRobot(object sender, RobotCreatedEventArgs e)
         {
             Debug.Log("Robot added to UnitySimulationManager. ID:" + e.robot.Id);
+            Instantiate(robie);
         }
         
         private void AddUnityGoal(object sender, GoalAssignedEventArgs e)
         {
             Debug.Log("Robot added to UnitySimulationManager. ID:" + e.goal.Robot.Id);
+            Instantiate(golie);
         }
     }   
 }

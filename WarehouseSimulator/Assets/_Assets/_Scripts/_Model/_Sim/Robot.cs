@@ -103,10 +103,10 @@ namespace WarehouseSimulator.Model.Sim
             }
         }
 
-        public void CallRobotPosEvent(RobotManager caller)
+        /*public void CallRobotPosEvent(RobotManager caller)
         {
             RobotPosition?.Invoke(caller, new RobotHappenedEventArgs(_gridPosition));
-        }
+        }*/
         
         private void GoalCompleted()
         {
