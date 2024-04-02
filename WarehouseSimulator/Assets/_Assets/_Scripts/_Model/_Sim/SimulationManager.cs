@@ -14,7 +14,7 @@ namespace WarehouseSimulator.Model.Sim
         private Map map;
         private GoalManager goalManager;
         private RobotManager robotManager;
-        // private CentralController centralController;
+        private CentralController centralController;
 
         
         // Properties
@@ -27,7 +27,10 @@ namespace WarehouseSimulator.Model.Sim
             map = new Map();
             goalManager = new GoalManager();
             robotManager = new RobotManager();
-            //create ceantralController
+            centralController = new CentralController();
+            
+            //event for adding robot to path planning
+            robotManager.RobotAddedEvent += (sender, args) => centralController.AddRobotToPlanner(args.robot);
         }
         
         public void Setup(SimInputArgs simulationArgs)
@@ -42,13 +45,15 @@ namespace WarehouseSimulator.Model.Sim
             map.LoadMap(config.basePath + config.mapFile);
             goalManager.ReadGoals(config.basePath + config.taskFile, map);
             robotManager.RoboRead(config.basePath + config.agentFile, map);
-            // TODO: centralController (preprocess)
+            
+            centralController.Preprocess(map);
+            // centralController.PlanNextMoves(map);//?
         }
         
-        // info: simulation tick
         public void Tick()
         {
-            //TODO: centralController timeToMove and planNextSteps
+            centralController.TimeToMove(map);
+            centralController.PlanNextMoves(map);
         }
 
         // info: simulation completed
