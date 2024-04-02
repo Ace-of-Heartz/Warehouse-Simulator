@@ -610,6 +610,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3584a512c0494fb1b517e0f3cc9e258, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  robie: {fileID: 5341832969892438612, guid: 0361f3004294314478132977bd9ca1e7, type: 3}
+  golie: {fileID: 3784796534712091687, guid: 199d7d99c4258d9469c2e64440d029b9, type: 3}
   unityMap: {fileID: 1331381516}
   DebugMode: 1
 --- !u!4 &1475599734
