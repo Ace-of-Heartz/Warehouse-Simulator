@@ -27,7 +27,7 @@ namespace WarehouseSimulator.View.Sim
             Vector3 newPos = _mapie.GetWorldPosition(_roboModel.GridPosition);
             if (oldPos != newPos)
             {
-                transform.position = Vector3.Lerp(oldPos, newPos, Time.deltaTime);
+                transform.position = Vector3.Lerp(oldPos, newPos, Time.deltaTime * 5);
             }
 
             Direction newRot = _roboModel.Heading;

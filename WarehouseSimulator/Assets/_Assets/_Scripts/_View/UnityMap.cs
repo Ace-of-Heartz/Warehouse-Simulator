@@ -53,7 +53,7 @@ namespace WarehouseSimulator.View
                 for (int j = 0; j < map.MapSize.y; j++)
                 {
                     GameObject ins = Instantiate(tilePrefab, Vector3.zero, Quaternion.identity, gameObject.transform);
-                    ins.transform.position = gridComponent.GetCellCenterWorld(new Vector3Int(i, -j));
+                    ins.transform.position = gridComponent.GetCellCenterWorld(new Vector3Int(i, -j, 1));
                     if(map.GetTileAt(new  Vector2Int(i, j)) == TileType.Wall)
                     {
                         ins.GetComponent<SpriteRenderer>().color = wallColor;

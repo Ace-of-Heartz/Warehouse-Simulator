@@ -55,7 +55,7 @@ namespace WarehouseSimulator.View.Sim
         {
             debugSimInputArgs.ConfigFilePath = "/Users/gergogalig/Library/CloudStorage/OneDrive-EotvosLorandTudomanyegyetem/FourthSemester/Szofttech/sample_files/warehouse_100_config.json";
             debugSimInputArgs.PreparationTime = 1;
-            debugSimInputArgs.IntervalOfSteps = 1;
+            debugSimInputArgs.IntervalOfSteps = 3;
             debugSimInputArgs.NumberOfSteps = 100;
             debugSimInputArgs.EventLogPath = "/Users/gergogalig/log.log";
             

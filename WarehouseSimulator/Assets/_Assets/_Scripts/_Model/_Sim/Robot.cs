@@ -111,11 +111,11 @@ namespace WarehouseSimulator.Model.Sim
             switch (_heading)
             {
                 case(Direction.North):
-                    return _gridPosition + Vector2Int.up; 
+                    return _gridPosition + Vector2Int.down; 
                 case(Direction.West):
                     return _gridPosition + Vector2Int.left; 
                 case(Direction.South):
-                    return _gridPosition + Vector2Int.down;
+                    return _gridPosition + Vector2Int.up;
                 case(Direction.East):
                     return _gridPosition + Vector2Int.right;
                 default: return new Vector2Int(-1, -1);
