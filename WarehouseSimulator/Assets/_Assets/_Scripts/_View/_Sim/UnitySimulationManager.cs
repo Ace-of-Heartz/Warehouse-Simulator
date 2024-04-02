@@ -14,6 +14,8 @@ namespace WarehouseSimulator.View.Sim
 
         public bool DebugMode = false;
         public SimInputArgs debugSimInputArgs = new SimInputArgs();
+
+        private float timeSinceLastTick = 0;
         
         void Start()
         {
@@ -30,6 +32,16 @@ namespace WarehouseSimulator.View.Sim
 
             unityMap.AssignMap(simulationManager.Map);
             unityMap.GenerateMap();
+        }
+
+        void Update()
+        {
+            timeSinceLastTick += Time.deltaTime;
+            if (timeSinceLastTick >= simulationManager.StepTime)
+            {
+                simulationManager.Tick();
+                timeSinceLastTick = 0;
+            }
         }
 
         void DebugSetup()

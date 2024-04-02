@@ -21,6 +21,7 @@ namespace WarehouseSimulator.Model.Sim
         public Map Map => map;
         public GoalManager GoalManager => goalManager;
         public RobotManager RobotManager => robotManager;
+        public float StepTime => stepTime;
 
         public SimulationManager()
         {
@@ -47,7 +48,7 @@ namespace WarehouseSimulator.Model.Sim
             robotManager.RoboRead(config.basePath + config.agentFile, map);
             
             centralController.Preprocess(map);
-            // centralController.PlanNextMoves(map);//?
+            centralController.PlanNextMoves(map);
         }
         
         public void Tick()
