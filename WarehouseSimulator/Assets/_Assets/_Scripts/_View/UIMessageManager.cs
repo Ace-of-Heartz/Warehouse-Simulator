@@ -13,7 +13,7 @@ namespace WarehouseSimulator.View
 
         public void MessageBox(string msg, Action<MessageBoxResponse> onDone)
         {
-            new MessageBox(msg,onDone,m_UIDocument,m_messageBox);
+            new MessageBox(msg,onDone,m_UIDocument.rootVisualElement.Q<VisualElement>("MessageContainer"),m_messageBox);
         }
     }
 }

@@ -17,13 +17,13 @@ namespace WarehouseSimulator.View
         public Action<MessageBoxResponse> m_done;
         public bool IsDone { get; private set; }
 
-        private UIDocument m_uiDocument;
+        private VisualElement m_uiContainer;
         private VisualElement m_ui;
         
-        public MessageBox(string msg, Action<MessageBoxResponse> onDone, UIDocument uiDocument,VisualTreeAsset uiAsset)
+        public MessageBox(string msg, Action<MessageBoxResponse> onDone, VisualElement uiContainer,VisualTreeAsset uiAsset)
         {
             IsDone = false;
-            m_uiDocument = uiDocument;
+            m_uiContainer = uiContainer;
             m_ui = uiAsset.Instantiate();
 
             m_ui.Q<Label>("InfoLabel").text = msg;
@@ -31,7 +31,7 @@ namespace WarehouseSimulator.View
             m_ui.Q<Button>("DeclineButton").clicked += Decline;
             m_ui.Q<Button>("CancelButton").clicked  += Cancel;
 
-            m_uiDocument.rootVisualElement.Add(m_ui);
+            uiContainer.Add(m_ui);
             
             m_done = onDone;
         }
@@ -59,7 +59,7 @@ namespace WarehouseSimulator.View
             
 
             m_done?.Invoke(response);
-            m_uiDocument.rootVisualElement.Remove(m_ui);
+            m_uiContainer.Remove(m_ui);
            
         }
     }

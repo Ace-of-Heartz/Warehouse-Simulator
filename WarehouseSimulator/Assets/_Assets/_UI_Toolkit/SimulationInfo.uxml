@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="SimulationInfo" style="flex-grow: 1; background-color: rgb(173, 173, 173);">
+        <ui:Label tabindex="-1" text="Simulation Info" parse-escape-sequences="true" display-tooltip-when-elided="true" name="InfoLabel" />
+        <ui:ListView name="InfoList" style="-unity-background-image-tint-color: rgb(90, 90, 90); background-color: rgb(106, 106, 106); border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px;" />
+    </ui:VisualElement>
+</ui:UXML>
