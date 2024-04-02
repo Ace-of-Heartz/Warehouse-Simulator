@@ -18,7 +18,6 @@ namespace WarehouseSimulator.View.Sim
         // Start is called before the first frame update
         void Start()
         {
-            _goalModel.GoalFinishedEvent += DestroyMe;
             transform.position = new(_goalModel.GridPosition.x, _goalModel.GridPosition.y);
             roboId.text = _goalModel.RoboId;
         }
@@ -29,9 +28,15 @@ namespace WarehouseSimulator.View.Sim
             
         }
 
-        private void DestroyMe([CanBeNull] object sender, EventArgs e)
+        private void DestroyMe(object sender, EventArgs e)
         {
-            Destroy(transform.parent.gameObject);
+            Destroy(gameObject);
+        }
+
+        public void GiveGoalModel(Goal g)
+        {
+            _goalModel = g;
+            _goalModel.GoalFinishedEvent += DestroyMe;
         }
     }
 }    

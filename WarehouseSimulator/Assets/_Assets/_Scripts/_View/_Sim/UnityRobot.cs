@@ -47,5 +47,10 @@ namespace WarehouseSimulator.View.Sim
 
             _id.transform.rotation = Quaternion.Euler(0, 0, 0);
         }
+
+        public void MyRoboModel(Robot dis)
+        {
+            _roboModel = dis;
+        }
     }
 }    
