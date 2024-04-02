@@ -9,7 +9,7 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class GoalManager
     {
-        private Queue<Goal> _goalsRemaining; //kérdés: ha ezek csak a még ki nem osztott célok, akkor már aktív célokat mi fogja tartalmazni?
+        private Queue<Goal> _goalsRemaining;
 
         public GoalManager()
         {
