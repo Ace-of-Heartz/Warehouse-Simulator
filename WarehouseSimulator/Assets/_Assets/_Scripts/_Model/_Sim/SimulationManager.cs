@@ -40,7 +40,7 @@ namespace WarehouseSimulator.Model.Sim
             config.basePath = Path.GetDirectoryName(simulationArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
             
             map.LoadMap(config.basePath + config.mapFile);
-            goalManager.ReadGoals(config.basePath + config.taskFile, map.MapSize);
+            goalManager.ReadGoals(config.basePath + config.taskFile, map);
             robotManager.RoboRead(config.basePath + config.agentFile, map);
             // TODO: centralController (preprocess)
         }

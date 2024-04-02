@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
 using UnityEngine;
+using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
@@ -33,34 +34,35 @@ namespace WarehouseSimulator.Model.Sim
             return next;
         }
 
-        public void ReadGoals(string from, Vector2Int mapSize)
+        public void ReadGoals(string from, Map mapie)
         {
             using StreamReader riiid = new(from);
-            if (!int.TryParse(riiid.ReadLine(),out int goaln)) 
-            {throw new InvalidDataException("Invalid file format: First line not a number"); }
+            if (!int.TryParse(riiid.ReadLine(), out int goaln))
+            {
+                throw new InvalidDataException("Invalid file format: First line not a number");
+            }
 
             int runningGoaln = 0;
-            string line = riiid.ReadLine();
-            while (line != null)
+            for (int i = 0; i < goaln; i++)
             {
-                if (runningGoaln >= goaln)
+                string line = riiid.ReadLine();
+                if (line == null)
                 {
-                    throw new InvalidDataException("Invalid file format: there were too many lines");
-                }
-
-                if (!int.TryParse(riiid.ReadLine(), out int linPos)) 
+                    throw new InvalidDataException("Invalid file format: there weren't enough lines");
+                } 
+                if (!int.TryParse(line, out int linPos))
                 {
                     throw new InvalidDataException($"Invalid file format: {runningGoaln + 2}. line not a number");
                 }
+                if (mapie.GetTileAt(linPos) != TileType.Empty)
+                {
+                    throw new InvalidDataException($"Invalid file format: {runningGoaln + 2}. line does not provide a valid position");
+                }
 
-                int quot = linPos / mapSize.y;
-                Vector2Int newGoalPos = new(linPos - mapSize.y * quot,quot);
-                _goalsRemaining.Enqueue(new Goal(newGoalPos));
-
+                Vector2Int nextPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
+                _goalsRemaining.Enqueue(new Goal(nextPos));
                 runningGoaln++;
-                line = riiid.ReadLine();
             }
-
         }
     }
 }
