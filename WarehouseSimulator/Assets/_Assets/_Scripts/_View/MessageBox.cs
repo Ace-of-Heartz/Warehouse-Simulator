@@ -20,35 +20,76 @@ namespace WarehouseSimulator.View
         private VisualElement m_uiContainer;
         private VisualElement m_ui;
         
-        public MessageBox(string msg, Action<MessageBoxResponse> onDone, VisualElement uiContainer,VisualTreeAsset uiAsset)
+        public MessageBox(
+            string msg,
+            Action<MessageBoxResponse> onDone,
+            MessageBoxTypeSelector type,
+            VisualElement uiContainer,
+            VisualTreeAsset uiAsset
+            )
         {
             IsDone = false;
             m_uiContainer = uiContainer;
             m_ui = uiAsset.Instantiate();
 
             m_ui.Q<Label>("InfoLabel").text = msg;
-            m_ui.Q<Button>("ConfirmButton").clicked += Confirm;
-            m_ui.Q<Button>("DeclineButton").clicked += Decline;
-            m_ui.Q<Button>("CancelButton").clicked  += Cancel;
+
+            string[] texts = type.GetButtonText();
+            
+            if (type is SimpleMessageBoxTypeSelector)
+                SetupButtons((SimpleMessageBoxTypeSelector)type, texts);
+            else if (type is ComplexMessageBoxTypeSelector)
+                SetupButtons((ComplexMessageBoxTypeSelector) type,texts);
+            else if (type is OneWayMessageBoxTypeSelector)
+                SetupButtons((OneWayMessageBoxTypeSelector) type, texts);
 
             uiContainer.Add(m_ui);
             
             m_done = onDone;
         }
 
+        private void SetupButtons(SimpleMessageBoxTypeSelector type,string[] texts)
+        {
+            
+            m_ui.Q<Button>("ConfirmButton").text = texts[0];
+            m_ui.Q<Button>("ConfirmButton").clicked += Confirm;
+            
+            m_ui.Q<Button>("CancelButton").text = texts[1];
+            m_ui.Q<Button>("CancelButton").clicked  += Cancel;
+        }
+
+        private void SetupButtons(ComplexMessageBoxTypeSelector type, string[] texts)
+        {
+            m_ui.Q<Button>("ConfirmButton").text = texts[0];
+            m_ui.Q<Button>("ConfirmButton").clicked += Confirm;
+            
+            m_ui.Q<Button>("DeclineButton").text = texts[1];
+            m_ui.Q<Button>("DeclineButton").clicked += Decline;
+            
+            m_ui.Q<Button>("CancelButton").text = texts[2];
+            m_ui.Q<Button>("CancelButton").clicked  += Cancel;
+        }
+
+        private void SetupButtons(OneWayMessageBoxTypeSelector type, string[] texts)
+        {
+            m_ui.Q<Button>("ConfirmButton").text = texts[0];
+            m_ui.Q<Button>("ConfirmButton").clicked += Confirm;
+        }
+
+
         private void Confirm()
         {
-            SetDone(MessageBoxResponse.Confirmed);
+            SetDone(MessageBoxResponse.CONFIRMED);
         }
 
         private void Decline()
         {
-            SetDone(MessageBoxResponse.Declined);
+            SetDone(MessageBoxResponse.DECLINED);
         }
 
         private void Cancel()
         {
-            SetDone(MessageBoxResponse.Canceled);
+            SetDone(MessageBoxResponse.CANCELED);
         }
         
         private void SetDone(MessageBoxResponse response)

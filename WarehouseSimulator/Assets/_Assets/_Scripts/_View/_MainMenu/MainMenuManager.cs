@@ -102,9 +102,10 @@ public class MainMenuManager : MonoBehaviour
             GameObject.Find("UIErrorManager").GetComponent<UIMessageManager>().MessageBox("Fatal error occured!", response =>
                 {
                     
-                }
+                },
+                new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK)
             );
-            Debug.Log("Fatal error occured at input parsing for simulation.");
+            //Debug.Log("Fatal error occured at input parsing for simulation.");
         }
     }
     
@@ -136,9 +137,10 @@ public class MainMenuManager : MonoBehaviour
             GameObject.Find("UIErrorManager").GetComponent<UIMessageManager>().MessageBox("Fatal error occured!", response =>
                 {
                     
-                }
-            );
-            Debug.Log("Fatal error occured at input parsing for playback.");
+                },
+                new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK)
+                );
+            //Debug.Log("Fatal error occured at input parsing for playback.");
         }
     }
     
@@ -151,12 +153,16 @@ public class MainMenuManager : MonoBehaviour
             {
                 switch (response)
                 {
-                    case MessageBoxResponse.Confirmed: 
+                    case MessageBoxResponse.CONFIRMED: 
                         Application.Quit();
                         break;
-                    default: break;
+                    case MessageBoxResponse.CANCELED:
+                        break;
+                    case MessageBoxResponse.DECLINED:
+                        break;
                 }
-            }
+            },
+            new SimpleMessageBoxTypeSelector(SimpleMessageBoxTypeSelector.MessageBoxType.OK_CANCEL)
             );
         
     }
