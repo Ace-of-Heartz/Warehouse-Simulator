@@ -15,17 +15,13 @@ namespace WarehouseSimulator.View.Sim
         [SerializeField]
         private TextMeshPro roboId;
 
+        private UnityMap _mapie;
+
         // Start is called before the first frame update
         void Start()
         {
-            transform.position = new(_goalModel.GridPosition.x, _goalModel.GridPosition.y);
+            transform.position = _mapie.GetWorldPosition(_goalModel.GridPosition);
             roboId.text = _goalModel.RoboId;
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            
         }
 
         private void DestroyMe(object sender, EventArgs e)
@@ -33,9 +29,10 @@ namespace WarehouseSimulator.View.Sim
             Destroy(gameObject);
         }
 
-        public void GiveGoalModel(Goal g)
+        public void GiveGoalModel(Goal g, UnityMap dis)
         {
             _goalModel = g;
+            _mapie = dis;
             _goalModel.GoalFinishedEvent += DestroyMe;
         }
     }

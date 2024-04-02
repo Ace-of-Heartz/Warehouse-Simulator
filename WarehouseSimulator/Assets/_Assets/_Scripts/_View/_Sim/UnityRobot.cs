@@ -9,20 +9,22 @@ namespace WarehouseSimulator.View.Sim
     {
         private Robot _roboModel;
         [SerializeField]
-        private TextMeshPro _id;
+        private TextMeshPro id;
+
+        private UnityMap _mapie;
 
         // Start is called before the first frame update
         void Start()
         {
-            transform.position = new(_roboModel.GridPosition.x, _roboModel.GridPosition.y);
-            _id.text = _roboModel.Id.ToString();
+            transform.position = _mapie.GetWorldPosition(_roboModel.GridPosition);
+            id.text = _roboModel.Id.ToString();
         }
 
         // Update is called once per frame
         void Update()
         {
             Vector3 oldPos = transform.position;
-            Vector3 newPos = new(_roboModel.GridPosition.x, _roboModel.GridPosition.y);
+            Vector3 newPos = _mapie.GetWorldPosition(_roboModel.GridPosition);
             if (oldPos != newPos)
             {
                 transform.position = Vector3.Lerp(oldPos, newPos, Time.deltaTime);
@@ -45,12 +47,13 @@ namespace WarehouseSimulator.View.Sim
                     break;
             }
 
-            _id.transform.rotation = Quaternion.Euler(0, 0, 0);
+            id.transform.rotation = Quaternion.Euler(0, 0, 0);
         }
 
-        public void MyRoboModel(Robot dis)
+        public void MyThingies(Robot dis, UnityMap dat)
         {
             _roboModel = dis;
+            _mapie = dat;
         }
     }
 }    
