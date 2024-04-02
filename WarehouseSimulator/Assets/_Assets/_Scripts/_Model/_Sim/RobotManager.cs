@@ -35,7 +35,7 @@ namespace WarehouseSimulator.Model.Sim
             }
         }
     
-        public void AssignTasksToFreeRobots(GoalManager from) //calling this is the responsibility of the SimulationManager
+        public void AssignTasksToFreeRobots(GoalManager from)
         {
             foreach (var (robie,_) in AllRobots)
             {

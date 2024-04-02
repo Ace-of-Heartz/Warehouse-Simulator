@@ -48,6 +48,8 @@ namespace WarehouseSimulator.Model.Sim
             goalManager.ReadGoals(config.basePath + config.taskFile, map);
             robotManager.RoboRead(config.basePath + config.agentFile, map);
             
+            
+            robotManager.AssignTasksToFreeRobots(goalManager);
             centralController.Preprocess(map);
             centralController.PlanNextMoves(map);
         }
@@ -56,6 +58,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             centralController.TimeToMove(map);
             centralController.PlanNextMoves(map);
+            robotManager.AssignTasksToFreeRobots(goalManager);
         }
 
         // info: simulation completed
