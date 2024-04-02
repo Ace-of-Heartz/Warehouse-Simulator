@@ -60,6 +60,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             goTo.AssignedTo(this);
             Goal = goTo;
+            _state = RobotBeing.InTask;
         }
 
 
@@ -112,6 +113,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             Goal?.FinishTask();
             Goal = null;
+            _state = RobotBeing.Free;
         }
 
         private Vector2Int WhereToMove()
