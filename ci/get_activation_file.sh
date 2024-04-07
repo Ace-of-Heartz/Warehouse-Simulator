@@ -1,26 +1,40 @@
+
 #!/usr/bin/env bash
 
-activation_file=${UNITY_ACTIVATION_FILE:-./Unity_v$UNITY_VERSION.alf}
+activation_file=${UNITY_ACTIVATION_FILE:-./unity3d.alf}
 
-if [[ -z "${UNITY_USERNAME}" ]] || [[ -z "${UNITY_PASSWORD}" ]] || [[ -z "${UNITY_SERIAL_KEY}" ]]; then
-  echo "UNITY_USERNAME, UNITY_SERIAL_KEY or UNITY_PASSWORD environment variables are not set, please refer to instructions in the readme and add these to your secret environment variables."
-  echo "Add them as a Gitlab variables for your project/group CI/CD or specifically for this job."
+if [[ -z "${UNITY_USERNAME}" ]] || [[ -z "${UNITY_PASSWORD}" ]]; then
+  echo "UNITY_USERNAME or UNITY_PASSWORD environment variables are not set, please refer to instructions in the readme and add these to your secret environment variables."
   exit 1
 fi
 
-xvfb-run --auto-servernum --server-args='-screen 0 640x480x24' \
-  unity-editor \
+unity-editor \
     -logFile /dev/stdout \
     -batchmode \
-    -createManualActivationFile \
     -nographics \
-    -serial "$UNITY_SERIAL_KEY" \
-    -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD" |
+    -username "$UNITY_USERNAME" -password "$UNITY_PASSWORD" \
+    -createManualActivationFile |
       tee ./unity-output.log
 
-# Fail job if unity.alf is empty
-ls "${UNITY_ACTIVATION_FILE:-./Unity_v$UNITY_VERSION.alf}"
-exit_code=$?
+# cat ./unity-output.log |
+#   grep 'LICENSE SYSTEM .* Posting *' |
+#   sed 's/.*Posting *//' > "${activation_file}"
+
+echo "--------working directory-----------"
+echo $PWD
+
+
+#cpy from the .alt to UNITY_ACTIVATION_FILE
+file=$(ls Unity_v* )
+echo "--------license file content-----------"
+echo $(cat $file)
+
+echo "--------activation file path-----------"
+echo $activation_file
+
+echo $(cat $file) > $activation_file
+
+
 
 if [[ ${exit_code} -eq 0 ]]; then
   echo ""
@@ -43,6 +57,6 @@ if [[ ${exit_code} -eq 0 ]]; then
   echo ""
   echo "(optional) For more details on why this is not fully automated, visit https://gitlab.com/gableroux/unity3d-gitlab-ci-example/issues/73"
 else
-  echo "License file could not be found at ${UNITY_ACTIVATION_FILE:-./Unity_v$UNITY_VERSION.alf}"
+  echo "License file could not be found at ${UNITY_ACTIVATION_FILE:-./unity3d.alf}"
 fi
 exit $exit_code
