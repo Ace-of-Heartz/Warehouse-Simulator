@@ -1,4 +1,5 @@
 using System.IO;
+using WarehouseSimulator.View.MainMenu;
 
 namespace WarehouseSimulator.Model.Sim
 {
@@ -8,33 +9,56 @@ namespace WarehouseSimulator.Model.Sim
         private SimulationConfig config;
         private int maxSteps;
         private float stepTime;
+        private float preparationTime;
 
         private Map map;
-        // private GoalManager goalManager;
-        // private RobotManager robotManager;
-        // private CentralController centralController;
+        private GoalManager goalManager;
+        private RobotManager robotManager;
+        private CentralController centralController;
 
         
         // Properties
         public Map Map => map;
-        
-        public void Setup(string configFilePath)
+        public GoalManager GoalManager => goalManager;
+        public RobotManager RobotManager => robotManager;
+        public float StepTime => stepTime;
+        public bool IsPreprocessDone => centralController.IsPreprocessDone;
+
+        public SimulationManager()
         {
-            config = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(configFilePath));//todo: error handling
-            config.basePath = Path.GetDirectoryName(configFilePath) + Path.DirectorySeparatorChar;
-            
             map = new Map();
-            map.LoadMap(config.basePath + config.mapFile);
+            goalManager = new GoalManager();
+            robotManager = new RobotManager();
+            centralController = new CentralController();
             
-            // TODO: goalManager(load)
-            // TODO: robotManager(load)
-            // TODO: centralController (preprocess)
+            //event for adding robot to path planning
+            robotManager.RobotAddedEvent += (sender, args) => centralController.AddRobotToPlanner(args.robot);
         }
         
-        // info: simulation tick
+        public void Setup(SimInputArgs simulationArgs)
+        {
+            maxSteps = simulationArgs.NumberOfSteps;
+            stepTime = simulationArgs.IntervalOfSteps;
+            preparationTime = simulationArgs.PreparationTime;
+            
+            config = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(simulationArgs.ConfigFilePath));//todo: error handling
+            config.basePath = Path.GetDirectoryName(simulationArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
+            
+            map.LoadMap(config.basePath + config.mapFile);
+            goalManager.ReadGoals(config.basePath + config.taskFile, map);
+            robotManager.RoboRead(config.basePath + config.agentFile, map);
+            
+            
+            robotManager.AssignTasksToFreeRobots(goalManager);
+            centralController.Preprocess(map);
+            centralController.PlanNextMoves(map);
+        }
+        
         public void Tick()
         {
-            //TODO: centralController timeToMove and planNextSteps
+            centralController.TimeToMove(map);
+            centralController.PlanNextMoves(map);
+            robotManager.AssignTasksToFreeRobots(goalManager);
         }
 
         // info: simulation completed
