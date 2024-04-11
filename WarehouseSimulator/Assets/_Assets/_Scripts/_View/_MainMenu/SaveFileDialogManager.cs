@@ -69,7 +69,7 @@ namespace WarehouseSimulator.View.MainMenu
             if (!FileBrowser.ShowSaveDialog(
                     (path =>
                     {
-                        m_pathToFile = path[0]; Debug.Log(path[0]); 
+                        m_pathToFile = path[0]; //Debug.Log(path[0]); 
                         inputExtension.inputField.text = m_pathToFile;
 
                     }),
@@ -83,7 +83,7 @@ namespace WarehouseSimulator.View.MainMenu
                 ))
             {   
                 
-                GameObject.Find("UIMessageManager").GetComponent<UIMessageManager>().MessageBox(
+                UIMessageManager.GetInstance().MessageBox(
                     "Fatal error occured! File explore could not be opened!",
                     response => { }
                     ,new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK));
