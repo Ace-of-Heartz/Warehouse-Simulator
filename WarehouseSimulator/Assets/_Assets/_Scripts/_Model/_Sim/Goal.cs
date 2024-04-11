@@ -8,12 +8,13 @@ namespace WarehouseSimulator.Model.Sim
     {
         private Vector2Int _gridPosition;
         [CanBeNull] private Robot _robot;
+        private int _selfId;
 
         #region Properties
 
         public string RoboId
         {
-            get => _robot.Id.ToString();
+            get => _robot?.Id.ToString() ?? "unknown";
         }
         
         public Vector2Int GridPosition
@@ -29,24 +30,23 @@ namespace WarehouseSimulator.Model.Sim
         #endregion
         
         [CanBeNull] public event EventHandler GoalFinishedEvent;
-        [CanBeNull] public event EventHandler GoalAssignedEvent;
         
-        public Goal(Vector2Int gPos)
+        public Goal(Vector2Int gPos,int id)
         {
             _gridPosition = gPos;
+            _selfId = id;
         }
 
         public void AssignedTo(Robot thisOne)
         {
             _robot = thisOne;
-            GoalAssignedEvent?.Invoke(this, EventArgs.Empty);
-            //TODO => Blaaa: Log later
+            //TODO => Blaaa: Log later (ehhez kell a selfId)
         }
 
         public void FinishTask()
         {
             GoalFinishedEvent?.Invoke(this, EventArgs.Empty);
-            //TODO => Blaaa: Log later
+            //TODO => Blaaa: Log later (ehhez kell a selfId)
         }
     }
 }

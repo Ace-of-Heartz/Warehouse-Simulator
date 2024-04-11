@@ -10,15 +10,20 @@ namespace WarehouseSimulator.Model.Sim
     public class GoalManager
     {
         private Queue<Goal> _goalsRemaining;
+        private int _nextid;
+        
+        
 
         public GoalManager()
         {
             _goalsRemaining = new Queue<Goal>();
+            _nextid = 0;
         }
 
-        public void AddNewGoal(Vector2Int hir)
+        public void AddNewGoal(Vector2Int here)
         {
-            _goalsRemaining.Enqueue(new Goal(hir));
+            _goalsRemaining.Enqueue(new Goal(here,_nextid));
+            _nextid++;
         }
 
         [CanBeNull]
@@ -29,8 +34,7 @@ namespace WarehouseSimulator.Model.Sim
             {
                 next = _goalsRemaining.Dequeue();
             }
-            catch (Exception)
-            { }
+            catch (Exception) { }
             return next;
         }
 
@@ -41,8 +45,7 @@ namespace WarehouseSimulator.Model.Sim
             {
                 throw new InvalidDataException("Invalid file format: First line not a number");
             }
-
-            int runningGoaln = 0;
+            
             for (int i = 0; i < goaln; i++)
             {
                 string line = riiid.ReadLine();
@@ -52,16 +55,16 @@ namespace WarehouseSimulator.Model.Sim
                 } 
                 if (!int.TryParse(line, out int linPos))
                 {
-                    throw new InvalidDataException($"Invalid file format: {runningGoaln + 2}. line not a number");
+                    throw new InvalidDataException($"Invalid file format: {_nextid + 2}. line not a number");
                 }
                 if (mapie.GetTileAt(linPos) != TileType.Empty)
                 {
-                    throw new InvalidDataException($"Invalid file format: {runningGoaln + 2}. line does not provide a valid position");
+                    throw new InvalidDataException($"Invalid file format: {_nextid + 2}. line does not provide a valid position");
                 }
 
                 Vector2Int nextPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
-                _goalsRemaining.Enqueue(new Goal(nextPos));
-                runningGoaln++;
+                _goalsRemaining.Enqueue(new Goal(nextPos,_nextid));
+                _nextid++;
             }
         }
     }
