@@ -44,7 +44,7 @@ namespace WarehouseSimulator.Model
 
                 for (int j = 0; j < mapSize.x; j++)
                 {
-                    mapRepresentaion[mapSize.y - 1 - i, j] = (line[j] == '.' ? TileType.Empty : TileType.Wall);
+                    mapRepresentaion[i, j] = (line[j] == '.' ? TileType.Empty : TileType.Wall);
                 }
             }
 
@@ -52,11 +52,17 @@ namespace WarehouseSimulator.Model
 
         public void OccupyTile(Vector2Int dis)
         {
-            mapRepresentaion[dis.y,dis.x] = TileType.RoboOccupied;
+            if(GetTileAt(dis) == TileType.Empty)
+            {
+                mapRepresentaion[dis.y,dis.x] = TileType.RoboOccupied;
+            }
         }
         public void DeoccupyTile(Vector2Int dis)
         {
-            mapRepresentaion[dis.y,dis.x] = TileType.Empty;
+            if (GetTileAt(dis) == TileType.RoboOccupied)
+            {
+                mapRepresentaion[dis.y,dis.x] = TileType.Empty;
+            }
         }
     }
 

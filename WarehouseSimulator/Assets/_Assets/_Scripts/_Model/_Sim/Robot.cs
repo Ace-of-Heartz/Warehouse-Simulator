@@ -31,7 +31,6 @@ namespace WarehouseSimulator.Model.Sim
             get => _goal;
             private set
             {
-                GoalChangedEvent?.Invoke(this,EventArgs.Empty);
                 //TODO => Blaaa: Log later
                 _state = value == null ? RobotBeing.Free : RobotBeing.InTask;
                 _goal = value;
@@ -43,9 +42,6 @@ namespace WarehouseSimulator.Model.Sim
             get => _state;
         }
         #endregion
-
-        [CanBeNull] public event EventHandler GoalChangedEvent;
-        [CanBeNull] public event EventHandler<RobotHappenedEventArgs> RobotPosition;
 
         public Robot(int i, Vector2Int gPos, Direction h = Direction.North, Goal g = null, RobotBeing s = RobotBeing.Free)
         {
@@ -60,6 +56,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             goTo.AssignedTo(this);
             Goal = goTo;
+            _state = RobotBeing.InTask;
         }
 
 
@@ -83,7 +80,6 @@ namespace WarehouseSimulator.Model.Sim
                     }
                     else
                     {
-                        RobotPosition?.Invoke(this,new RobotHappenedEventArgs(nextPos));
                         //TODO => Unity react
                         mapie.DeoccupyTile(_gridPosition);
                         _gridPosition = nextPos;
@@ -102,16 +98,12 @@ namespace WarehouseSimulator.Model.Sim
                     break;
             }
         }
-
-        public void CallRobotPosEvent(RobotManager caller)
-        {
-            RobotPosition?.Invoke(caller, new RobotHappenedEventArgs(_gridPosition));
-        }
         
         private void GoalCompleted()
         {
             Goal?.FinishTask();
             Goal = null;
+            _state = RobotBeing.Free;
         }
 
         private Vector2Int WhereToMove()
@@ -119,11 +111,11 @@ namespace WarehouseSimulator.Model.Sim
             switch (_heading)
             {
                 case(Direction.North):
-                    return _gridPosition + Vector2Int.up; 
+                    return _gridPosition + Vector2Int.down; 
                 case(Direction.West):
                     return _gridPosition + Vector2Int.left; 
                 case(Direction.South):
-                    return _gridPosition + Vector2Int.down;
+                    return _gridPosition + Vector2Int.up;
                 case(Direction.East):
                     return _gridPosition + Vector2Int.right;
                 default: return new Vector2Int(-1, -1);

@@ -18,7 +18,7 @@ namespace WarehouseSimulator.View
         {
             new MessageBox(msg,onDone,
                 type,
-                m_UIDocument.rootVisualElement.Q<VisualElement>("MessageContainer"),
+                m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
                 m_complexMessageBox
                 ); 
         }
@@ -26,7 +26,7 @@ namespace WarehouseSimulator.View
         {
             new MessageBox(msg,onDone,
                 type,
-                m_UIDocument.rootVisualElement.Q<VisualElement>("MessageContainer"),
+                m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
                 m_simpleMessageBox
             ); 
         }
@@ -34,7 +34,7 @@ namespace WarehouseSimulator.View
         {
             new MessageBox(msg,onDone,
                 type,
-                m_UIDocument.rootVisualElement.Q<VisualElement>("MessageContainer"),
+                m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
                 m_oneWayMessageBox
             ); 
         }

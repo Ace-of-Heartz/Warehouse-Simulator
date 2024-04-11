@@ -11,6 +11,11 @@ namespace WarehouseSimulator.Model.Sim
 
         #region Properties
 
+        public string RoboId
+        {
+            get => _robot.Id.ToString();
+        }
+        
         public Vector2Int GridPosition
         {
             get => _gridPosition;

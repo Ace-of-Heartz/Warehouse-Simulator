@@ -1,2 +1,24 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="RobotPanel" src="project://database/Assets/_Assets/_UI_Toolkit/RobotPanel.uxml?fileID=9197481963319205126&amp;guid=3dfffe188aad38041a17a23d8de93daa&amp;type=3#RobotPanel" />
+    <ui:Template name="SimulationInfo" src="project://database/Assets/_Assets/_UI_Toolkit/InfoPanel.uxml?fileID=9197481963319205126&amp;guid=02d7ee6bbfb7ef047a01c1c6185d4468&amp;type=3#InfoPanel" />
+    <ui:Template name="PopupArea" src="project://database/Assets/_Assets/_UI_Toolkit/PopupArea.uxml?fileID=9197481963319205126&amp;guid=58a18c539385d7aacb0ee64948757230&amp;type=3#PopupArea" />
+    <ui:VisualElement name="SimulationCanvas" style="flex-grow: 1;">
+        <ui:VisualElement name="LeftSideBar" style="flex-grow: 1; align-self: flex-end;">
+            <ui:Instance template="RobotPanel" name="RobotPanel" />
+            <ui:Instance template="SimulationInfo" name="SimulationInfo" />
+        </ui:VisualElement>
+        <ui:Instance template="PopupArea" name="PopupArea" style="position: absolute; height: 559px; width: 775px; top: 173px; left: 586px;" />
+        <ui:VisualElement name="BottomBar" style="flex-grow: 1; -unity-text-align: middle-center; background-color: rgb(87, 87, 87); align-items: stretch; justify-content: center; flex-direction: row; align-self: auto; max-height: 150px;">
+            <ui:VisualElement name="BottomLeft" style="flex-grow: 1; width: auto; max-width: 10%;" />
+            <ui:VisualElement name="BottomCenter" style="flex-grow: 1; justify-content: center; align-items: center; max-width: 80%;">
+                <ui:ProgressBar value="22" title="my-progress" style="width: 1000px; height: auto; max-width: 1000px; min-width: 600px;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="BottomRight" style="flex-grow: 1; max-width: 10%;">
+                <ui:GroupBox name="GroupBox">
+                    <ui:Button text="START PLAYBACK" parse-escape-sequences="true" display-tooltip-when-elided="true" style="height: 42px; margin-bottom: 40px;" />
+                    <ui:Button text="ABORT" parse-escape-sequences="true" display-tooltip-when-elided="true" style="margin-bottom: 40px;" />
+                </ui:GroupBox>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
 </ui:UXML>
