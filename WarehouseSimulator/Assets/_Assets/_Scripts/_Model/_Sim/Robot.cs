@@ -118,7 +118,7 @@ namespace WarehouseSimulator.Model.Sim
                     return _gridPosition + Vector2Int.up;
                 case(Direction.East):
                     return _gridPosition + Vector2Int.right;
-                default: return new Vector2Int(-1, -1);
+                default: return new Vector2Int(0, 0);
             }
         }
     }
