@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace WarehouseSimulator.Model.PB
 {
+
     public class PbGoal
     {
         private Vector2Int _gridPosition;
@@ -18,14 +20,25 @@ namespace WarehouseSimulator.Model.PB
             get => _gridPosition;
         }
 
-        public int AliveF
+        public int AliveFrom
         {
             get => _aliveFrom;
         }
         
-        public int AliveT
+        public int AliveTo
         {
             get => _aliveTo;
+            set
+            {
+                if (_aliveTo == -1)
+                {
+                    _aliveTo = value;
+                }
+                else
+                {
+                    throw new InvalidFileException($"Goal {_selfId} was given \"finished\" twice");
+                }
+            }
         }
 
         public bool IsAlive
@@ -45,7 +58,7 @@ namespace WarehouseSimulator.Model.PB
         
         #endregion
 
-        public PbGoal(int selfId,Vector2Int gridPos, bool currentlyAlive = true)
+        public PbGoal(int selfId,Vector2Int gridPos, bool currentlyAlive = false)
         {
             _selfId = selfId;
             _gridPosition = gridPos;
@@ -61,13 +74,16 @@ namespace WarehouseSimulator.Model.PB
             }
         }
 
-        public void SetAlive(int from, int to,int roboId)
+        public void SetAliveFrom(int from, int roboId)
         {
             if (_aliveFrom == -1)
             {
                 _aliveFrom = from;
-                _aliveTo = to;
                 _roboId = roboId;
+            }
+            else
+            {
+                throw new InvalidFileException($"Goal {_selfId} was given \"assigned\" twice");
             }
         }
     }
