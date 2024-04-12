@@ -2,7 +2,7 @@
     <ui:Template name="RobotPanel" src="project://database/Assets/_Assets/_UI_Toolkit/RobotPanel.uxml?fileID=9197481963319205126&amp;guid=3dfffe188aad38041a17a23d8de93daa&amp;type=3#RobotPanel" />
     <ui:Template name="SimulationInfo" src="project://database/Assets/_Assets/_UI_Toolkit/InfoPanel.uxml?fileID=9197481963319205126&amp;guid=02d7ee6bbfb7ef047a01c1c6185d4468&amp;type=3#InfoPanel" />
     <ui:Template name="PopupArea" src="project://database/Assets/_Assets/_UI_Toolkit/PopupArea.uxml?fileID=9197481963319205126&amp;guid=58a18c539385d7aacb0ee64948757230&amp;type=3#PopupArea" />
-    <ui:VisualElement name="SimulationCanvas" style="flex-grow: 1;">
+    <ui:VisualElement name="SimulationCanvas" picking-mode="Ignore" style="flex-grow: 1;">
         <ui:VisualElement name="LeftSideBar" style="flex-grow: 1; align-self: flex-end;">
             <ui:Instance template="RobotPanel" name="RobotPanel" />
             <ui:Instance template="SimulationInfo" name="SimulationInfo" />
