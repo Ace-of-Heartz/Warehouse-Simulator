@@ -1,5 +1,6 @@
 using System;
 using JetBrains.Annotations;
+using Unity.Properties;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -7,6 +8,7 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class Robot
     {
+        
         private readonly int _id;
         private Vector2Int _gridPosition;
         private Direction _heading;
@@ -14,18 +16,23 @@ namespace WarehouseSimulator.Model.Sim
         private RobotBeing _state;
 
         #region Properties
+        
+        [CreateProperty]
         public int Id
         {
             get => _id;
         }
+        [CreateProperty]
         public Vector2Int GridPosition
         {
             get => _gridPosition;
         }
+        [CreateProperty]
         public Direction Heading
         {
             get => _heading;
         }
+        [CreateProperty]
         public Goal Goal
         {
             get => _goal;
@@ -36,7 +43,7 @@ namespace WarehouseSimulator.Model.Sim
                 _goal = value;
             }
         }
-
+        [CreateProperty]
         public RobotBeing State
         {
             get => _state;
