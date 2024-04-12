@@ -1,6 +1,9 @@
 using UnityEngine;
 using WarehouseSimulator.Model.Sim;
 using TMPro;
+using Unity.Properties;
+using UnityEditor.UIElements;
+using UnityEngine.UIElements;
 using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.View.Sim
@@ -23,7 +26,7 @@ namespace WarehouseSimulator.View.Sim
         // Update is called once per frame
         void Update()
         {
-            Vector3 oldPos = transform.position;
+            Vector3 oldPos = transform.position; 
             Vector3 newPos = _mapie.GetWorldPosition(_roboModel.GridPosition);
             if (oldPos != newPos)
             {
@@ -55,5 +58,7 @@ namespace WarehouseSimulator.View.Sim
             _roboModel = dis;
             _mapie = dat;
         }
+
+    
     }
 }    
