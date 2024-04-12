@@ -156,12 +156,12 @@ build-StandaloneLinux64:
   variables:
     BUILD_TARGET: StandaloneLinux64
 
-build-StandaloneLinux64-il2cpp:
-  <<: *build
-  image: $IMAGE:$UNITY_VERSION-linux-il2cpp-$IMAGE_VERSION
-  variables:
-    BUILD_TARGET: StandaloneLinux64
-    SCRIPTING_BACKEND: IL2CPP
+#build-StandaloneLinux64-il2cpp:
+#  <<: *build
+#  image: $IMAGE:$UNITY_VERSION-linux-il2cpp-$IMAGE_VERSION
+#  variables:
+#    BUILD_TARGET: StandaloneLinux64
+#    SCRIPTING_BACKEND: IL2CPP
 
 build-StandaloneOSX:
   <<: *build
@@ -192,20 +192,20 @@ build-WebGL:
   variables:
     BUILD_TARGET: WebGL
 
-build-android:
-  <<: *build
-  image: $IMAGE:$UNITY_VERSION-android-$IMAGE_VERSION
-  variables:
-    BUILD_TARGET: Android
-    BUILD_APP_BUNDLE: "false"
+#build-android:
+#  <<: *build
+#  image: $IMAGE:$UNITY_VERSION-android-$IMAGE_VERSION
+#  variables:
+#    BUILD_TARGET: Android
+#    BUILD_APP_BUNDLE: "false"
 
-build-android-il2cpp:
-  <<: *build
-  image: $IMAGE:$UNITY_VERSION-android-$IMAGE_VERSION
-  variables:
-    BUILD_TARGET: Android
-    BUILD_APP_BUNDLE: "false"
-    SCRIPTING_BACKEND: IL2CPP
+#build-android-il2cpp:
+#  <<: *build
+#  image: $IMAGE:$UNITY_VERSION-android-$IMAGE_VERSION
+#  variables:
+#    BUILD_TARGET: Android
+#    BUILD_APP_BUNDLE: "false"
+#    SCRIPTING_BACKEND: IL2CPP
 
 #deploy-android:
 #  stage: deploy
