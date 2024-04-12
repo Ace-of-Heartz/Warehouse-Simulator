@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
@@ -26,6 +27,7 @@ namespace WarehouseSimulator.View
         private SceneHandler()
         {
             m_scenes = new();
+            m_documents = new();
         }
 
         public static SceneHandler GetInstance()
@@ -52,7 +54,7 @@ namespace WarehouseSimulator.View
         public void SetCurrentScene(uint id)
         {
             m_currentSceneId = id;
-            
+            UpdateDocs(); 
         }
 
         public void UpdateDocs()
@@ -61,11 +63,11 @@ namespace WarehouseSimulator.View
             {
                 if (m_currentSceneId != k)
                 {
-                    m_documents[m_currentSceneId].enabled = false;
+                    m_documents[k].rootVisualElement.style.display = DisplayStyle.None;
                 }
                 else
-                    m_documents[m_currentSceneId].enabled = true;
-
+                    m_documents[k].rootVisualElement.style.display = DisplayStyle.Flex;
+    
             }
         }
     }

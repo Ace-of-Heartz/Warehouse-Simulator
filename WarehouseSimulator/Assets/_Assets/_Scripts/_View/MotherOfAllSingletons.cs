@@ -33,18 +33,19 @@ namespace WarehouseSimulator.View
         /// <summary>
         /// Initialize Singleton classes
         /// </summary>
-        private void Start()
+        private void Awake()
         {
             m_UIMessageManager = UIMessageManager.GetInstance();
             m_UIMessageManager.SetMessageBoxes(m_complexMessageBox,m_simpleMessageBox,m_oneWayMessageBox);
-
             m_sceneHandler = SceneHandler.GetInstance();
             foreach (var sceneNDoc in m_UIDocumentsAndScenes)
             {
                 m_sceneHandler.AddSceneNDoc(sceneNDoc.m_id,sceneNDoc.m_scene,sceneNDoc.m_doc);
             }
             SceneHandler.GetInstance().SetCurrentScene(0);
-            
+            m_UIMessageManager.SetUIDocument(SceneHandler.GetInstance().CurrentDoc);
+            DontDestroyOnLoad(this);
+            ;
         }
         
     }
