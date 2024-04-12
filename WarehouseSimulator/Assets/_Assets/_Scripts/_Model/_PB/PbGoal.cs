@@ -45,12 +45,11 @@ namespace WarehouseSimulator.Model.PB
         
         #endregion
 
-        public PbGoal(int selfId,Vector2Int gridPos, int roboId, bool currentlyAlive = true)
+        public PbGoal(int selfId,Vector2Int gridPos, bool currentlyAlive = true)
         {
             _selfId = selfId;
             _gridPosition = gridPos;
-            _aliveFrom = _aliveTo = 0;
-            _roboId = roboId;
+            _aliveFrom = _aliveTo = _roboId = -1;
             _currentlyAlive = currentlyAlive;
         }
 
@@ -62,10 +61,14 @@ namespace WarehouseSimulator.Model.PB
             }
         }
 
-        public void SetAliveFromTo(int from, int to)
+        public void SetAlive(int from, int to,int roboId)
         {
-            _aliveFrom = from;
-            _aliveTo = to;
+            if (_aliveFrom == -1)
+            {
+                _aliveFrom = from;
+                _aliveTo = to;
+                _roboId = roboId;
+            }
         }
     }
 }
