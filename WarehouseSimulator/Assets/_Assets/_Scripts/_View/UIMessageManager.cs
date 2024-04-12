@@ -37,7 +37,27 @@ namespace WarehouseSimulator.View
                    m_oneWayMessageBox is not null;
         }
         
-        public void MessageBox(string msg, Action<MessageBoxResponse> onDone, ComplexMessageBoxTypeSelector type, string confirmText = "Confirm",string declineText = "Decline", string cancelText = "Cancel")
+        /// <summary>
+        /// Used for calling a message box on screen with 1 button.
+        /// Can only result in "MessageBoxResponse.CONFIRMED", "MessageBoxResponse.CANCELED" and "MessageBoxResponse.DECLINED" state.
+        /// </summary>
+        /// <example>  UIMessageManager.GetInstance().MessageBox(
+        ///            "Fatal error occured! File explore could not be opened!",
+        ///            response => {
+        ///             switch (response){
+        ///                 case MessageBoxResponse.CONFIRMED: Debug.Log("Confirmed"); break;
+        ///                 case MessageBoxResponse.CANCELED: Debug.Log("Canceled"); break;
+        ///                 case MessageBoxResponse.DECLINED: Debug.Log("Declined"); break;
+        ///             }
+        ///             }
+        ///            ,new ComplexMessageBoxTypeSelector(ComplexMessageBoxTypeSelector.MessageBoxType.CONFIRM_DECLINE_CANCEL));
+        ///                </example>
+        /// <param name="msg">Message to be displayed for the user.</param>
+        /// <param name="onDone">Action to be executed upon any button click. Will receive result of message box query.</param>
+        /// <param name="type">Type of MessageBox to be used.</param>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <exception cref="MissingVisualElementException"></exception>
+        public void MessageBox(string msg, Action<MessageBoxResponse> onDone, ComplexMessageBoxTypeSelector type)
         {
             if (!IsComplete())
             {
@@ -54,7 +74,27 @@ namespace WarehouseSimulator.View
                 m_complexMessageBox
                 ); 
         }
-        public void MessageBox(string msg, Action<MessageBoxResponse> onDone, SimpleMessageBoxTypeSelector type, string confirmText = "Confirm",string declineText = "Decline", string cancelText = "Cancel")
+        
+        /// <summary>
+        /// Used for calling a message box on screen with 1 button.
+        /// Can only result in "MessageBoxResponse.CONFIRMED" and "MessageBoxResponse.CANCELED" state.
+        /// </summary>
+        /// <example>  UIMessageManager.GetInstance().MessageBox(
+        ///            "Fatal error occured! File explore could not be opened!",
+        ///            response => {
+        ///             switch (response){
+        ///                 case MessageBoxResponse.CONFIRMED: Debug.Log("Confirmed"); break;
+        ///                 case MessageBoxResponse.CANCELED: Debug.Log("Canceled"); break;
+        ///             }
+        ///             }
+        ///            ,new SimpleMessageBoxTypeSelector(SimpleMessageBoxTypeSelector.MessageBoxType.OK_CANCEL));
+        ///                </example>
+        /// <param name="msg">Message to be displayed for the user.</param>
+        /// <param name="onDone">Action to be executed upon any button click. Will receive result of message box query.</param>
+        /// <param name="type">Type of MessageBox to be used.</param>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <exception cref="MissingVisualElementException"></exception>
+        public void MessageBox(string msg, Action<MessageBoxResponse> onDone, SimpleMessageBoxTypeSelector type)
         {
             if (!IsComplete())
             {
@@ -70,7 +110,21 @@ namespace WarehouseSimulator.View
                 m_simpleMessageBox
             ); 
         }
-        public void MessageBox(string msg, Action<MessageBoxResponse> onDone, OneWayMessageBoxTypeSelector type, string confirmText = "Confirm",string declineText = "Decline", string cancelText = "Cancel")
+        /// <summary>
+        /// Used for calling a message box on screen with 1 button.
+        /// Can only result in "MessageBoxResponse.CONFIRMED" state.
+        /// </summary>
+        /// <example>  UIMessageManager.GetInstance().MessageBox(
+        ///            "Fatal error occured! File explore could not be opened!",
+        ///            response => { }
+        ///            ,new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK));
+        ///                </example>
+        /// <param name="msg">Message to be displayed for the user.</param>
+        /// <param name="onDone">Action to be executed upon any button click. Will receive result of message box query.</param>
+        /// <param name="type">Type of MessageBox to be used.</param>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <exception cref="MissingVisualElementException"></exception>
+        public void MessageBox(string msg, Action<MessageBoxResponse> onDone, OneWayMessageBoxTypeSelector type)
         {
             if (!IsComplete())
             {
