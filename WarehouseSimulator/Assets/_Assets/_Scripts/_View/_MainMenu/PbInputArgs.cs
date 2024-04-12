@@ -1,8 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
-using UnityEngine;
-
-namespace _Assets._Scripts._View._MainMenu
+﻿namespace _Assets._Scripts._View._MainMenu
 {
     public struct PbInputArgs
     {

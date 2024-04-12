@@ -1,26 +1,18 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using _Assets._Scripts._View._MainMenu;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-using WarehouseSimulator.Model;
-using WarehouseSimulator.Model.Enums;
+using UnityEngine.UIElements;
+using WarehouseSimulator.View.Sim;  
 
 namespace WarehouseSimulator.View.MainMenu {
 public class MainMenuManager : MonoBehaviour
 {
-    [FormerlySerializedAs("simScenePath")] public string _simScenePath;
-    [FormerlySerializedAs("pbScenePath")] public string _pbScenePath;
 
     public static SimInputArgs simInputArgs;
     public static PbInputArgs pbInputArgs;
@@ -30,8 +22,9 @@ public class MainMenuManager : MonoBehaviour
 
     private void Start()
     {
-        GameObject.Find("Button_SimStart").GetComponent<Button>().interactable = false;
-        GameObject.Find("Button_PbStart").GetComponent<Button>().interactable = false;
+        
+        GameObject.Find("Button_SimStart").GetComponent<UnityEngine.UI.Button>().interactable = false;
+        GameObject.Find("Button_PbStart").GetComponent<UnityEngine.UI.Button>().interactable = false;
         
         foreach (var field in inputFieldsForSim)
         {
@@ -56,11 +49,11 @@ public class MainMenuManager : MonoBehaviour
     {
         if (inputFieldsForPb.All(a => !string.IsNullOrEmpty(a.text)))
         {
-            GameObject.Find("Button_PbStart").GetComponent<Button>().interactable = true;
+            GameObject.Find("Button_PbStart").GetComponent<UnityEngine.UI.Button>().interactable = true;
         }
         else
         {
-            GameObject.Find("Button_PbStart").GetComponent<Button>().interactable = false;
+            GameObject.Find("Button_PbStart").GetComponent<UnityEngine.UI.Button>().interactable = false;
         }
     }
 
@@ -68,11 +61,11 @@ public class MainMenuManager : MonoBehaviour
     {
         if (inputFieldsForSim.All(a => !string.IsNullOrEmpty(a.text)))
         {
-            GameObject.Find("Button_SimStart").GetComponent<Button>().interactable = true;
+            GameObject.Find("Button_SimStart").GetComponent<UnityEngine.UI.Button>().interactable = true;
         }
         else 
         {
-            GameObject.Find("Button_SimStart").GetComponent<Button>().interactable = false;
+            GameObject.Find("Button_SimStart").GetComponent<UnityEngine.UI.Button>().interactable = false;
         }
     }
 
@@ -85,8 +78,12 @@ public class MainMenuManager : MonoBehaviour
         CompleteSimInputArgs();
         if (!simInputArgs.IsComplete())
             throw new ArgumentException();
-        else 
-            SceneManager.LoadSceneAsync(_simScenePath);
+        else
+        {
+            SceneHandler.GetInstance().SetCurrentScene(1);
+            SceneManager.LoadSceneAsync(SceneHandler.GetInstance().CurrentScene);
+            UIMessageManager.GetInstance().SetUIDocument(SceneHandler.GetInstance().CurrentDoc);
+        }
         
     }
 
@@ -105,7 +102,13 @@ public class MainMenuManager : MonoBehaviour
         }
         catch (Exception)
         {
-            Debug.Log("Fatal error occured at input parsing for simulation.");
+            UIMessageManager.GetInstance().MessageBox("Fatal error occured!", response =>
+                {
+                    
+                },
+                new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK)
+            );
+            //Debug.Log("Fatal error occured at input parsing for simulation.");
         }
     }
     
@@ -117,8 +120,12 @@ public class MainMenuManager : MonoBehaviour
         CompletePbInputArgs();
         if (!pbInputArgs.IsComplete())
             throw new ArgumentException();
-        else 
-            SceneManager.LoadSceneAsync(_pbScenePath);
+        else
+        {
+            SceneHandler.GetInstance().SetCurrentScene(2);
+            SceneManager.LoadSceneAsync(SceneHandler.GetInstance().CurrentScene);
+            UIMessageManager.GetInstance().SetUIDocument(SceneHandler.GetInstance().CurrentDoc);
+        }
     }
     
     /// <summary>
@@ -133,7 +140,14 @@ public class MainMenuManager : MonoBehaviour
         }
         catch (Exception)
         {
-            Debug.Log("Fatal error occured at input parsing for playback.");
+            
+            UIMessageManager.GetInstance().MessageBox("Fatal error occured!", response =>
+                {
+                    
+                },
+                new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK)
+                );
+            //Debug.Log("Fatal error occured at input parsing for playback.");
         }
     }
     
@@ -142,8 +156,22 @@ public class MainMenuManager : MonoBehaviour
     /// </summary>
     public void ExitProgram()
     {
-        Debug.Log("Exiting program...");
-        Application.Quit();
+        UIMessageManager.GetInstance().MessageBox("Quit application?", response =>
+            {
+                switch (response)
+                {
+                    case MessageBoxResponse.CONFIRMED: 
+                        Application.Quit();
+                        break;
+                    case MessageBoxResponse.CANCELED:
+                        break;
+                    case MessageBoxResponse.DECLINED:
+                        break;
+                }
+            },
+            new SimpleMessageBoxTypeSelector(SimpleMessageBoxTypeSelector.MessageBoxType.OK_CANCEL)
+            );
+        
     }
     
 

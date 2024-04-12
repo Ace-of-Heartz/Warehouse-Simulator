@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Scripts.View.MainMenu;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
+using SimpleFileBrowser;
+using UnityEngine.Serialization;
 
-namespace Assets.Scripts.View.MainMenu
+
+namespace WarehouseSimulator.View.MainMenu
 {
     public class SaveFileDialogManager : MonoBehaviour
     {
         #region Fields
         
-        [CanBeNull] private string _pathToFile;
+        public string m_pathToFile;
 
         [SerializeField]
         private List<InputExtension> inputFields;
@@ -24,7 +28,7 @@ namespace Assets.Scripts.View.MainMenu
         /// </summary>
         public string PathToFile
         {
-            get => _pathToFile;
+            get => m_pathToFile;
         } 
         
         #endregion
@@ -59,8 +63,32 @@ namespace Assets.Scripts.View.MainMenu
             else
                 throw new ArgumentException(); 
             
-            _pathToFile = EditorUtility.SaveFilePanel("Search file", "~/",inputExtension.defaultName,inputExtension.extension );
-            inputExtension.inputField.text = _pathToFile;
+            FileBrowser.SetFilters(true,"JSON",".json");
+            FileBrowser.SetDefaultFilter(".json");
+            
+            if (!FileBrowser.ShowSaveDialog(
+                    (path =>
+                    {
+                        m_pathToFile = path[0]; //Debug.Log(path[0]); 
+                        inputExtension.inputField.text = m_pathToFile;
+
+                    }),
+                    (() => { m_pathToFile = ""; Debug.Log("Cancel");}),
+                    FileBrowser.PickMode.Files,
+                    false,
+                    "G:\\Uni\\4th_semester\\soft_tech\\sample_files", //TODO: Change this to "~\\User"
+                    "NewConfigFile",
+                    "Save Log File",
+                    "Select"
+                ))
+            {   
+                
+                UIMessageManager.GetInstance().MessageBox(
+                    "Fatal error occured! File explore could not be opened!",
+                    response => { }
+                    ,new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK));
+            } 
+            
             
         }
         #endregion

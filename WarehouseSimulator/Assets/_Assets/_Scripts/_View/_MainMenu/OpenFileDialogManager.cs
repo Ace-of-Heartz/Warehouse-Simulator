@@ -1,14 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using UnityEngine.UI;
-using TMPro;
-using System.Runtime.CompilerServices;
 using Assets.Scripts.View.MainMenu;
 using JetBrains.Annotations;
-using Unity.VisualScripting;
+using SimpleFileBrowser;
+using UnityEngine.Serialization;
+using UnityEngine.Windows;
+
 
 namespace WarehouseSimulator.View.MainMenu
 {
@@ -17,7 +16,7 @@ namespace WarehouseSimulator.View.MainMenu
     {
         #region Fields
         
-        public string pathToFile;
+        public string m_pathToFile;
 
         [SerializeField]
         private List<InputExtension> inputFields;
@@ -31,7 +30,7 @@ namespace WarehouseSimulator.View.MainMenu
         /// </summary>
         public string PathToFile
         {
-            get => pathToFile;
+            get => m_pathToFile;
         } 
         
         #endregion
@@ -64,10 +63,34 @@ namespace WarehouseSimulator.View.MainMenu
             if (obj is InputExtension)
                 inputExtension = (InputExtension)obj;
             else
-                throw new ArgumentException(); 
+                throw new ArgumentException();
             
-            pathToFile = EditorUtility.OpenFilePanel("Search file", "~/",inputExtension.extension );
-            inputExtension.inputField.text = pathToFile;
+            FileBrowser.SetFilters(true,"JSON",".json");
+            FileBrowser.SetDefaultFilter(".json");
+            
+            if (!FileBrowser.ShowLoadDialog(
+                    (path =>
+                    {
+                        m_pathToFile = path[0];  //Debug.Log(path[0]); 
+                        inputExtension.inputField.text = m_pathToFile;
+                    }),
+                    (() => { m_pathToFile = ""; Debug.Log("Cancel"); }),
+                    FileBrowser.PickMode.Files,
+                    false,
+                    "G:\\Uni\\4th_semester\\soft_tech\\sample_files", //TODO: Change this to "~\\User"
+                    "",
+                    "Load Config File",
+                    "Select"
+                ))
+            {
+               
+                UIMessageManager.GetInstance().MessageBox(
+                    "Fatal error occured! File explore could not be opened!",
+                    response => { }
+                    ,new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK));
+            } 
+            
+            
             
         }
         #endregion

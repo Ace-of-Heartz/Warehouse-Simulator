@@ -1,11 +1,14 @@
 # Macro for Unity YAML-based asset files.
-[attr]unityyaml -text merge=unityyamlmerge diff
+[attr]unityyaml merge=unityyamlmerge diff eol=lf linguist-language=yaml
+# Macro for all Unit JSON files.
+[attr]unity-json eol=lf linguist-language=json
 # Macro for all binary files that should use Git LFS.
-[attr]lfs -text filter=lfs diff=lfs merge=lfs
+[attr]lfs filter=lfs diff=lfs merge=lfs -text
 # Default to auto-normalized line endings.
 * text=auto
+
 # Custom for Visual Studio
-*.cs     diff=csharp
+*.cs     diff=csharp text
 # Standard to msysgit
 *.doc	 diff=astextplain
 *.DOC	 diff=astextplain
@@ -17,11 +20,20 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+# Unity Binary Assets
+*.cubemap lfs
+*.unitypackage lfs
+# Note: Unity terrain assets must have "-Terrain" suffix.
+*-[Tt]errain.asset -unityyaml lfs
+# Note: Unity navmesh assets must have "-NavMesh" suffix.
+*-[Nn]av[Mm]esh.asset -unityyaml lfs
+# Note: LightingData must be stored with LFS if you don't want it to get corrupted
+LightingData.asset lfs
 # Unity Text Assets
 *.scenetemplate unityyaml
 *.meta unityyaml
 *.unity unityyaml
-*.asset filter=lfs diff=lfs merge=lfs -text
+*.asset unityyaml
 *.prefab unityyaml
 *.mat unityyaml
 *.anim unityyaml
@@ -43,13 +55,6 @@
 *.shadervariants unityyaml
 *.preset unityyaml
 *.asmdef -text diff
-# Unity Binary Assets
-*.cubemap lfs
-*.unitypackage lfs
-# Note: Unity terrain assets must have "-Terrain" suffix.
-*-[Tt]errain.asset -unityyaml lfs
-# Note: Unity navmesh assets must have "-NavMesh" suffix.
-*-[Nn]av[Mm]esh.asset -unityyaml lfs
 # Image
 *.jpg lfs
 *.jpeg lfs
@@ -130,3 +135,17 @@
 *.gz lfs
 *.rar lfs
 *.tar lfs
+# Unity JSON files
+*.asmdef                unity-json
+*.asmref                unity-json
+*.index                 unity-json
+*.inputactions          unity-json
+*.shadergraph           unity-json
+*.shadersubgraph        unity-json
+# Unity source files
+*.cginc                 text
+*.compute               text linguist-language=hlsl
+*.hlsl                  text linguist-language=hlsl
+*.raytrace              text linguist-language=hlsl
+*.shader                text
+

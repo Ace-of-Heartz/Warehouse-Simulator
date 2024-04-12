@@ -1,6 +1,7 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -8,55 +9,69 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class RobotManager
     {
-        public Dictionary<Robot, RobotDoing> AllRobots;
-        private int nextId;
-    
-        public int NextId
+        private List<Robot> AllRobots;
+
+        [CanBeNull] public event EventHandler<RobotCreatedEventArgs> RobotAddedEvent;
+        [CanBeNull] public event EventHandler<GoalAssignedEventArgs> GoalAssignedEvent;
+
+        public RobotManager()
         {
-            get => nextId;
+            AllRobots = new();
         }
         
-    
-        private void AddRobot(Vector2 pos, Direction h, int i)
+        private void AddRobot(int i, Vector2Int pos)
         {
-            Robot newR = new(i, pos, h, null, RobotBeing.Free);
-            AllRobots.Add(newR,RobotDoing.Wait);
+            Robot newR = new(i, pos);
+            AllRobots.Add(newR);
+            //newR.CallRobotPosEvent(this);
+            RobotAddedEvent?.Invoke(this, new(newR));
         }
     
-        public void PerformRobotAction()
+        public void AssignTasksToFreeRobots(GoalManager from)
         {
-            
-        }
-    
-        public void AssignTasksToFreeRobots()
-        {
-            
+            foreach (var robie in AllRobots)
+            {
+                if (robie.State == RobotBeing.Free)
+                {
+                    Goal next = from.GetNext();
+                    if (next == null) { break; }
+                    robie.AssignGoal(next);
+                    GoalAssignedEvent?.Invoke(this, new(next));
+                }
+            }
         }
         
-        public void RoboRead(string from)
+        public void RoboRead(string from, Map mapie)
         {
             using StreamReader rid = new(from);
-            if (!int.TryParse(rid.ReadLine(), out int robn)) //
+            if (!int.TryParse(rid.ReadLine(), out int robn))
             {
                 throw new InvalidDataException("Invalid file format: First line not a number");
             }
-    
-            string temp = rid.ReadLine();
-            while (temp != null)
-            {
-                if (robn <= 0)
+
+            int nextid = 0;
+            for (int i = 0; i < robn; i++)
+            {   
+                string line = rid.ReadLine();
+                if (line == null)
                 {
-                    throw new InvalidDataException("Invalid file format: there were too many lines");
+                    throw new InvalidDataException("Invalid file format: there weren't enough lines");
+                } 
+                if (!int.TryParse(line, out int linPos))
+                {
+                    throw new InvalidDataException($"Invalid file format: {nextid + 2}. line not a number");
                 }
+                if (mapie.GetTileAt(linPos) != TileType.Empty)
+                {
+                    throw new InvalidDataException($"Invalid file format: {nextid + 2}. line does not provide a valid position");
+                }
+
+                Vector2Int nextRobPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
+                mapie.OccupyTile(nextRobPos);
+                AddRobot(nextid,nextRobPos);
                 
-                if (!int.TryParse(rid.ReadLine(), out int newRobPos)) //
-                {
-                    throw new InvalidDataException("Invalid file format: line not a number");
-                }
-                robn--;
-                temp = rid.ReadLine();
+                nextid++;
             }
-    
-        }    
+        }
     }
 }
