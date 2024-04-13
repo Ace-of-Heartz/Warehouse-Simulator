@@ -8,6 +8,8 @@ namespace WarehouseSimulator.Model.Sim
     public class CentralController
     {
         private Dictionary<Robot, RobotDoing> plannedActions;
+
+        private IPathPlanner m_pathPlanner;
         
         private bool isPreprocessDone;
         public bool IsPreprocessDone => isPreprocessDone;
@@ -46,13 +48,22 @@ namespace WarehouseSimulator.Model.Sim
             {
                 plannedActions[robot] = RobotDoing.Timeout;
             }
+
+            List<RobotDoing> plannedActionsForRobot;
+            foreach (var robot in robots)
+            {
+                
+                plannedActionsForRobot = m_pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition).Result;
+            }
+            
+            
             
             //TODO: make async
             // random moves for now
-            foreach (var robot in robots)
-            {
-                plannedActions[robot] = (RobotDoing) new Random().Next(0, 4);
-            }
+            // foreach (var robot in robots)
+            // {
+            //     plannedActions[robot] = (RobotDoing) new Random().Next(0, 4);
+            // }
         }
     }
 }
