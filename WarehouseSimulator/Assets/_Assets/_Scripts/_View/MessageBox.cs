@@ -19,7 +19,14 @@ namespace WarehouseSimulator.View
 
         private VisualElement m_uiContainer;
         private VisualElement m_ui;
-        
+        /// <summary>
+        /// Instantiates a messagebox.
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="onDone"></param>
+        /// <param name="type"></param>
+        /// <param name="uiContainer"></param>
+        /// <param name="uiAsset"></param>
         public MessageBox(
             string msg,
             Action<MessageBoxResponse> onDone,
