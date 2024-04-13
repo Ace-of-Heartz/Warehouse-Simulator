@@ -5,25 +5,27 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class SimulationManager
     {
-        //config part
+        #region Config Fields
         private SimulationConfig config;
         private int maxSteps;
         private float stepTime;
         private float preparationTime;
-
+        #endregion
+        
         private Map map;
         private GoalManager goalManager;
         private RobotManager robotManager;
         private CentralController centralController;
 
         
-        // Properties
+        #region Properties
         public Map Map => map;
         public GoalManager GoalManager => goalManager;
         public RobotManager RobotManager => robotManager;
         public float StepTime => stepTime;
         public bool IsPreprocessDone => centralController.IsPreprocessDone;
-
+        #endregion
+        
         public SimulationManager()
         {
             map = new Map();
