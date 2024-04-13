@@ -65,11 +65,6 @@ namespace WarehouseSimulator.Model.Sim
             m_robotData.m_goal = g;
             m_robotData.m_state = s;
             
-            // _id = i;
-            // _gridPosition = gPos;
-            // _heading = h;
-            // _goal = g;
-            // _state = s;
         }
 
         public void AssignGoal(Goal goTo)
