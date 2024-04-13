@@ -27,7 +27,7 @@ namespace WarehouseSimulator.View.Sim
             robotPanel.Bind(so);
             
             SerializedProperty sp = so.FindProperty("m_id");
-            robotPanel.Q("IDField").Q<IntegerField>().BindProperty(sp);
+            robotPanel.Q("IDField").Q<IntegerField>("IDField").BindProperty(sp);
 
             sp = so.FindProperty("m_heading");
             robotPanel.Q("DirectionField").Q<EnumField>().BindProperty(sp);
@@ -38,6 +38,13 @@ namespace WarehouseSimulator.View.Sim
             sp = so.FindProperty("m_gridPosition");
             robotPanel.Q("PositionField").Q<Vector2IntField>().BindProperty(sp);
 
+            so = new SerializedObject(m_unityRobot.RobotData.m_goal.GoalData);
+
+            sp = so.FindProperty("m_id");
+            robotPanel.Q("GoalDisplay").Q("GoalPanel").Q<IntegerField>("IDField").BindProperty(sp);
+
+            sp = so.FindProperty("m_gridPosition");
+            robotPanel.Q("GoalDisplay").Q("GoalPanel").Q<Vector2IntField>().BindProperty(sp);
 
 
         }

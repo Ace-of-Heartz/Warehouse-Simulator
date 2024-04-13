@@ -6,25 +6,32 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class Goal
     {
-        private Vector2Int _gridPosition;
-        [CanBeNull] private Robot _robot;
-        private int _selfId;
-
+        private GoalData m_goalData;
+        
         #region Properties
 
+        public GoalData GoalData
+        {
+            get => m_goalData;
+        }
+        public int GoalID
+        {
+            get => m_goalData.m_id;
+        }
+        
         public string RoboId
         {
-            get => _robot?.Id.ToString() ?? "unknown";
+            get => m_goalData.m_robot?.Id.ToString() ?? "unknown";
         }
         
         public Vector2Int GridPosition
         {
-            get => _gridPosition;
+            get => m_goalData.m_gridPosition;
         }
 
         public Robot Robot
         {
-            get => _robot;
+            get => m_goalData.m_robot;
         }
 
         #endregion
@@ -33,13 +40,16 @@ namespace WarehouseSimulator.Model.Sim
         
         public Goal(Vector2Int gPos,int id)
         {
-            _gridPosition = gPos;
-            _selfId = id;
+            m_goalData = ScriptableObject.CreateInstance<GoalData>();
+            m_goalData.m_id = id;
+            m_goalData.m_gridPosition = gPos;
+            
+
         }
 
         public void AssignedTo(Robot thisOne)
         {
-            _robot = thisOne;
+            m_goalData.m_robot = thisOne;
             //TODO => Blaaa: Log later (ehhez kell a selfId)
         }
 
