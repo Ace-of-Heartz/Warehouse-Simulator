@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using WarehouseSimulator.Model.Sim;
 using WarehouseSimulator.View.MainMenu;
@@ -9,6 +10,8 @@ namespace WarehouseSimulator.View.Sim
     {
         [SerializeField] private GameObject robie;
         [SerializeField] private GameObject golie;
+
+
         
         [SerializeField]
         private UnityMap unityMap;
@@ -25,7 +28,7 @@ namespace WarehouseSimulator.View.Sim
             simulationManager = new SimulationManager();
             simulationManager.RobotManager.RobotAddedEvent += AddUnityRobot;
             simulationManager.RobotManager.GoalAssignedEvent += AddUnityGoal;
-            if (DebugMode)
+            if (!DebugMode )
             {
                 DebugSetup();
                 simulationManager.Setup(debugSimInputArgs);
@@ -67,6 +70,9 @@ namespace WarehouseSimulator.View.Sim
             GameObject rob  = Instantiate(robie);
             UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
             robieManager.MyThingies(e.robot,unityMap);
+
+            
+
         }
         
         private void AddUnityGoal(object sender, GoalAssignedEventArgs e)

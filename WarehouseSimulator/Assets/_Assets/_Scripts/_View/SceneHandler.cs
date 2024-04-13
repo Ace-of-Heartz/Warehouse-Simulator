@@ -17,6 +17,11 @@ namespace WarehouseSimulator.View
             get => m_scenes[m_currentSceneId];
         }
 
+        public uint CurrentSceneID
+        {
+            get => m_currentSceneId;
+        }
+
         public UIDocument CurrentDoc
         {
             get => m_documents[m_currentSceneId];
