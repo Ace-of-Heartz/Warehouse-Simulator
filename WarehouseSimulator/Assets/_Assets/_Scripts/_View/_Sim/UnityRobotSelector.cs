@@ -4,6 +4,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using WarehouseSimulator.Model.Enums;
+using WarehouseSimulator.Model;
 
 namespace WarehouseSimulator.View.Sim
 {
