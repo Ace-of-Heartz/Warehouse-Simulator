@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using WarehouseSimulator.Model.Sim;
@@ -66,7 +67,7 @@ namespace WarehouseSimulator.View.Sim
             Debug.Log("Robot added to UnitySimulationManager. ID:" + e.robot.Id);
             GameObject rob  = Instantiate(robie);
             UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
-            robieManager.MyThingies(e.robot,unityMap);
+            robieManager.MyThingies(e.robot,unityMap,simulationManager.StepTime);
         }
         
         private void AddUnityGoal(object sender, GoalAssignedEventArgs e)
