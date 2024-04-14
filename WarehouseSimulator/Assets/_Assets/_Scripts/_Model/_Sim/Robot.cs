@@ -1,5 +1,6 @@
 using System;
 using JetBrains.Annotations;
+using Unity.Properties;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -7,56 +8,71 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class Robot
     {
-        private readonly int _id;
-        private Vector2Int _gridPosition;
-        private Direction _heading;
-        [CanBeNull] private Goal _goal;
-        private RobotBeing _state;
+
+        
+        
+        // private readonly int _id;
+        // private Vector2Int _gridPosition;
+        // private Direction _heading;
+        // [CanBeNull] private Goal _goal;
+        // private RobotBeing _state;
+
+        private RobotData m_robotData;
+        
+        
 
         #region Properties
+
+        public RobotData RobotData
+        {
+            get => m_robotData;
+        }
+            
         public int Id
         {
-            get => _id;
+            get => m_robotData.m_id;
         }
         public Vector2Int GridPosition
         {
-            get => _gridPosition;
+            get => m_robotData.m_gridPosition;
         }
         public Direction Heading
         {
-            get => _heading;
+            get => m_robotData.m_heading;
         }
         public Goal Goal
         {
-            get => _goal;
+            get => m_robotData.m_goal;
             private set
             {
                 //TODO => Blaaa: Log later
-                _state = value == null ? RobotBeing.Free : RobotBeing.InTask;
-                _goal = value;
+                m_robotData.m_state = value == null ? RobotBeing.Free : RobotBeing.InTask;
+                m_robotData.m_goal = value;
             }
         }
-
         public RobotBeing State
         {
-            get => _state;
+            get => m_robotData.m_state;
         }
         #endregion
 
         public Robot(int i, Vector2Int gPos, Direction h = Direction.North, Goal g = null, RobotBeing s = RobotBeing.Free)
         {
-            _id = i;
-            _gridPosition = gPos;
-            _heading = h;
-            _goal = g;
-            _state = s;
+            m_robotData = ScriptableObject.CreateInstance<RobotData>();
+            m_robotData.m_id = i;
+            m_robotData.m_gridPosition = gPos;
+            m_robotData.m_heading = h;
+            m_robotData.m_goal = g;
+            m_robotData.m_state = s;
+            
         }
 
         public void AssignGoal(Goal goTo)
         {
             goTo.AssignedTo(this);
             Goal = goTo;
-            _state = RobotBeing.InTask;
+            // _state = RobotBeing.InTask;
+            m_robotData.m_state = RobotBeing.InTask;
         }
 
 
@@ -81,43 +97,46 @@ namespace WarehouseSimulator.Model.Sim
                     else
                     {
                         //TODO => Unity react
-                        mapie.DeoccupyTile(_gridPosition);
-                        _gridPosition = nextPos;
-                        mapie.OccupyTile(_gridPosition);
-                        if (nextPos == _goal?.GridPosition)
+                        mapie.DeoccupyTile(m_robotData.m_gridPosition);
+                        m_robotData.m_gridPosition = nextPos;
+                        mapie.OccupyTile(m_robotData.m_gridPosition);
+                        if (nextPos == m_robotData.m_goal?.GridPosition)
                         {
                             GoalCompleted();
                         }
                     }
                     break;
                 case(RobotDoing.Rotate90):
-                    _heading = (Direction)( ((int)_heading + 1) % 4 );
+                    m_robotData.m_heading = (Direction)( ((int)m_robotData.m_heading + 1) % 4 );
                     break;
                 case(RobotDoing.RotateNeg90):
-                    _heading = (Direction)( ((int)_heading - 1) % 4 );
+                    m_robotData.m_heading = (Direction)( ((int)m_robotData.m_heading - 1) % 4 );
                     break;
             }
+
+            
+            
         }
         
         private void GoalCompleted()
         {
             Goal?.FinishTask();
             Goal = null;
-            _state = RobotBeing.Free;
+            m_robotData.m_state = RobotBeing.Free;
         }
 
         private Vector2Int WhereToMove()
         {
-            switch (_heading)
+            switch (m_robotData.m_heading)
             {
                 case(Direction.North):
-                    return _gridPosition + Vector2Int.down; 
+                    return m_robotData.m_gridPosition + Vector2Int.down; 
                 case(Direction.West):
-                    return _gridPosition + Vector2Int.left; 
+                    return m_robotData.m_gridPosition + Vector2Int.left; 
                 case(Direction.South):
-                    return _gridPosition + Vector2Int.up;
+                    return m_robotData.m_gridPosition + Vector2Int.up;
                 case(Direction.East):
-                    return _gridPosition + Vector2Int.right;
+                    return m_robotData.m_gridPosition + Vector2Int.right;
                 default: return new Vector2Int(0, 0);
             }
         }
