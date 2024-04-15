@@ -11,7 +11,7 @@ namespace WarehouseSimulator.View
 {
     public class UnityGoal : MonoBehaviour
     {
-        private GoalLike _simGoalModel;
+        private GoalLike _goalModel;
         [SerializeField]
         private TextMeshPro roboId;
 
@@ -20,15 +20,16 @@ namespace WarehouseSimulator.View
         // Start is called before the first frame update
         void Start()
         {
-            transform.position = _mapie.GetWorldPosition(_simGoalModel.GridPosition);
-            roboId.text = _simGoalModel.RoboId;
+            //Do we even need this blaaa?
         }
 
         public void GiveGoalModel(SimGoal g, UnityMap dis)
         {
-            _simGoalModel = g;
+            _goalModel = g;
             _mapie = dis;
             g.GoalFinishedEvent += (_,_) => Destroy(gameObject);
+            transform.position = _mapie.GetWorldPosition(_goalModel.GridPosition);
+            roboId.text = _goalModel.RoboId;
         }
     }
 }    
