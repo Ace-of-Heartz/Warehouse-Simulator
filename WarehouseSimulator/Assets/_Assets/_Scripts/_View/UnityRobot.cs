@@ -10,7 +10,7 @@ using UnityEngine.UIElements;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model;
 
-namespace WarehouseSimulator.View.Sim
+namespace WarehouseSimulator.View
 {
     public class UnityRobot : MonoBehaviour
     {
@@ -18,7 +18,7 @@ namespace WarehouseSimulator.View.Sim
         
         private RobotData m_robotData;
         
-        private Robot _roboModel;
+        private RobotLike _roboModel;
         
         [SerializeField]
         private TextMeshPro id;
@@ -48,13 +48,10 @@ namespace WarehouseSimulator.View.Sim
         // Update is called once per frame
         void Update()
         {
-            
             Vector3 oldPos = transform.position; 
             Vector3 newPos = _mapie.GetWorldPosition(_roboModel.GridPosition);
-            if (oldPos != newPos)
-            {
-                transform.position = Vector3.Lerp(oldPos, newPos, Time.deltaTime * _speed);
-            }
+            //if (oldPos != newPos) transform.position = Vector3.Lerp(oldPos, newPos, Time.deltaTime * _speed);
+            if (oldPos != newPos) transform.position = newPos;
 
             Direction newRot = _roboModel.Heading;
             switch (newRot)
@@ -76,7 +73,7 @@ namespace WarehouseSimulator.View.Sim
             id.transform.rotation = Quaternion.Euler(0, 0, 0);
         }
 
-        public void MyThingies(Robot dis, UnityMap dat, float speedMultiplier)
+        public void MyThingies(SimRobot dis, UnityMap dat, float speedMultiplier)
         {
             _roboModel = dis;
             _mapie = dat;
