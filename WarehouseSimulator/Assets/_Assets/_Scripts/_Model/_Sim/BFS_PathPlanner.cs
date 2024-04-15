@@ -9,27 +9,51 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class BFS_PathPlanner : IPathPlanner
     {
+        #region Fields
         private Map m_map;
-        private Dictionary<(Vector2Int,Direction),((Vector2Int,Direction),RobotDoing)> m_pathDict;
+        private Dictionary<
+            (Vector2Int,Direction),((Vector2Int,Direction),RobotDoing)
+            > m_pathDict;
 
         private Queue<(Vector2Int,Direction)> m_queue;
+        #endregion
         
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="map"></param>
         public BFS_PathPlanner(Map map)
         {
             m_map = map;
         } 
             
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="finish"></param>
+        /// <param name="dir"></param>
+        /// <returns></returns>
         public async Task<List<RobotDoing>> GetPath(Vector2Int start, Vector2Int finish, Direction dir)
         {
-
-            return GetInstructions(start,finish,dir);
+            var instructions = GetInstructions(start, finish, dir);
+            return instructions;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="finish"></param>
+        /// <param name="facing"></param>
+        /// <returns></returns>
         private List<RobotDoing> GetInstructions(Vector2Int start, Vector2Int finish, Direction facing)
         {
             bool is_finish_found = false;
             
             List<RobotDoing> instructions = new();
+            m_pathDict = new();
             m_queue = new();
             m_queue.Enqueue((start,facing));
 
@@ -38,15 +62,19 @@ namespace WarehouseSimulator.Model.Sim
             while (m_queue.Count > 0)
             {
                 (currentNode,currentDir) = m_queue.Dequeue();
-                //TODO: Dict stuff
                 if (currentNode == finish)
                 {
                     is_finish_found = true;
                     break;
                 }
-                foreach((var node,var dir) in GetNeighbouringNodes(currentNode,currentDir))
+                foreach((var node,var dir,var inst) in GetNeighbouringNodes(currentNode,currentDir))
                 {
-                    m_queue.Enqueue((node, dir));
+                    if (!m_pathDict.ContainsKey((node, dir))) //Only put in, if position and direction combination wasn't checked before
+                    {
+                        m_pathDict[(node, dir)] = ((currentNode, currentDir),inst);
+                        m_queue.Enqueue((node, dir));
+                    }
+                    
                 }
             }
 
@@ -54,21 +82,41 @@ namespace WarehouseSimulator.Model.Sim
             {
                 return instructions; //Could not find finish -> don't do anything
             }
+
+            currentNode = finish;
             
             //Traceback path
-            
+            while (m_pathDict[(currentNode, currentDir)].Item1.Item1 != start)
+            {
+                instructions.Add(m_pathDict[(currentNode, currentDir)].Item2);
+                (currentNode, currentDir) = m_pathDict[(currentNode, currentDir)].Item1;
+            }
+
+            instructions.Reverse();
 
             return instructions;
         }
 
-        private IEnumerable<(Vector2Int, Direction)> GetNeighbouringNodes(Vector2Int currentNode, Direction facing)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currentNode"></param>
+        /// <param name="facing"></param>
+        /// <returns></returns>
+        private IEnumerable<(Vector2Int, Direction,RobotDoing)> GetNeighbouringNodes(Vector2Int currentNode, Direction facing)
         {
             (Vector2Int forwardNode,Direction leftNode,Direction rightNode)  = GetNextNodes(currentNode, facing);
-            yield return (forwardNode, facing);
-            yield return (currentNode, leftNode);
-            yield return (currentNode, rightNode);
+            yield return (forwardNode, facing,RobotDoing.Forward);
+            yield return (currentNode, leftNode,RobotDoing.Rotate90);
+            yield return (currentNode, rightNode,RobotDoing.RotateNeg90);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currentNode"></param>
+        /// <param name="facing"></param>
+        /// <returns></returns>
         private (Vector2Int,Direction, Direction) GetNextNodes(Vector2Int currentNode, Direction facing)
         {
             Vector2Int forwardNode;
