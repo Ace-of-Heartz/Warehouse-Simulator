@@ -1,6 +1,8 @@
 using System;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Unity.Properties;
+using Unity.VisualScripting;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -8,13 +10,20 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class SimRobot : RobotLike
     {
-        public SimRobot(int i, 
-            Vector2Int gridPos, 
-            Direction heading = Direction.North, 
-            SimGoal goal = null, 
-            RobotBeing state = RobotBeing.Free) 
-                : base (i,gridPos,heading,state,goal) { }
+        private Vector2Int _nextPos;
 
+        public SimRobot(int i,
+            Vector2Int gridPos,
+            Direction heading = Direction.North,
+            SimGoal goal = null,
+            RobotBeing state = RobotBeing.Free)
+                : base(i, gridPos, heading, state, goal)
+        {
+            _nextPos = new(-1, -1);
+        }
+
+        public Vector2Int NextPos => _nextPos;
+        
         public void AssignGoal(SimGoal goTo)
         {
             goTo.AssignedTo(this);
@@ -24,9 +33,13 @@ namespace WarehouseSimulator.Model.Sim
         }
 
 
-        public void PerformActionRequested(RobotDoing watt, Map mapie)
+        public bool TryPerformActionRequested(RobotDoing watt, Map mapie)
         {
-            if (mapie == null) { throw new ArgumentNullException($"The argument: {nameof(mapie)} as the map does not exist"); }
+            _nextPos = RobotData.m_gridPosition;
+            if (mapie == null)
+            {
+                throw new ArgumentNullException($"The argument: {nameof(mapie)} as the map does not exist");
+            }
 
             switch (watt)
             {
@@ -34,27 +47,16 @@ namespace WarehouseSimulator.Model.Sim
                 case (RobotDoing.Wait):
                     break;
                 case (RobotDoing.Forward):
-                    Vector2Int nextPos = WhereToMove(RobotData.m_gridPosition);
-                    if (mapie.GetTileAt(nextPos) == TileType.Wall)
+                    _nextPos = WhereToMove(RobotData.m_gridPosition);
+                    if (mapie.GetTileAt(_nextPos) == TileType.Wall)
                     {
                         //TODO => Blaaa: CC react and LOG
+                        return false;
                     }
-                    else if (mapie.GetTileAt(nextPos) == TileType.RoboOccupied)
-                    {
-                        //TODO => Blaaa: CC react and LOG
-                    }
-                    else
-                    {
-                        //TODO => Unity react
-                        mapie.DeoccupyTile(RobotData.m_gridPosition);
-                        RobotData.m_gridPosition = nextPos;
-                        mapie.OccupyTile(RobotData.m_gridPosition);
-                        if (nextPos == RobotData.m_goal?.GridPosition)
-                        {
-                            GoalCompleted();
-                        }
-                    }
-
+                    // else if (mapie.GetTileAt(nextPos) == TileType.RoboOccupied)
+                    // {
+                    //     //TODO => Blaaa: CC react and LOG
+                    // }
                     break;
                 case (RobotDoing.Rotate90):
                     RobotData.m_heading = (Direction)(((int)RobotData.m_heading + 1) % 4);
@@ -62,6 +64,19 @@ namespace WarehouseSimulator.Model.Sim
                 case (RobotDoing.RotateNeg90):
                     RobotData.m_heading = (Direction)(((int)RobotData.m_heading - 1) % 4);
                     break;
+            }
+
+            return true;
+        }
+
+        public void MakeStep(Map mipieMap)
+        {
+            mipieMap.DeoccupyTile(RobotData.m_gridPosition);
+            RobotData.m_gridPosition = _nextPos;
+            mipieMap.OccupyTile(RobotData.m_gridPosition);
+            if (_nextPos == RobotData.m_goal?.GridPosition)
+            {
+                GoalCompleted();
             }
         }
         
