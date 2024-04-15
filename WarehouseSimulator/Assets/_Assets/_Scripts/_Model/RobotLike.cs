@@ -50,7 +50,7 @@ namespace WarehouseSimulator.Model
             m_robotData.m_goal = goal;
         }
         
-        private Vector2Int WhereToMove(Vector2Int pos)
+        protected Vector2Int WhereToMove(Vector2Int pos)
         {
             switch (m_robotData.m_heading)
             {
@@ -62,7 +62,7 @@ namespace WarehouseSimulator.Model
                     return pos + Vector2Int.up;
                 case(Direction.East):
                     return pos + Vector2Int.right;
-                default: return new Vector2Int(0, 0);
+                default: return pos;
             }
         }
     }

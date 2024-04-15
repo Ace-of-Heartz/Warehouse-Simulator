@@ -40,9 +40,7 @@ namespace WarehouseSimulator.View
         // Start is called before the first frame update
         void Start()
         {
-            transform.position = _mapie.GetWorldPosition(_roboModel.GridPosition);
-            id.text = _roboModel.Id.ToString();
-            m_robotData = _roboModel.RobotData;
+            //Do we even need this blaaa?
         }
 
         // Update is called once per frame
@@ -78,6 +76,9 @@ namespace WarehouseSimulator.View
             _roboModel = dis;
             _mapie = dat;
             _speed = speedMultiplier;
+            transform.position = _mapie.GetWorldPosition(_roboModel.GridPosition);
+            id.text = _roboModel.Id.ToString();
+            m_robotData = _roboModel.RobotData;
         }
 
     

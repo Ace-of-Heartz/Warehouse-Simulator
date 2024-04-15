@@ -27,17 +27,18 @@ namespace WarehouseSimulator.Model.Sim
         public void PerformActionRequested(RobotDoing watt, Map mapie)
         {
             if (mapie == null) { throw new ArgumentNullException($"The argument: {nameof(mapie)} as the map does not exist"); }
+
             switch (watt)
             {
-                case(RobotDoing.Timeout):
-                case(RobotDoing.Wait):
+                case (RobotDoing.Timeout):
+                case (RobotDoing.Wait):
                     break;
-                case(RobotDoing.Forward):
-                    Vector2Int nextPos = WhereToMove();
+                case (RobotDoing.Forward):
+                    Vector2Int nextPos = WhereToMove(RobotData.m_gridPosition);
                     if (mapie.GetTileAt(nextPos) == TileType.Wall)
                     {
                         //TODO => Blaaa: CC react and LOG
-                    } 
+                    }
                     else if (mapie.GetTileAt(nextPos) == TileType.RoboOccupied)
                     {
                         //TODO => Blaaa: CC react and LOG
@@ -53,17 +54,15 @@ namespace WarehouseSimulator.Model.Sim
                             GoalCompleted();
                         }
                     }
+
                     break;
-                case(RobotDoing.Rotate90):
-                    RobotData.m_heading = (Direction)( ((int)RobotData.m_heading + 1) % 4 );
+                case (RobotDoing.Rotate90):
+                    RobotData.m_heading = (Direction)(((int)RobotData.m_heading + 1) % 4);
                     break;
-                case(RobotDoing.RotateNeg90):
-                    RobotData.m_heading = (Direction)( ((int)RobotData.m_heading - 1) % 4 );
+                case (RobotDoing.RotateNeg90):
+                    RobotData.m_heading = (Direction)(((int)RobotData.m_heading - 1) % 4);
                     break;
             }
-
-            
-            
         }
         
         private void GoalCompleted()
@@ -75,22 +74,6 @@ namespace WarehouseSimulator.Model.Sim
             }
             RobotData.m_goal = null;
             RobotData.m_state = RobotBeing.Free;
-        }
-
-        private Vector2Int WhereToMove()
-        {
-            switch (RobotData.m_heading)
-            {
-                case(Direction.North):
-                    return RobotData.m_gridPosition + Vector2Int.down; 
-                case(Direction.West):
-                    return RobotData.m_gridPosition + Vector2Int.left; 
-                case(Direction.South):
-                    return RobotData.m_gridPosition + Vector2Int.up;
-                case(Direction.East):
-                    return RobotData.m_gridPosition + Vector2Int.right;
-                default: return new Vector2Int(0, 0);
-            }
         }
     }
 }
