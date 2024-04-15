@@ -5,43 +5,26 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.PB
 {
-    public class PbRobot
+    public class PbRobot : RobotLike
     {
-        private readonly int _id;
         private Vector2Int[] _gridPositionHistory;
         private Direction[] _headings;
         private RobotBeing[] _states;
-        private Vector2Int _currentPos;
-        private Direction _currentHeading;
-        private RobotBeing _currState;
-        
-        #region
-        public int Id
-        {
-            get => _id;
-        }
-        public Vector2Int GridPosition
-        {
-            get => _currentPos;
-        }
-        public Direction Heading
-        {
-            get => _currentHeading;
-        }
 
-        public RobotBeing State
-        {
-            get => _currState;
-        }
+        #region Properties
+        public int Id => RobotData.m_id;
+        
+        public Vector2Int GridPosition => RobotData.m_gridPosition;
+        
+        public Direction Heading => RobotData.m_heading;
+        
+        public RobotBeing State => RobotData.m_state;
         
         #endregion
 
-        public PbRobot(int i,Vector2Int cP,int stepNumber,Direction cH = Direction.North,RobotBeing cS = RobotBeing.Free)
+        public PbRobot(int i, Vector2Int position, int stepNumber,Direction heading = Direction.North, RobotBeing state = RobotBeing.Free) 
+            : base (i,position,heading,state)
         {
-            _id = i;
-            _currentPos = cP;
-            _currentHeading = cH;
-            _currState = cS;
             _gridPositionHistory = new Vector2Int[stepNumber];
             _headings = new Direction[stepNumber];
             _states = new RobotBeing[stepNumber];
@@ -58,9 +41,9 @@ namespace WarehouseSimulator.Model.PB
             {
                 throw new ArgumentException($"Argument {nameof(step)}: stepnumber too low");
             }
-            _currentPos = _gridPositionHistory[step];
-            _currentHeading = _headings[step];
-            _currState = _states[step];
+            RobotData.m_gridPosition = _gridPositionHistory[step];
+            RobotData.m_heading = _headings[step];
+            RobotData.m_state = _states[step];
         }
 
         public void CalcTimeLine(List<RobotDoing> actions)
@@ -70,9 +53,9 @@ namespace WarehouseSimulator.Model.PB
                 throw new ArgumentException($"Invalid number of actions ({actions.Count} instead of {_gridPositionHistory.Length}) in argument {nameof(actions)}");
             }
             int i = 0;
-            _gridPositionHistory[i] = _currentPos;
-            _headings[i] = _currentHeading;
-            _states[i] = _currState;
+            _gridPositionHistory[i] = RobotData.m_gridPosition;
+            _headings[i] = RobotData.m_heading;
+            _states[i] = RobotData.m_state;
             foreach (RobotDoing wattodo in actions)
             {
                 ++i;
@@ -100,22 +83,6 @@ namespace WarehouseSimulator.Model.PB
                         _states[i] = _states[i - 1];
                         break;
                 }
-            }
-        }
-        
-        private Vector2Int WhereToMove(Vector2Int pos)
-        {
-            switch (_currentHeading)
-            {
-                case(Direction.North):
-                    return pos + Vector2Int.down; 
-                case(Direction.West):
-                    return pos + Vector2Int.left; 
-                case(Direction.South):
-                    return pos + Vector2Int.up;
-                case(Direction.East):
-                    return pos + Vector2Int.right;
-                default: return new Vector2Int(0, 0);
             }
         }
     }
