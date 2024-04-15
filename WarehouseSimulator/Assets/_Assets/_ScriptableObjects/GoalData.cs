@@ -1,6 +1,5 @@
 ﻿using JetBrains.Annotations;
 using UnityEngine;
-using WarehouseSimulator.Model.Sim;
 
 namespace WarehouseSimulator.Model
 {
@@ -9,6 +8,6 @@ namespace WarehouseSimulator.Model
     {
         public int m_id;
         public Vector2Int m_gridPosition;
-        [CanBeNull] public Robot m_robot;
+        [CanBeNull] public RobotLike m_robot;
     }
 }
