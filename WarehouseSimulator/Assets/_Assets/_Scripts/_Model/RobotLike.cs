@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using JetBrains.Annotations;
+using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model
@@ -6,43 +7,52 @@ namespace WarehouseSimulator.Model
     public abstract class RobotLike
     {
         #region Fields
-        private readonly int _id;
-        private Vector2Int _currentGridPosition;
-        private Direction _currentHeading;
-        private RobotBeing _currentState;
+
+        private RobotData m_robotData;
+        
         #endregion
         
         #region Properties
-        public int Id
-        {
-            get => _id;
-        }
-        public Vector2Int GridPosition
-        {
-            get => _currentGridPosition;
-        }
-        public Direction Heading
-        {
-            get => _currentHeading;
-        }
+
+        public RobotData RobotData => m_robotData;
+            
+        public int Id => m_robotData.m_id;
+
+        public Vector2Int GridPosition => m_robotData.m_gridPosition;
+    
+        public Direction Heading => m_robotData.m_heading;
         
-        public RobotBeing State
+        public GoalLike Goal
         {
-            get => _currentState;
+            get => m_robotData.m_goal;
+            private set
+            {
+                //TODO => Blaaa: Log later
+                m_robotData.m_state = value == null ? RobotBeing.Free : RobotBeing.InTask;
+                m_robotData.m_goal = value;
+            }
         }
+        public RobotBeing State => m_robotData.m_state;
+        
         #endregion
         
-        protected RobotLike(int i, Vector2Int gPos, Direction h = Direction.North, RobotBeing s = RobotBeing.Free)
+        protected RobotLike(int i, 
+            Vector2Int gPos, 
+            Direction heading = Direction.North, 
+            RobotBeing state = RobotBeing.Free, 
+            [CanBeNull] GoalLike goal = null)
         {
-            _id = i;
-            _currentGridPosition = gPos;
-            _currentHeading = h;
-            _currentState = s;
+            m_robotData = ScriptableObject.CreateInstance<RobotData>();
+            m_robotData.m_id = i;
+            m_robotData.m_gridPosition = gPos;
+            m_robotData.m_heading = heading;
+            m_robotData.m_state = state;
+            m_robotData.m_goal = goal;
         }
         
         private Vector2Int WhereToMove(Vector2Int pos)
         {
-            switch (_currentHeading)
+            switch (m_robotData.m_heading)
             {
                 case(Direction.North):
                     return pos + Vector2Int.down; 
