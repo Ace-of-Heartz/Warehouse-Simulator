@@ -7,14 +7,12 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
-    public class GoalManager
+    public class SimGoalManager
     {
         private Queue<SimGoal> _goalsRemaining;
         private int _nextid;
-        
-        
 
-        public GoalManager()
+        public SimGoalManager()
         {
             _goalsRemaining = new Queue<SimGoal>();
             _nextid = 0;

@@ -27,8 +27,8 @@ namespace WarehouseSimulator.View.Sim
         void Start()
         {
             simulationManager = new SimulationManager();
-            simulationManager.RobotManager.RobotAddedEvent += AddUnityRobot;
-            simulationManager.RobotManager.GoalAssignedEvent += AddUnityGoal;
+            simulationManager.SimRobotManager.RobotAddedEvent += AddUnitySimRobot;
+            simulationManager.SimRobotManager.GoalAssignedEvent += AddUnityGoal;
             if (!DebugMode )
             {
                 DebugSetup();
@@ -65,7 +65,7 @@ namespace WarehouseSimulator.View.Sim
             
         }
 
-        private void AddUnityRobot(object sender, RobotCreatedEventArgs e)
+        private void AddUnitySimRobot(object sender, RobotCreatedEventArgs e)
         {
             Debug.Log("Robot added to UnitySimulationManager. ID:" + e.SimRobot.Id);
             GameObject rob  = Instantiate(robie);

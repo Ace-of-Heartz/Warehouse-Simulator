@@ -7,14 +7,14 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
-    public class RobotManager
+    public class SimRobotManager
     {
         private List<SimRobot> AllRobots;
 
         [CanBeNull] public event EventHandler<RobotCreatedEventArgs> RobotAddedEvent;
         [CanBeNull] public event EventHandler<GoalAssignedEventArgs> GoalAssignedEvent;
 
-        public RobotManager()
+        public SimRobotManager()
         {
             AllRobots = new();
         }
@@ -27,7 +27,7 @@ namespace WarehouseSimulator.Model.Sim
             RobotAddedEvent?.Invoke(this, new(newR));
         }
     
-        public void AssignTasksToFreeRobots(GoalManager from)
+        public void AssignTasksToFreeRobots(SimGoalManager from)
         {
             foreach (var robie in AllRobots)
             {
