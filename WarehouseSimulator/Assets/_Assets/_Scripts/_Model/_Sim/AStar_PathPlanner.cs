@@ -7,7 +7,14 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class AStar_PathPlanner : IPathPlanner
     {
-        public async Task<List<RobotDoing>> GetPath(Vector2Int start, Vector2Int finish)
+        private Map m_map;
+        
+        public AStar_PathPlanner(Map map)
+        {
+            map = m_map;
+        }
+        
+        public async Task<List<RobotDoing>> GetPath(Vector2Int start, Vector2Int finish,Direction direction)
         {
             List<RobotDoing> instructions = new();
 

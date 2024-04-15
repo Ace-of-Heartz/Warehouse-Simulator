@@ -9,7 +9,7 @@ namespace WarehouseSimulator.Model.Sim
     public interface IPathPlanner
     {
         // ReSharper restore Unity.ExpensiveCode
-        public Task<List<RobotDoing>> GetPath(Vector2Int start, Vector2Int finish);
+        public Task<List<RobotDoing>> GetPath(Vector2Int start, Vector2Int finish,Direction dir);
         
         
     }

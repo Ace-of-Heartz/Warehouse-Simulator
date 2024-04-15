@@ -14,8 +14,9 @@ namespace WarehouseSimulator.Model.Sim
         private bool isPreprocessDone;
         public bool IsPreprocessDone => isPreprocessDone;
         
-        public CentralController()
+        public CentralController(Map map)
         {
+            m_pathPlanner = new BFS_PathPlanner(map);
             plannedActions = new Dictionary<Robot, RobotDoing>();
             isPreprocessDone = false;
         }
@@ -53,7 +54,7 @@ namespace WarehouseSimulator.Model.Sim
             foreach (var robot in robots)
             {
                 
-                plannedActionsForRobot = m_pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition).Result;
+                plannedActionsForRobot = m_pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading).Result;
             }
             
             

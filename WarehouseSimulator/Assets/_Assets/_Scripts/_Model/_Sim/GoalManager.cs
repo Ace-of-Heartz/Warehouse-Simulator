@@ -59,7 +59,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
                 if (mapie.GetTileAt(linPos) != TileType.Empty)
                 {
-                    throw new InvalidDataException($"Invalid file format: {_nextid + 2}. line does not provide a valid position");
+                    throw new InvalidDataException($"Invalid file format: {_nextid + 2}. line does not provide a valid position, because pos: {linPos % mapie.MapSize.x}, {linPos / mapie.MapSize.x} and tyle was {mapie.GetTileAt(linPos)}");
                 }
 
                 Vector2Int nextPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
