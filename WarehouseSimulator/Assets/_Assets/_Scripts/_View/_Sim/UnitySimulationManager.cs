@@ -67,18 +67,18 @@ namespace WarehouseSimulator.View.Sim
 
         private void AddUnityRobot(object sender, RobotCreatedEventArgs e)
         {
-            Debug.Log("Robot added to UnitySimulationManager. ID:" + e.robot.Id);
+            Debug.Log("Robot added to UnitySimulationManager. ID:" + e.SimRobot.Id);
             GameObject rob  = Instantiate(robie);
             UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
-            robieManager.MyThingies(e.robot,unityMap,simulationManager.StepTime);
+            robieManager.MyThingies(e.SimRobot,unityMap,simulationManager.StepTime);
         }
         
         private void AddUnityGoal(object sender, GoalAssignedEventArgs e)
         {
-            Debug.Log("Robot added to UnitySimulationManager. ID:" + e.goal.Robot.Id);
+            Debug.Log("Robot added to UnitySimulationManager. ID:" + e.SimGoal.SimRobot.Id);
             GameObject gooo = Instantiate(golie);
             UnityGoal golieMan = gooo.GetComponent<UnityGoal>();
-            golieMan.GiveGoalModel(e.goal,unityMap);
+            golieMan.GiveGoalModel(e.SimGoal,unityMap);
         }
     }   
 }

@@ -7,20 +7,20 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class CentralController
     {
-        private Dictionary<Robot, RobotDoing> plannedActions;
+        private Dictionary<SimRobot, RobotDoing> plannedActions;
         
         private bool isPreprocessDone;
         public bool IsPreprocessDone => isPreprocessDone;
         
         public CentralController()
         {
-            plannedActions = new Dictionary<Robot, RobotDoing>();
+            plannedActions = new Dictionary<SimRobot, RobotDoing>();
             isPreprocessDone = false;
         }
         
-        public void AddRobotToPlanner(Robot robot)
+        public void AddRobotToPlanner(SimRobot simRobot)
         {
-            plannedActions.Add(robot, RobotDoing.Wait);
+            plannedActions.Add(simRobot, RobotDoing.Wait);
         }
         
 

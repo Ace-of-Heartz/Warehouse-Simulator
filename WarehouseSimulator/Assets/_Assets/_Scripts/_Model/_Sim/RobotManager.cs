@@ -9,7 +9,7 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class RobotManager
     {
-        private List<Robot> AllRobots;
+        private List<SimRobot> AllRobots;
 
         [CanBeNull] public event EventHandler<RobotCreatedEventArgs> RobotAddedEvent;
         [CanBeNull] public event EventHandler<GoalAssignedEventArgs> GoalAssignedEvent;
@@ -21,7 +21,7 @@ namespace WarehouseSimulator.Model.Sim
         
         private void AddRobot(int i, Vector2Int pos)
         {
-            Robot newR = new(i, pos);
+            SimRobot newR = new(i, pos);
             AllRobots.Add(newR);
             //newR.CallRobotPosEvent(this);
             RobotAddedEvent?.Invoke(this, new(newR));
@@ -33,7 +33,7 @@ namespace WarehouseSimulator.Model.Sim
             {
                 if (robie.State == RobotBeing.Free)
                 {
-                    Goal next = from.GetNext();
+                    SimGoal next = from.GetNext();
                     if (next == null) { break; }
                     robie.AssignGoal(next);
                     GoalAssignedEvent?.Invoke(this, new(next));

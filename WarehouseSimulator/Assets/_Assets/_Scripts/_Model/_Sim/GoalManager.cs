@@ -9,27 +9,27 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class GoalManager
     {
-        private Queue<Goal> _goalsRemaining;
+        private Queue<SimGoal> _goalsRemaining;
         private int _nextid;
         
         
 
         public GoalManager()
         {
-            _goalsRemaining = new Queue<Goal>();
+            _goalsRemaining = new Queue<SimGoal>();
             _nextid = 0;
         }
 
         public void AddNewGoal(Vector2Int here)
         {
-            _goalsRemaining.Enqueue(new Goal(here,_nextid));
+            _goalsRemaining.Enqueue(new SimGoal(here,_nextid));
             _nextid++;
         }
 
         [CanBeNull]
-        public Goal GetNext()
+        public SimGoal GetNext()
         {
-            Goal next = null;
+            SimGoal next = null;
             try
             {
                 next = _goalsRemaining.Dequeue();
@@ -63,7 +63,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
 
                 Vector2Int nextPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
-                _goalsRemaining.Enqueue(new Goal(nextPos,_nextid));
+                _goalsRemaining.Enqueue(new SimGoal(nextPos,_nextid));
                 _nextid++;
             }
         }
