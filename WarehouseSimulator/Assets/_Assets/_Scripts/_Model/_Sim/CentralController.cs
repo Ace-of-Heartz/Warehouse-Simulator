@@ -35,7 +35,7 @@ namespace WarehouseSimulator.Model.Sim
             //TODO: abort planNextMoves if still in progress
             foreach (var (robot, action) in plannedActions)
             {
-                robot.PerformActionRequested(action, map);
+                robot.TryPerformActionRequested(action, map);
             }
         }
 

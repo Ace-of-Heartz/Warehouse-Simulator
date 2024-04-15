@@ -32,7 +32,8 @@ namespace WarehouseSimulator.Model.Sim
             {
                 next = _goalsRemaining.Dequeue();
             }
-            catch (Exception) { }
+            catch (Exception) { /* ignored */ }
+
             return next;
         }
 
