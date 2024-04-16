@@ -1,8 +1,6 @@
+#nullable enable
 using System;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
-using Unity.Properties;
-using Unity.VisualScripting;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -15,7 +13,7 @@ namespace WarehouseSimulator.Model.Sim
         public SimRobot(int i,
             Vector2Int gridPos,
             Direction heading = Direction.North,
-            SimGoal goal = null,
+            SimGoal? goal = null,
             RobotBeing state = RobotBeing.Free)
                 : base(i, gridPos, heading, state, goal)
         {
@@ -33,7 +31,7 @@ namespace WarehouseSimulator.Model.Sim
         }
 
 
-        public bool TryPerformActionRequested(RobotDoing watt, Map mapie)
+        public ValueTask<(bool,SimRobot?)> TryPerformActionRequestedAsync(RobotDoing watt, Map mapie)
         {
             _nextPos = RobotData.m_gridPosition;
             if (mapie == null)
@@ -51,7 +49,7 @@ namespace WarehouseSimulator.Model.Sim
                     if (mapie.GetTileAt(_nextPos) == TileType.Wall)
                     {
                         //TODO => Blaaa: CC react and LOG
-                        return false;
+                        return new ValueTask<(bool,SimRobot?)>((false, this));
                     }
                     // else if (mapie.GetTileAt(nextPos) == TileType.RoboOccupied)
                     // {
@@ -66,7 +64,7 @@ namespace WarehouseSimulator.Model.Sim
                     break;
             }
 
-            return true;
+            return new ValueTask<(bool,SimRobot?)>((true,null));
         }
 
         public void MakeStep(Map mipieMap)
