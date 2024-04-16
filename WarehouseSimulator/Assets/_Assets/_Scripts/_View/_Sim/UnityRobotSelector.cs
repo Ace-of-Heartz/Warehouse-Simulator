@@ -39,16 +39,23 @@ namespace WarehouseSimulator.View.Sim
             sp = so.FindProperty("m_gridPosition");
             robotPanel.Q("PositionField").Q<Vector2IntField>().BindProperty(sp);
 
-            if (m_unityRobot.RobotData.m_goal is null)
-                return;
+            if (m_unityRobot.RobotData.m_goal == null)
+            {
+                robotPanel.Q("GoalDisplay").style.visibility = Visibility.Hidden;
+            }
+            else
+            {
+                robotPanel.Q("GoalDisplay").style.visibility = Visibility.Visible;
+                so = new SerializedObject(m_unityRobot.RobotData.m_goal.GoalData);
+
+                sp = so.FindProperty("m_id");
+                robotPanel.Q("GoalDisplay").Q("GoalPanel").Q<IntegerField>("IDField").BindProperty(sp);
+
+                sp = so.FindProperty("m_gridPosition");
+                robotPanel.Q("GoalDisplay").Q("GoalPanel").Q<Vector2IntField>().BindProperty(sp);
+            }
             
-            so = new SerializedObject(m_unityRobot.RobotData.m_goal.GoalData);
 
-            sp = so.FindProperty("m_id");
-            robotPanel.Q("GoalDisplay").Q("GoalPanel").Q<IntegerField>("IDField").BindProperty(sp);
-
-            sp = so.FindProperty("m_gridPosition");
-            robotPanel.Q("GoalDisplay").Q("GoalPanel").Q<Vector2IntField>().BindProperty(sp);
 
 
         }
