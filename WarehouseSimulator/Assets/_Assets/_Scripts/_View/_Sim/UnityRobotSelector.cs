@@ -15,7 +15,7 @@ namespace WarehouseSimulator.View.Sim
 
         public void SelectRobot()
         {
-            Debug.Log("Oh no, someone pressed me!");
+            Debug.Log($"Kerfus-{m_unityRobot.RobotData.m_id} reporting for duty!");
             var sceneHandler = SceneHandler.GetInstance();
             if (sceneHandler.CurrentSceneID == 0)
             {
@@ -39,6 +39,9 @@ namespace WarehouseSimulator.View.Sim
             sp = so.FindProperty("m_gridPosition");
             robotPanel.Q("PositionField").Q<Vector2IntField>().BindProperty(sp);
 
+            if (m_unityRobot.RobotData.m_goal is null)
+                return;
+            
             so = new SerializedObject(m_unityRobot.RobotData.m_goal.GoalData);
 
             sp = so.FindProperty("m_id");
