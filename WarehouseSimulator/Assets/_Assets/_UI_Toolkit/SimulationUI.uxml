@@ -14,9 +14,9 @@
                 <ui:ProgressBar value="22" title="my-progress" style="width: 1000px; height: auto; max-width: 1000px; min-width: 600px;" />
             </ui:VisualElement>
             <ui:VisualElement name="BottomRight" picking-mode="Ignore" style="flex-grow: 1; max-width: 10%;">
-                <ui:GroupBox name="GroupBox">
-                    <ui:Button text="START PLAYBACK" parse-escape-sequences="true" display-tooltip-when-elided="true" style="height: 42px; margin-bottom: 40px;" />
-                    <ui:Button text="ABORT" parse-escape-sequences="true" display-tooltip-when-elided="true" style="margin-bottom: 40px;" />
+                <ui:GroupBox name="ButtonBox">
+                    <ui:Button text="START PLAYBACK" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_StartPB" style="height: 42px; margin-bottom: 40px;" />
+                    <ui:Button text="ABORT" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Button_Abort" style="margin-bottom: 40px;" />
                 </ui:GroupBox>
             </ui:VisualElement>
         </ui:VisualElement>
