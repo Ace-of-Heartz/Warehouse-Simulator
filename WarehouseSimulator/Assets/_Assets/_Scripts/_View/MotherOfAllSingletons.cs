@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -57,6 +57,7 @@ namespace WarehouseSimulator.View
                 SceneHandler.GetInstance().SetCurrentScene(0);
                 m_UIMessageManager.SetUIDocument(SceneHandler.GetInstance().CurrentDoc);
             
+                BindingSetupManager.SetupBindings();
             }
             
         }
