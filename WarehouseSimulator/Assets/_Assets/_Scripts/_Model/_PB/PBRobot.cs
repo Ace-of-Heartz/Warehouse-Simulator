@@ -11,17 +11,6 @@ namespace WarehouseSimulator.Model.PB
         private Direction[] _headings;
         private RobotBeing[] _states;
 
-        #region Properties
-        public int Id => RobotData.m_id;
-        
-        public Vector2Int GridPosition => RobotData.m_gridPosition;
-        
-        public Direction Heading => RobotData.m_heading;
-        
-        public RobotBeing State => RobotData.m_state;
-        
-        #endregion
-
         public PbRobot(int i, Vector2Int position, int stepNumber,Direction heading = Direction.North, RobotBeing state = RobotBeing.Free) 
             : base (i,position,heading,state)
         {
