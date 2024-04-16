@@ -1,6 +1,7 @@
 using System;
 
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 
@@ -11,15 +12,30 @@ namespace WarehouseSimulator.View
     /// </summary>
     public class UIMessageManager
     {
+        #region Fields
         private static UIMessageManager m_uiUIMessageManagerInstance;
 
+        private bool m_isMessageBoxOpen; 
+        #endregion
+        
+        #region Properties
+
+        public bool IsMessageBoxOpen
+        {
+            get => m_isMessageBoxOpen;
+            private set => m_isMessageBoxOpen = value;
+        }
+        
+        #endregion 
+        
         private UIMessageManager()
         {
+            IsMessageBoxOpen = false;
         }
 
         public static UIMessageManager GetInstance()
         {
-            if (m_uiUIMessageManagerInstance is null)
+            if (m_uiUIMessageManagerInstance == null)
                 m_uiUIMessageManagerInstance = new();
             return m_uiUIMessageManagerInstance;
         }
@@ -59,20 +75,25 @@ namespace WarehouseSimulator.View
         /// <exception cref="MissingVisualElementException"></exception>
         public void MessageBox(string msg, Action<MessageBoxResponse> onDone, ComplexMessageBoxTypeSelector type)
         {
-            if (!IsComplete())
+            CheckComponentAvailability();
+            
+            if (!IsMessageBoxAllowed())
             {
-                throw new NullReferenceException("Not all necessary components are present for popup windows");
+                return;
             }
 
-            if (m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea") is null)
-            {
-                throw new MissingVisualElementException();
-            }
-            new MessageBox(msg,onDone,
+            
+            IsMessageBoxOpen = true;
+            
+            var mb = new MessageBox(msg,onDone,
                 type,
                 m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
                 m_complexMessageBox
-                ); 
+                );
+            mb.m_done += (_) =>
+            {
+                IsMessageBoxOpen = false;
+            };
         }
         
         /// <summary>
@@ -96,19 +117,25 @@ namespace WarehouseSimulator.View
         /// <exception cref="MissingVisualElementException"></exception>
         public void MessageBox(string msg, Action<MessageBoxResponse> onDone, SimpleMessageBoxTypeSelector type)
         {
-            if (!IsComplete())
+            CheckComponentAvailability();
+            
+            if (!IsMessageBoxAllowed())
             {
-                throw new NullReferenceException("Not all necessary components are present for popup windows");
+                return;
             }
-            if (m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea") is null)
-            {
-                throw new MissingVisualElementException();
-            }
-            new MessageBox(msg,onDone,
+            
+            IsMessageBoxOpen = true;
+
+            
+            var mb = new MessageBox(msg,onDone,
                 type,
                 m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
                 m_simpleMessageBox
             ); 
+            mb.m_done += (_) =>
+            {
+                IsMessageBoxOpen = false;
+            };
         }
         /// <summary>
         /// Used for calling a message box on screen with 1 button.
@@ -126,20 +153,25 @@ namespace WarehouseSimulator.View
         /// <exception cref="MissingVisualElementException"></exception>
         public void MessageBox(string msg, Action<MessageBoxResponse> onDone, OneWayMessageBoxTypeSelector type)
         {
-            if (!IsComplete())
+            CheckComponentAvailability();
+            
+            if (!IsMessageBoxAllowed())
             {
-                throw new NullReferenceException("Not all necessary components are present for popup windows");
+                return;
             }
+            
+            IsMessageBoxOpen = true;
 
-            if (m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea") is null)
-            {
-                throw new MissingVisualElementException();
-            }
-            new MessageBox(msg,onDone,
+            
+            var mb = new MessageBox(msg,onDone,
                 type,
                 m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
                 m_oneWayMessageBox
-            ); 
+            );
+            mb.m_done += (_) =>
+            {
+                IsMessageBoxOpen = false;
+            };
         }
 
         public void SetUIDocument(UIDocument doc)
@@ -162,6 +194,27 @@ namespace WarehouseSimulator.View
             m_complexMessageBox = complexMessageBox;
             m_simpleMessageBox = simpleMessageBox;
             m_oneWayMessageBox = oneWayMessageBox;
+        }
+
+        private void CheckComponentAvailability()
+        {
+            if (!IsComplete())
+            {
+                throw new NullReferenceException("Not all necessary components are present for popup windows");
+            }
+
+            if (m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea") is null)
+            {
+                throw new MissingVisualElementException();
+            }
+            
+        }
+
+        private bool IsMessageBoxAllowed()
+        {
+            bool l = !IsMessageBoxOpen;
+            Debug.Log(l);
+            return l;
         }
 
 
