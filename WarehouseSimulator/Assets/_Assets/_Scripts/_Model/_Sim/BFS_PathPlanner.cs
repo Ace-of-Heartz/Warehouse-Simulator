@@ -69,11 +69,34 @@ namespace WarehouseSimulator.Model.Sim
                 }
                 foreach((var node,var dir,var inst) in GetNeighbouringNodes(currentNode,currentDir))
                 {
-                    if (!m_pathDict.ContainsKey((node, dir))) //Only put in, if position and direction combination wasn't checked before
+                    switch (inst)
                     {
-                        m_pathDict[(node, dir)] = ((currentNode, currentDir),inst);
-                        m_queue.Enqueue((node, dir));
+                        case RobotDoing.Forward:
+                            if (!m_pathDict.Keys.Any(p => p.Item1 == node )) //Never move forward to an already trod path
+                            {
+                                if (m_map.GetTileAt(node) == TileType.Wall)
+                                {
+                                    break; // Don't move into a wall
+                                }
+                                else
+                                {
+                                    m_pathDict[(node, dir)] = ((currentNode, currentDir),inst);
+                                    m_queue.Enqueue((node, dir));
+                                }
+                                
+                            }
+
+                            break;
+                        default:
+                            if (!m_pathDict.ContainsKey((node, dir))) //Never turn more than it's needed AKA 4 times
+                            {
+                                m_pathDict[(node, dir)] = ((currentNode, currentDir),inst);
+                                m_queue.Enqueue((node, dir));
+                            }
+
+                            break;
                     }
+                    
                     
                 }
             }
