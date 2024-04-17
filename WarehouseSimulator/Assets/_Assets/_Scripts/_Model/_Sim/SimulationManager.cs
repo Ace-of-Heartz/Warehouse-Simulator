@@ -58,7 +58,7 @@ namespace WarehouseSimulator.Model.Sim
         public void Tick()
         {
             centralController.TimeToMove(map);
-            centralController.PlanNextMoves(map);
+            //centralController.PlanNextMoves(map);
             _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
         }
 

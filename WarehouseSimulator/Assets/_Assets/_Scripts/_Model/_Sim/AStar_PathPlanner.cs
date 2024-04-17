@@ -14,9 +14,9 @@ namespace WarehouseSimulator.Model.Sim
             map = m_map;
         }
         
-        public async Task<List<RobotDoing>> GetPath(Vector2Int start, Vector2Int finish,Direction direction)
+        public async Task<Stack<RobotDoing>> GetPath(Vector2Int start, Vector2Int finish,Direction direction)
         {
-            List<RobotDoing> instructions = new();
+            Stack<RobotDoing> instructions = new();
 
             return instructions;
             
