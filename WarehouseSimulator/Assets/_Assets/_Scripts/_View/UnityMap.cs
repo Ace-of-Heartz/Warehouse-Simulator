@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
@@ -12,6 +13,9 @@ namespace WarehouseSimulator.View
         [SerializeField] private Color wallColor = Color.grey;
         [SerializeField] private Color emptyColor = Color.green;
 
+        [SerializeField] private Sprite wallSprite;
+        [SerializeField] private Sprite emptySprite;
+        
         private Grid gridComponent;
 
         private Map map;
@@ -56,11 +60,13 @@ namespace WarehouseSimulator.View
                     ins.transform.position = gridComponent.GetCellCenterWorld(new Vector3Int(i, -j, 1));
                     if(map.GetTileAt(new  Vector2Int(i, j)) == TileType.Wall)
                     {
-                        ins.GetComponent<SpriteRenderer>().color = wallColor;
+                        //ins.GetComponent<SpriteRenderer>().color = wallColor;
+                        ins.GetComponent<SpriteRenderer>().sprite = wallSprite;
                     }
                     else
                     {
-                        ins.GetComponent<SpriteRenderer>().color = emptyColor;
+                        //ins.GetComponent<SpriteRenderer>().color = emptyColor;
+                        ins.GetComponent<SpriteRenderer>().sprite = emptySprite;
                     }
                 }
             }

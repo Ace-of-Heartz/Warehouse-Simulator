@@ -404,6 +404,8 @@ MonoBehaviour:
   tilePrefab: {fileID: 6276043894028852693, guid: a51214375f8c34a6d81d4d4a32e47f91, type: 3}
   wallColor: {r: 0.8392157, g: 0.85490197, b: 0.78431374, a: 1}
   emptyColor: {r: 0.9843137, g: 0.9529412, b: 0.8352941, a: 1}
+  wallSprite: {fileID: 21300000, guid: 4fa8a1b3d4cd1614da053eb03e6b654d, type: 3}
+  emptySprite: {fileID: 21300000, guid: a7a36fa0cfd409b44815c1abd66468ad, type: 3}
 --- !u!1 &1475599732
 GameObject:
   m_ObjectHideFlags: 0

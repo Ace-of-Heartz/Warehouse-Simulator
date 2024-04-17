@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.View.Sim;  
 
 namespace WarehouseSimulator.View.MainMenu {
@@ -99,15 +100,21 @@ public class MainMenuManager : MonoBehaviour
             simInputArgs.IntervalOfSteps = int.Parse(GameObject.Find("InputField_IntervalOfSteps").GetComponent<TMP_InputField>().text);
             simInputArgs.PreparationTime = float.Parse(GameObject.Find("InputField_PreparationTime").GetComponent<TMP_InputField>().text);
             simInputArgs.EventLogPath = GameObject.Find("InputField_SimPathToEventLog").GetComponent<TMP_InputField>().text;
+            var res = GameObject.Find("Dropdown_SearchAlgorithm").GetComponent<TMP_Dropdown>().value;
+            simInputArgs.SearchAlgorithm = res == 1 ? SEARCH_ALGORITHM.A_STAR :
+                res == 2 ? SEARCH_ALGORITHM.COOP_A_STAR : SEARCH_ALGORITHM.BFS;
+
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            
             UIMessageManager.GetInstance().MessageBox("Fatal error occured!", response =>
                 {
                     
                 },
                 new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK)
             );
+            throw e;
             //Debug.Log("Fatal error occured at input parsing for simulation.");
         }
     }

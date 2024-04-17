@@ -51,9 +51,14 @@ namespace WarehouseSimulator.View
             GetInstance().m_documents.Add(id, doc);
         }
 
-        public string GetSceneOfID(uint id)
+        public static string GetSceneOfID(uint id)
         {
             return GetInstance().m_scenes[id];
+        }
+
+        public static UIDocument GetDocOfID(uint id)
+        {
+            return GetInstance().m_documents[id];
         }
 
         public void SetCurrentScene(uint id)
