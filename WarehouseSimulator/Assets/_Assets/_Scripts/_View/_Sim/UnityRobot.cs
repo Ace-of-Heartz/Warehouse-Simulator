@@ -23,6 +23,8 @@ namespace WarehouseSimulator.View.Sim
         [SerializeField]
         private TextMeshPro id;
 
+        private float _speed;
+
         [SerializeField] private GameObject _texture;
         private UnityMap _mapie;
 
@@ -52,7 +54,7 @@ namespace WarehouseSimulator.View.Sim
             Vector3 newPos = _mapie.GetWorldPosition(_roboModel.GridPosition);
             if (oldPos != newPos)
             {
-                transform.position = Vector3.Lerp(oldPos, newPos, Time.deltaTime * 5);
+                transform.position = Vector3.Lerp(oldPos, newPos, Time.deltaTime * _speed);
             }
 
             Direction newRot = _roboModel.Heading;
@@ -79,14 +81,11 @@ namespace WarehouseSimulator.View.Sim
             
         }
 
-
-        
-        
-
-        public void MyThingies(Robot dis, UnityMap dat)
+        public void MyThingies(Robot dis, UnityMap dat, float speedMultiplier)
         {
             _roboModel = dis;
             _mapie = dat;
+            _speed = speedMultiplier;
         }
 
     
