@@ -10,7 +10,7 @@ using UnityEngine.UIElements;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model;
 
-namespace WarehouseSimulator.View.Sim
+namespace WarehouseSimulator.View
 {
     public class UnityRobot : MonoBehaviour
     {
@@ -18,10 +18,12 @@ namespace WarehouseSimulator.View.Sim
         
         private RobotData m_robotData;
         
-        private Robot _roboModel;
+        private RobotLike _roboModel;
         
         [SerializeField]
         private TextMeshPro id;
+
+        private float _speed;
 
         [SerializeField] private GameObject _texture;
         private UnityMap _mapie;
@@ -39,21 +41,16 @@ namespace WarehouseSimulator.View.Sim
         // Start is called before the first frame update
         void Start()
         {
-            transform.position = _mapie.GetWorldPosition(_roboModel.GridPosition);
-            id.text = _roboModel.Id.ToString();
-            m_robotData = _roboModel.RobotData;
+            //Do we even need this blaaa?
         }
 
         // Update is called once per frame
         void Update()
         {
-            
             Vector3 oldPos = transform.position; 
             Vector3 newPos = _mapie.GetWorldPosition(_roboModel.GridPosition);
-            if (oldPos != newPos)
-            {
-                transform.position = Vector3.Lerp(oldPos, newPos, Time.deltaTime * 5);
-            }
+            //if (oldPos != newPos) transform.position = Vector3.Lerp(oldPos, newPos, Time.deltaTime * _speed);
+            if (oldPos != newPos) transform.position = newPos;
 
             Direction newRot = _roboModel.Heading;
             switch (newRot)
@@ -79,14 +76,14 @@ namespace WarehouseSimulator.View.Sim
             
         }
 
-
-        
-        
-
-        public void MyThingies(Robot dis, UnityMap dat)
+        public void MyThingies(SimRobot dis, UnityMap dat, float speedMultiplier)
         {
             _roboModel = dis;
             _mapie = dat;
+            _speed = speedMultiplier;
+            transform.position = _mapie.GetWorldPosition(_roboModel.GridPosition);
+            id.text = _roboModel.Id.ToString();
+            m_robotData = _roboModel.RobotData;
         }
 
     
