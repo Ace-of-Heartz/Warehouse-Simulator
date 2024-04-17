@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model.Sim;
 using WarehouseSimulator.View.MainMenu;
 
@@ -29,7 +30,7 @@ namespace WarehouseSimulator.View.Sim
             simulationManager = new SimulationManager();
             simulationManager.SimRobotManager.RobotAddedEvent += AddUnitySimRobot;
             simulationManager.SimRobotManager.GoalAssignedEvent += AddUnityGoal;
-            if (!DebugMode )
+            if (DebugMode)
             {
                 DebugSetup();
                 simulationManager.Setup(debugSimInputArgs);
@@ -62,7 +63,7 @@ namespace WarehouseSimulator.View.Sim
             debugSimInputArgs.IntervalOfSteps = 3;
             debugSimInputArgs.NumberOfSteps = 100;
             debugSimInputArgs.EventLogPath = "/Users/gergogalig/log.log";
-            
+            debugSimInputArgs.SearchAlgorithm = SEARCH_ALGORITHM.BFS;
         }
 
         private void AddUnitySimRobot(object sender, RobotCreatedEventArgs e)
