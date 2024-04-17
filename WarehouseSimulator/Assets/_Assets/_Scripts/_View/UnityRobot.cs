@@ -25,6 +25,7 @@ namespace WarehouseSimulator.View
 
         private float _speed;
 
+        [SerializeField] private GameObject _texture;
         private UnityMap _mapie;
 
         #endregion
@@ -55,20 +56,24 @@ namespace WarehouseSimulator.View
             switch (newRot)
             {
                 case Direction.North:
-                    transform.rotation = Quaternion.Euler(0, 0, 0);
+                    _texture.transform.rotation = Quaternion.Euler(0, 0, 0);
+
                     break;
                 case Direction.East:
-                    transform.rotation = Quaternion.Euler(0, 0, -90);
+                    _texture.transform.rotation = Quaternion.Euler(0, 0, -90);
+
                     break;
                 case Direction.South:
-                    transform.rotation = Quaternion.Euler(0, 0, 180);
+                    _texture.transform.rotation = Quaternion.Euler(0, 0, 180);
+
                     break;
                 case Direction.West:
-                    transform.rotation = Quaternion.Euler(0, 0, 90);
+                    _texture.transform.rotation = Quaternion.Euler(0, 0, 90);
+                    
+
                     break;
             }
-
-            id.transform.rotation = Quaternion.Euler(0, 0, 0);
+            
         }
 
         public void MyThingies(SimRobot dis, UnityMap dat, float speedMultiplier)

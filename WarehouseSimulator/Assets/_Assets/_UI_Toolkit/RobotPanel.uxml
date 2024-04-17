@@ -11,4 +11,5 @@
             <ui:Instance template="GoalPanel" name="GoalPanel" picking-mode="Ignore" />
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:VisualElement focusable="false" style="flex-grow: 1; position: absolute; height: 546px; width: 396px;" />
 </ui:UXML>
