@@ -42,7 +42,7 @@ namespace WarehouseSimulator.Model.Sim
             {
                 if(actions.Count == 0) continue;
                 var a = actions.Dequeue();
-                robot.TryPerformActionRequestedAsync(a, map);
+                robot.TryPerformActionRequested(a, map);
                 robot.MakeStep(map);
             }
         }

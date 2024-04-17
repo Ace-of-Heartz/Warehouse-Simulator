@@ -29,7 +29,7 @@ namespace WarehouseSimulator.Model.Sim
             RobotData.m_state = RobotBeing.InTask;
         }
 
-        public (bool,SimRobot?) TryPerformActionRequestedAsync(RobotDoing watt, Map mapie)
+        public (bool,SimRobot?) TryPerformActionRequested(RobotDoing watt, Map mapie)
         {
             _nextPos = RobotData.m_gridPosition;
             if (mapie == null)
