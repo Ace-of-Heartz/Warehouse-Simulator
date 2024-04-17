@@ -29,9 +29,9 @@ namespace WarehouseSimulator.Model.Sim
         public SimulationManager()
         {
             map = new Map();
-            _simGoalManager = new SimGoalManager();
-            _simRobotManager = new SimRobotManager();
-            centralController = new CentralController();
+            goalManager = new GoalManager();
+            robotManager = new RobotManager();
+            centralController = new CentralController(map);
             
             //event for adding robot to path planning
             _simRobotManager.RobotAddedEvent += (sender, args) => centralController.AddRobotToPlanner(args.SimRobot);
