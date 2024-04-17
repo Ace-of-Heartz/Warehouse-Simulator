@@ -1,15 +1,13 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
     public class CentralController
     {
-        private Dictionary<SimRobot, List<RobotDoing>> plannedActions;
+        private Dictionary<SimRobot, Queue<RobotDoing>> plannedActions;
 
         private IPathPlanner m_pathPlanner;
         
@@ -25,7 +23,9 @@ namespace WarehouseSimulator.Model.Sim
         
         public void AddRobotToPlanner(SimRobot simRobot)
         {
-            plannedActions.Add(simRobot, new List<RobotDoing>(){RobotDoing.Wait});
+            var q = new Queue<RobotDoing>();
+            q.Enqueue(RobotDoing.Wait);
+            plannedActions.Add(simRobot, q);
         }
         
 
@@ -40,10 +40,10 @@ namespace WarehouseSimulator.Model.Sim
             //TODO: abort planNextMoves if still in progress
             foreach (var (robot, actions) in plannedActions)
             {
-                foreach (var action in actions)
-                {
-                    robot.PerformActionRequested(action, map);
-                }
+                if(actions.Count == 0) continue;
+                var a = actions.Dequeue();
+                robot.TryPerformActionRequestedAsync(a, map);
+                robot.MakeStep(map);
             }
         }
 
@@ -52,9 +52,9 @@ namespace WarehouseSimulator.Model.Sim
             var robots = plannedActions.Keys.ToList();
             foreach (var robot in robots)
             {
-                plannedActions[robot] = new List<RobotDoing>{RobotDoing.Timeout};
-                
-                
+                var q = new Queue<RobotDoing>();
+                q.Enqueue(RobotDoing.Timeout);
+                plannedActions[robot] = q;
             }
 
             List<RobotDoing> plannedActionsForRobot;
@@ -67,7 +67,7 @@ namespace WarehouseSimulator.Model.Sim
                 Debug.Log(robot.Goal.GridPosition);
                 //Robot planned actions
                 plannedActionsForRobot = m_pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading).Result;
-                plannedActions[robot] = plannedActionsForRobot;
+                plannedActions[robot] = new Queue<RobotDoing>(plannedActionsForRobot);
 
                 foreach (var a in plannedActionsForRobot)
                 {
