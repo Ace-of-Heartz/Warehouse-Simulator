@@ -1,56 +1,49 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace WarehouseSimulator.Model.PB
 {
-    public class PbGoal
+
+    public class PbGoal : GoalLike
     {
-        private Vector2Int _gridPosition;
         private int _aliveFrom;
         private int _aliveTo;
         private bool _currentlyAlive;
         private int _roboId;
-        private int _selfId;
 
         #region Properties
 
-        public Vector2Int GridPos
-        {
-            get => _gridPosition;
-        }
+        public Vector2Int GridPos => GoalData.m_gridPosition;
 
-        public int AliveF
-        {
-            get => _aliveFrom;
-        }
-        
-        public int AliveT
+        public int AliveFrom => _aliveFrom;
+    
+        public int AliveTo
         {
             get => _aliveTo;
+            set
+            {
+                if (_aliveTo == -1)
+                {
+                    _aliveTo = value;
+                }
+                else
+                {
+                    throw new InvalidFileException($"Goal {GoalData.m_id} was \"finished\" twice");
+                }
+            }
         }
 
-        public bool IsAlive
-        {
-            get => _currentlyAlive;
-        }
+        public bool IsAlive => _currentlyAlive;
 
-        public int RoboNumber
-        {
-            get => _roboId;
-        }
+        public int RoboNumber => _roboId;
 
-        public int SelfId
-        {
-            get => _selfId;
-        }
+        public int SelfId => GoalData.m_id;
         
         #endregion
 
-        public PbGoal(int selfId,Vector2Int gridPos, int roboId, bool currentlyAlive = true)
+        public PbGoal(int selfId, Vector2Int gridPos, bool currentlyAlive = false) : base(selfId,gridPos)
         {
-            _selfId = selfId;
-            _gridPosition = gridPos;
-            _aliveFrom = _aliveTo = 0;
-            _roboId = roboId;
+            _aliveFrom = _aliveTo = _roboId = -1;
             _currentlyAlive = currentlyAlive;
         }
 
@@ -62,10 +55,17 @@ namespace WarehouseSimulator.Model.PB
             }
         }
 
-        public void SetAliveFromTo(int from, int to)
+        public void SetAliveFrom(int from, int roboId)
         {
-            _aliveFrom = from;
-            _aliveTo = to;
+            if (_aliveFrom == -1)
+            {
+                _aliveFrom = from;
+                _roboId = roboId;
+            }
+            else
+            {
+                throw new InvalidFileException($"Goal {GoalData.m_id} was \"assigned\" twice");
+            }
         }
     }
 }

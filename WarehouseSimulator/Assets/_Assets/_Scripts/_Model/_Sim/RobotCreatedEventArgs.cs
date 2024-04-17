@@ -4,11 +4,11 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class RobotCreatedEventArgs : EventArgs
     {
-        public Robot robot;
+        public SimRobot SimRobot;
         
-        public RobotCreatedEventArgs(Robot r)
+        public RobotCreatedEventArgs(SimRobot r)
         {
-            robot = r;
+            SimRobot = r;
         }
     }
 }

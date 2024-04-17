@@ -9,7 +9,7 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class CentralController
     {
-        private Dictionary<Robot, List<RobotDoing>> plannedActions;
+        private Dictionary<SimRobot, List<RobotDoing>> plannedActions;
 
         private IPathPlanner m_pathPlanner;
         
@@ -23,9 +23,9 @@ namespace WarehouseSimulator.Model.Sim
             isPreprocessDone = false;
         }
         
-        public void AddRobotToPlanner(Robot robot)
+        public void AddRobotToPlanner(SimRobot simRobot)
         {
-            plannedActions.Add(robot, new List<RobotDoing>(){RobotDoing.Wait});
+            plannedActions.Add(simRobot, new List<RobotDoing>(){RobotDoing.Wait});
         }
         
 

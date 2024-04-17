@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
@@ -7,34 +7,33 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
-    public class GoalManager
+    public class SimGoalManager
     {
-        private Queue<Goal> _goalsRemaining;
+        private Queue<SimGoal> _goalsRemaining;
         private int _nextid;
-        
-        
 
-        public GoalManager()
+        public SimGoalManager()
         {
-            _goalsRemaining = new Queue<Goal>();
+            _goalsRemaining = new Queue<SimGoal>();
             _nextid = 0;
         }
 
         public void AddNewGoal(Vector2Int here)
         {
-            _goalsRemaining.Enqueue(new Goal(here,_nextid));
+            _goalsRemaining.Enqueue(new SimGoal(here,_nextid));
             _nextid++;
         }
 
         [CanBeNull]
-        public Goal GetNext()
+        public SimGoal GetNext()
         {
-            Goal next = null;
+            SimGoal next = null;
             try
             {
                 next = _goalsRemaining.Dequeue();
             }
-            catch (Exception) { }
+            catch (Exception) { /* ignored */ }
+
             return next;
         }
 
@@ -43,7 +42,7 @@ namespace WarehouseSimulator.Model.Sim
             using StreamReader riiid = new(from);
             if (!int.TryParse(riiid.ReadLine(), out int goaln))
             {
-                throw new InvalidDataException("Invalid file format: First line not a number");
+                throw new InvalidFileException("Invalid file format: First line not a number");
             }
             
             for (int i = 0; i < goaln; i++)
@@ -51,19 +50,19 @@ namespace WarehouseSimulator.Model.Sim
                 string line = riiid.ReadLine();
                 if (line == null)
                 {
-                    throw new InvalidDataException("Invalid file format: there weren't enough lines");
+                    throw new InvalidFileException("Invalid file format: there weren't enough lines");
                 } 
                 if (!int.TryParse(line, out int linPos))
                 {
-                    throw new InvalidDataException($"Invalid file format: {_nextid + 2}. line not a number");
+                    throw new InvalidFileException($"Invalid file format: {_nextid + 2}. line not a number");
                 }
                 if (mapie.GetTileAt(linPos) != TileType.Empty)
                 {
-                    throw new InvalidDataException($"Invalid file format: {_nextid + 2}. line does not provide a valid position, because pos: {linPos % mapie.MapSize.x}, {linPos / mapie.MapSize.x} and tyle was {mapie.GetTileAt(linPos)}");
+                    throw new InvalidFileException($"Invalid file format: {_nextid + 2}. line does not provide a valid position");
                 }
 
                 Vector2Int nextPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
-                _goalsRemaining.Enqueue(new Goal(nextPos,_nextid));
+                _goalsRemaining.Enqueue(new SimGoal(nextPos,_nextid));
                 _nextid++;
             }
         }
