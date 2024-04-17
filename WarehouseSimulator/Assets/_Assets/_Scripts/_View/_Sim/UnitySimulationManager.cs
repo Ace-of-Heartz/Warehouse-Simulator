@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model.Sim;
 using WarehouseSimulator.View.MainMenu;
 
@@ -26,9 +28,9 @@ namespace WarehouseSimulator.View.Sim
         void Start()
         {
             simulationManager = new SimulationManager();
-            simulationManager.RobotManager.RobotAddedEvent += AddUnityRobot;
-            simulationManager.RobotManager.GoalAssignedEvent += AddUnityGoal;
-            if (!DebugMode )
+            simulationManager.SimRobotManager.RobotAddedEvent += AddUnitySimRobot;
+            simulationManager.SimRobotManager.GoalAssignedEvent += AddUnityGoal;
+            if (DebugMode)
             {
                 DebugSetup();
                 simulationManager.Setup(debugSimInputArgs);
@@ -61,26 +63,23 @@ namespace WarehouseSimulator.View.Sim
             debugSimInputArgs.IntervalOfSteps = 3;
             debugSimInputArgs.NumberOfSteps = 100;
             debugSimInputArgs.EventLogPath = "/Users/gergogalig/log.log";
-            
+            debugSimInputArgs.SearchAlgorithm = SEARCH_ALGORITHM.BFS;
         }
 
-        private void AddUnityRobot(object sender, RobotCreatedEventArgs e)
+        private void AddUnitySimRobot(object sender, RobotCreatedEventArgs e)
         {
-            Debug.Log("Robot added to UnitySimulationManager. ID:" + e.robot.Id);
+            Debug.Log("Robot added to UnitySimulationManager. ID:" + e.SimRobot.Id);
             GameObject rob  = Instantiate(robie);
             UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
-            robieManager.MyThingies(e.robot,unityMap);
-
-            
-
+            robieManager.MyThingies(e.SimRobot,unityMap,simulationManager.StepTime);
         }
         
         private void AddUnityGoal(object sender, GoalAssignedEventArgs e)
         {
-            Debug.Log("Robot added to UnitySimulationManager. ID:" + e.goal.Robot.Id);
+            Debug.Log("Robot added to UnitySimulationManager. ID:" + e.SimGoal.SimRobot.Id);
             GameObject gooo = Instantiate(golie);
             UnityGoal golieMan = gooo.GetComponent<UnityGoal>();
-            golieMan.GiveGoalModel(e.goal,unityMap);
+            golieMan.GiveGoalModel(e.SimGoal,unityMap);
         }
     }   
 }

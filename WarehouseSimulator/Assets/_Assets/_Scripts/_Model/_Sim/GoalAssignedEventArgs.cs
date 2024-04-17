@@ -4,11 +4,11 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class GoalAssignedEventArgs : EventArgs
     {
-        public Goal goal;
+        public SimGoal SimGoal;
         
-        public GoalAssignedEventArgs(Goal g)
+        public GoalAssignedEventArgs(SimGoal g)
         {
-            goal = g;
+            SimGoal = g;
         }
     }
 }

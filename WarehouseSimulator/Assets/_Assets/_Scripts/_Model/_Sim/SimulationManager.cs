@@ -13,15 +13,15 @@ namespace WarehouseSimulator.Model.Sim
         #endregion
         
         private Map map;
-        private GoalManager goalManager;
-        private RobotManager robotManager;
+        private SimGoalManager _simGoalManager;
+        private SimRobotManager _simRobotManager;
         private CentralController centralController;
 
         
         #region Properties
         public Map Map => map;
-        public GoalManager GoalManager => goalManager;
-        public RobotManager RobotManager => robotManager;
+        public SimGoalManager SimGoalManager => _simGoalManager;
+        public SimRobotManager SimRobotManager => _simRobotManager;
         public float StepTime => stepTime;
         public bool IsPreprocessDone => centralController.IsPreprocessDone;
         #endregion
@@ -29,12 +29,12 @@ namespace WarehouseSimulator.Model.Sim
         public SimulationManager()
         {
             map = new Map();
-            goalManager = new GoalManager();
-            robotManager = new RobotManager();
-            centralController = new CentralController();
+            _simGoalManager = new SimGoalManager();
+            _simRobotManager = new SimRobotManager();
+            centralController = new CentralController(map);
             
             //event for adding robot to path planning
-            robotManager.RobotAddedEvent += (sender, args) => centralController.AddRobotToPlanner(args.robot);
+            _simRobotManager.RobotAddedEvent += (sender, args) => centralController.AddRobotToPlanner(args.SimRobot);
         }
         
         public void Setup(SimInputArgs simulationArgs)
@@ -47,11 +47,10 @@ namespace WarehouseSimulator.Model.Sim
             config.basePath = Path.GetDirectoryName(simulationArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
             
             map.LoadMap(config.basePath + config.mapFile);
-            goalManager.ReadGoals(config.basePath + config.taskFile, map);
-            robotManager.RoboRead(config.basePath + config.agentFile, map);
+            _simGoalManager.ReadGoals(config.basePath + config.taskFile, map);
+            _simRobotManager.RoboRead(config.basePath + config.agentFile, map);
             
-            
-            robotManager.AssignTasksToFreeRobots(goalManager);
+            _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
             centralController.Preprocess(map);
             centralController.PlanNextMoves(map);
         }
@@ -60,7 +59,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             centralController.TimeToMove(map);
             centralController.PlanNextMoves(map);
-            robotManager.AssignTasksToFreeRobots(goalManager);
+            _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
         }
 
         // info: simulation completed
