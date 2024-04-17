@@ -42,7 +42,7 @@ namespace WarehouseSimulator.Model.Sim
             using StreamReader riiid = new(from);
             if (!int.TryParse(riiid.ReadLine(), out int goaln))
             {
-                throw new InvalidDataException("Invalid file format: First line not a number");
+                throw new InvalidFileException("Invalid file format: First line not a number");
             }
             
             for (int i = 0; i < goaln; i++)
@@ -50,15 +50,15 @@ namespace WarehouseSimulator.Model.Sim
                 string line = riiid.ReadLine();
                 if (line == null)
                 {
-                    throw new InvalidDataException("Invalid file format: there weren't enough lines");
+                    throw new InvalidFileException("Invalid file format: there weren't enough lines");
                 } 
                 if (!int.TryParse(line, out int linPos))
                 {
-                    throw new InvalidDataException($"Invalid file format: {_nextid + 2}. line not a number");
+                    throw new InvalidFileException($"Invalid file format: {_nextid + 2}. line not a number");
                 }
                 if (mapie.GetTileAt(linPos) != TileType.Empty)
                 {
-                    throw new InvalidDataException($"Invalid file format: {_nextid + 2}. line does not provide a valid position");
+                    throw new InvalidFileException($"Invalid file format: {_nextid + 2}. line does not provide a valid position");
                 }
 
                 Vector2Int nextPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);

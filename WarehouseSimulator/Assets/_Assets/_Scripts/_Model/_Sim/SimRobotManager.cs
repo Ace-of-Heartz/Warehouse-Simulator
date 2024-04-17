@@ -51,7 +51,7 @@ namespace WarehouseSimulator.Model.Sim
             using StreamReader rid = new(from);
             if (!int.TryParse(rid.ReadLine(), out int robn))
             {
-                throw new InvalidDataException("Invalid file format: First line not a number");
+                throw new InvalidFileException("Invalid file format: First line not a number");
             }
 
             int nextid = 0;
@@ -60,15 +60,15 @@ namespace WarehouseSimulator.Model.Sim
                 string? line = rid.ReadLine();
                 if (line == null)
                 {
-                    throw new InvalidDataException("Invalid file format: there weren't enough lines");
+                    throw new InvalidFileException("Invalid file format: there weren't enough lines");
                 } 
                 if (!int.TryParse(line, out int linPos))
                 {
-                    throw new InvalidDataException($"Invalid file format: {nextid + 2}. line not a number");
+                    throw new InvalidFileException($"Invalid file format: {nextid + 2}. line not a number");
                 }
                 if (mapie.GetTileAt(linPos) != TileType.Empty)
                 {
-                    throw new InvalidDataException($"Invalid file format: {nextid + 2}. line does not provide a valid position");
+                    throw new InvalidFileException($"Invalid file format: {nextid + 2}. line does not provide a valid position");
                 }
 
                 Vector2Int nextRobPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
@@ -85,12 +85,12 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="actions">Array of (robot,action) tuples</param>
         /// <param name="mapie">The map</param>
         /// <returns>
-        /// A ValueTask<(bool,robot,robot)> tuple where the bool value represents if the Steps are valid
+        /// A ValueTask which has a value of a (bool, SimRobot?, SimRobot?) tuple where the bool value represents if the Steps are valid
         /// The first robot value represents the first robot included in the possible invalid step (if the step is valid, this will be null)
         /// The second robot value represents the second robot included in the possible invalid step (if only one robot was included, or the step is valid, this will be null)
         /// </returns>
         /// <exception cref="ArgumentException">Is thrown when the length of the actions array isn't valid</exception>
-        public async ValueTask<(bool,SimRobot?,SimRobot?)> CheckValidSteps((SimRobot robie, RobotDoing action)[] actions,Map mapie)
+        public async Task<(bool,SimRobot?,SimRobot?)> CheckValidSteps((SimRobot robie, RobotDoing action)[] actions,Map mapie)
         {
             if (actions.Length != _allRobots.Count)
             {
@@ -101,7 +101,7 @@ namespace WarehouseSimulator.Model.Sim
             //     if (!robie.TryPerformActionRequested(what, mapie)) return false; //TODO => Blaaa: Async?
             // }
             
-            var tasks = actions.Select(async tuple => await tuple.robie.TryPerformActionRequestedAsync(tuple.action, mapie));
+            var tasks = actions.Select(async tuple => await Task.FromResult(tuple.robie.TryPerformActionRequestedAsync(tuple.action, mapie)));
             (bool success, SimRobot? whoTripped)[]? results = await Task.WhenAll(tasks);
 
             SimRobot? hitter = null;
@@ -115,7 +115,7 @@ namespace WarehouseSimulator.Model.Sim
             
             foreach (SimRobot robie in _allRobots)
             {
-                var positionCheckTasks = _allRobots.Select(async thisrob => await CheckingFuturePositions(thisrob,robie));
+                var positionCheckTasks = _allRobots.Select(async thisrob => await Task.FromResult(CheckingFuturePositions(thisrob,robie)));
                 (bool good, SimRobot? whoCrashed)[]? maybeMistakes = await Task.WhenAll(positionCheckTasks);
                 hitter = null;
                 try
@@ -144,18 +144,18 @@ namespace WarehouseSimulator.Model.Sim
             return (true,null,null);
         }
 
-        private ValueTask<(bool,SimRobot?)> CheckingFuturePositions(SimRobot thisOne, SimRobot notThisOne)
+        private (bool,SimRobot?) CheckingFuturePositions(SimRobot thisOne, SimRobot notThisOne)
         {
-            if (thisOne.RobotData.m_id == notThisOne.RobotData.m_id) return new ValueTask<(bool,SimRobot?)>((true,null)); //if it's the same robot, we skip the step
+            if (thisOne.RobotData.m_id == notThisOne.RobotData.m_id) return (true,null); //if it's the same robot, we skip the step
 
-            if (notThisOne.NextPos == thisOne.NextPos) return new ValueTask<(bool,SimRobot?)>((false,thisOne));//(false,notThisOne,thisOne); 
+            if (notThisOne.NextPos == thisOne.NextPos) return (false,thisOne);//(false,notThisOne,thisOne); 
             //we check whether there are matching future positions, because this would mean that the step is invalid
 
             if (notThisOne.NextPos == thisOne.RobotData.m_gridPosition
-                & thisOne.NextPos == notThisOne.RobotData.m_gridPosition) return new ValueTask<(bool,SimRobot?)>((false,thisOne)); //(false,notThisOne,thisOne);
+                & thisOne.NextPos == notThisOne.RobotData.m_gridPosition) return (false,thisOne); //(false,notThisOne,thisOne);
             //we check whether they want to step in each other's places ("jump over each other") because this would mean the step is invalid
             //TODO => Nincs más, amit meg kéne nézni?
-            return new ValueTask<(bool,SimRobot?)>((true,null));
+            return (true,null);
         }
     }
 }

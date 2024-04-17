@@ -26,12 +26,10 @@ namespace WarehouseSimulator.Model.Sim
         {
             goTo.AssignedTo(this);
             RobotData.m_goal = goTo;
-            // _state = RobotBeing.InTask;
             RobotData.m_state = RobotBeing.InTask;
         }
 
-
-        public ValueTask<(bool,SimRobot?)> TryPerformActionRequestedAsync(RobotDoing watt, Map mapie)
+        public (bool,SimRobot?) TryPerformActionRequestedAsync(RobotDoing watt, Map mapie)
         {
             _nextPos = RobotData.m_gridPosition;
             if (mapie == null)
@@ -49,7 +47,8 @@ namespace WarehouseSimulator.Model.Sim
                     if (mapie.GetTileAt(_nextPos) == TileType.Wall)
                     {
                         //TODO => Blaaa: CC react and LOG
-                        return new ValueTask<(bool,SimRobot?)>((false, this));
+                        return (false, this);
+                        //return ((false, this));
                     }
                     // else if (mapie.GetTileAt(nextPos) == TileType.RoboOccupied)
                     // {
@@ -64,7 +63,7 @@ namespace WarehouseSimulator.Model.Sim
                     break;
             }
 
-            return new ValueTask<(bool,SimRobot?)>((true,null));
+            return (true,null);
         }
 
         public void MakeStep(Map mipieMap)

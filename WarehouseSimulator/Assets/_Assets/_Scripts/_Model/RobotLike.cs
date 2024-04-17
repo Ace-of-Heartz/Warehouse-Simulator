@@ -15,7 +15,7 @@ namespace WarehouseSimulator.Model
         #region Properties
 
         public RobotData RobotData => m_robotData;
-            
+        
         public int Id => m_robotData.m_id;
 
         public Vector2Int GridPosition => m_robotData.m_gridPosition;
@@ -27,7 +27,6 @@ namespace WarehouseSimulator.Model
             get => m_robotData.m_goal;
             private set
             {
-                //TODO => Blaaa: Log later
                 m_robotData.m_state = value == null ? RobotBeing.Free : RobotBeing.InTask;
                 m_robotData.m_goal = value;
             }
