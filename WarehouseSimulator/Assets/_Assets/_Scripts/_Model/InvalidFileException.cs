@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WarehouseSimulator.Model.PB
+namespace WarehouseSimulator.Model
 {
     public class InvalidFileException : Exception
     {

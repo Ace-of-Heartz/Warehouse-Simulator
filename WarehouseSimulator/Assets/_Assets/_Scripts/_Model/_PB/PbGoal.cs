@@ -4,27 +4,19 @@ using UnityEngine;
 namespace WarehouseSimulator.Model.PB
 {
 
-    public class PbGoal
+    public class PbGoal : GoalLike
     {
-        private Vector2Int _gridPosition;
         private int _aliveFrom;
         private int _aliveTo;
         private bool _currentlyAlive;
         private int _roboId;
-        private int _selfId;
 
         #region Properties
 
-        public Vector2Int GridPos
-        {
-            get => _gridPosition;
-        }
+        public Vector2Int GridPos => GoalData.m_gridPosition;
 
-        public int AliveFrom
-        {
-            get => _aliveFrom;
-        }
-        
+        public int AliveFrom => _aliveFrom;
+    
         public int AliveTo
         {
             get => _aliveTo;
@@ -36,32 +28,21 @@ namespace WarehouseSimulator.Model.PB
                 }
                 else
                 {
-                    throw new InvalidFileException($"Goal {_selfId} was given \"finished\" twice");
+                    throw new InvalidFileException($"Goal {GoalData.m_id} was \"finished\" twice");
                 }
             }
         }
 
-        public bool IsAlive
-        {
-            get => _currentlyAlive;
-        }
+        public bool IsAlive => _currentlyAlive;
 
-        public int RoboNumber
-        {
-            get => _roboId;
-        }
+        public int RoboNumber => _roboId;
 
-        public int SelfId
-        {
-            get => _selfId;
-        }
+        public int SelfId => GoalData.m_id;
         
         #endregion
 
-        public PbGoal(int selfId,Vector2Int gridPos, bool currentlyAlive = false)
+        public PbGoal(int selfId, Vector2Int gridPos, bool currentlyAlive = false) : base(selfId,gridPos)
         {
-            _selfId = selfId;
-            _gridPosition = gridPos;
             _aliveFrom = _aliveTo = _roboId = -1;
             _currentlyAlive = currentlyAlive;
         }
@@ -83,7 +64,7 @@ namespace WarehouseSimulator.Model.PB
             }
             else
             {
-                throw new InvalidFileException($"Goal {_selfId} was given \"assigned\" twice");
+                throw new InvalidFileException($"Goal {GoalData.m_id} was \"assigned\" twice");
             }
         }
     }

@@ -12,7 +12,7 @@ namespace WarehouseSimulator.Model
         public int m_id;
         public Vector2Int m_gridPosition;
         public Direction m_heading;
-        [CanBeNull] public Goal m_goal;
+        [CanBeNull] public GoalLike m_goal;
         public RobotBeing m_state;
     }
 }
