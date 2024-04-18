@@ -56,8 +56,11 @@ namespace WarehouseSimulator.Model.Sim
             Stack<RobotDoing> instructions = new();
             m_pathDict = new();
             m_queue = new();
+
+            m_pathDict[(start, facing)] = ((Vector2Int.zero, Direction.North), RobotDoing.Wait); //Arbitrary value
             m_queue.Enqueue((start,facing));
-            Debug.Log("Start pos: " + start);
+            
+
             (var currentNode,var currentDir) = (Vector2Int.zero, Direction.North);
             //Find finish
             while (m_queue.Count > 0)
@@ -70,6 +73,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
                 foreach((var node,var dir,var inst) in GetNeighbouringNodes(currentNode,currentDir))
                 {
+                    Debug.Log("---------------");
                     Debug.Log("\tNode:" + node);
                     Debug.Log("\tDir:" + dir);
                     Debug.Log("\tInst:" + inst);
@@ -81,6 +85,7 @@ namespace WarehouseSimulator.Model.Sim
 
                                 if (m_map.GetTileAt(node) == TileType.Wall)
                                 {
+                                    Debug.Log("Wall at: " + node);
                                     break; // Don't move into a wall
                                 }
                                 else
@@ -95,6 +100,7 @@ namespace WarehouseSimulator.Model.Sim
                         default:
                             if (!m_pathDict.ContainsKey((node, dir))) //Never turn more than it's needed AKA 4 times
                             {
+                                Debug.Log("First time here?");
                                 m_pathDict[(node, dir)] = ((currentNode, currentDir),inst);
                                 m_queue.Enqueue((node, dir));
                             }
