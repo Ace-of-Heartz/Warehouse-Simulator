@@ -36,7 +36,7 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="finish"></param>
         /// <param name="dir"></param>
         /// <returns></returns>
-        public async Task<Stack<RobotDoing>> GetPath(Vector2Int start, Vector2Int finish, Direction dir)
+        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction dir)
         {
             var instructions = GetInstructions(start, finish, dir);
             return instructions;
@@ -121,8 +121,9 @@ namespace WarehouseSimulator.Model.Sim
             currentNode = finish;
             
             //Traceback path
-            while (m_pathDict[(currentNode, currentDir)].Item1 != (start,facing))
+            while ((currentNode,currentDir) != (start,facing))
             {
+                    
                 Debug.Log(m_map.GetTileAt(currentNode));
                 Debug.Log(currentNode);
                 Debug.Log(currentDir);
@@ -145,8 +146,8 @@ namespace WarehouseSimulator.Model.Sim
         {
             (Vector2Int forwardNode,Direction leftNode,Direction rightNode)  = GetNextNodes(currentNode, facing);
             yield return (forwardNode, facing,RobotDoing.Forward);
-            yield return (currentNode, leftNode,RobotDoing.RotateNeg90);
-            yield return (currentNode, rightNode,RobotDoing.Rotate90);
+            yield return (currentNode, leftNode,RobotDoing.Rotate90);
+            yield return (currentNode, rightNode,RobotDoing.RotateNeg90);
         }
 
         /// <summary>

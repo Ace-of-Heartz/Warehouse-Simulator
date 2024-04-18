@@ -42,7 +42,6 @@ namespace WarehouseSimulator.Model.Sim
             {
                 if(actions.Count == 0) continue;
                 var a = actions.Pop();
-                Debug.Log(a);
                 robot.TryPerformActionRequestedAsync(a, map);
                 robot.MakeStep(map);
             }
@@ -64,7 +63,7 @@ namespace WarehouseSimulator.Model.Sim
                 if (robot.Goal == null)
                     continue;
 
-                plannedActionsForRobot = m_pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading).Result;
+                plannedActionsForRobot = m_pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading);
                 plannedActions[robot] = plannedActionsForRobot;
 
 
