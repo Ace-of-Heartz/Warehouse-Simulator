@@ -15,6 +15,13 @@ namespace WarehouseSimulator.View
 
         private static void SetupSimBinding()
         {
+            SetupSimAbortButton();
+            
+            
+        }
+
+        private static void SetupSimAbortButton()
+        {
             var doc = SceneHandler.GetDocOfID(1);
             doc.rootVisualElement
                 .Q("SimulationCanvas")
@@ -38,11 +45,9 @@ namespace WarehouseSimulator.View
                     }
                 }, 
                 new SimpleMessageBoxTypeSelector(SimpleMessageBoxTypeSelector.MessageBoxType.CONFIRM_CANCEL)
-                );
-            
-            
+            );
         }
-
+        
         private static void SetupPlaybackBinding()
         {
             var doc = SceneHandler.GetDocOfID(2);
