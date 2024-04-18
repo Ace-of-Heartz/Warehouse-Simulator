@@ -10,6 +10,8 @@ namespace WarehouseSimulator.Model.Sim
         private int maxSteps;
         private float stepTime;
         private float preparationTime;
+
+        private SimulationData m_simulationData;
         #endregion
         
         private Map map;
@@ -52,7 +54,7 @@ namespace WarehouseSimulator.Model.Sim
             
             _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
             centralController.Preprocess(map);
-            centralController.PlanNextMovesForAll(map);
+            centralController.PlanNextMovesForAllAsync(map);
         }
         
         public void Tick()
