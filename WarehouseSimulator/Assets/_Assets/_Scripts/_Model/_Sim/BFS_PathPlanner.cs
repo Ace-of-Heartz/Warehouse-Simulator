@@ -12,11 +12,6 @@ namespace WarehouseSimulator.Model.Sim
     {
         #region Fields
         private Map m_map;
-        private Dictionary<
-            (Vector2Int,Direction),((Vector2Int,Direction),RobotDoing)
-            > m_pathDict;
-
-        private Queue<(Vector2Int,Direction)> m_queue;
         #endregion
         
         
@@ -51,21 +46,29 @@ namespace WarehouseSimulator.Model.Sim
         /// <returns></returns>
         private Stack<RobotDoing> GetInstructions(Vector2Int start, Vector2Int finish, Direction facing)
         {
+            Dictionary<
+                (Vector2Int,Direction)
+                ,
+                ((Vector2Int,Direction),RobotDoing)> 
+                pathDict;
+            
+            Queue<(Vector2Int,Direction)> dfsQueue;
+            
             bool is_finish_found = false;
             
             Stack<RobotDoing> instructions = new();
-            m_pathDict = new();
-            m_queue = new();
+            pathDict = new();
+            dfsQueue = new();
 
-            m_pathDict[(start, facing)] = ((Vector2Int.zero, Direction.North), RobotDoing.Wait); //Arbitrary value
-            m_queue.Enqueue((start,facing));
+            pathDict[(start, facing)] = ((Vector2Int.zero, Direction.North), RobotDoing.Wait); //Arbitrary value
+            dfsQueue.Enqueue((start,facing));
             
 
             (var currentNode,var currentDir) = (Vector2Int.zero, Direction.North);
             //Find finish
-            while (m_queue.Count > 0)
+            while (dfsQueue.Count > 0)
             {
-                (currentNode,currentDir) = m_queue.Dequeue();
+                (currentNode,currentDir) = dfsQueue.Dequeue();
                 if (currentNode == finish)
                 {
                     is_finish_found = true;
@@ -77,7 +80,7 @@ namespace WarehouseSimulator.Model.Sim
                     switch (inst)
                     {
                         case RobotDoing.Forward:
-                            if (!m_pathDict.Keys.ToList().Exists(p => p.Item1 == node )) //Never move forward to an already trod path
+                            if (!pathDict.Keys.ToList().Exists(p => p.Item1 == node )) //Never move forward to an already trod path
                             {
 
                                 if (m_map.GetTileAt(node) == TileType.Wall)
@@ -86,19 +89,18 @@ namespace WarehouseSimulator.Model.Sim
                                 }
                                 else
                                 {
-                                    m_pathDict[(node, dir)] = ((currentNode, currentDir),inst);
-                                    m_queue.Enqueue((node, dir));
+                                    pathDict[(node, dir)] = ((currentNode, currentDir),inst);
+                                    dfsQueue.Enqueue((node, dir));
                                 }
                                 
                             }
 
                             break;
                         default:
-                            if (!m_pathDict.ContainsKey((node, dir))) //Never turn more than it's needed AKA 4 times
+                            if (!pathDict.ContainsKey((node, dir))) //Never turn more than it's needed AKA 4 times
                             {
-                                Debug.Log("First time here?");
-                                m_pathDict[(node, dir)] = ((currentNode, currentDir),inst);
-                                m_queue.Enqueue((node, dir));
+                                pathDict[(node, dir)] = ((currentNode, currentDir),inst);
+                                dfsQueue.Enqueue((node, dir));
                             }
 
                             break;
@@ -120,8 +122,8 @@ namespace WarehouseSimulator.Model.Sim
             while ((currentNode,currentDir) != (start,facing))
             {
                     
-                instructions.Push(m_pathDict[(currentNode, currentDir)].Item2);
-                (currentNode, currentDir) = m_pathDict[(currentNode, currentDir)].Item1;
+                instructions.Push(pathDict[(currentNode, currentDir)].Item2);
+                (currentNode, currentDir) = pathDict[(currentNode, currentDir)].Item1;
             }
 
             return instructions;
