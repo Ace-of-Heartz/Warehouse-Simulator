@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -42,42 +44,43 @@ namespace WarehouseSimulator.Model.Sim
             {
                 if(actions.Count == 0) continue;
                 var a = actions.Pop();
-                robot.TryPerformActionRequestedAsync(a, map);
+                robot.TryPerformActionRequested(a, map);
                 robot.MakeStep(map);
             }
         }
+        
 
-        public void PlanNextMoves(Map map)
+        public void PlanNextMovesForAll(Map map)
         {
             var robots = plannedActions.Keys.ToList();
+            
+            //TODO: Make async
             foreach (var robot in robots)
             {
-                var q = new Stack<RobotDoing>();
-                q.Push(RobotDoing.Timeout);
-                plannedActions[robot] = q;
-            }
-
-            Stack<RobotDoing> plannedActionsForRobot;
-            foreach (var robot in robots)
-            {
-                if (robot.Goal == null)
-                    continue;
-
-                plannedActionsForRobot = m_pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading);
-                plannedActions[robot] = plannedActionsForRobot;
-
-
-
+                PlanNextMoves(map,robot);
             }
             
-            
-            
-            //TODO: make async
-            // random moves for now
-            // foreach (var robot in robots)
-            // {
-            //     plannedActions[robot] = (RobotDoing) new Random().Next(0, 4);
-            // }
         }
+
+        public void PlanNextMoves(Map map,SimRobot robot)
+        {
+            //TODO: Calc how many waits we need for one request
+
+            if (plannedActions[robot] == null)
+            {
+                plannedActions[robot] = new Stack<RobotDoing>();
+            }
+            
+            if (robot.Goal == null)
+            {
+                plannedActions[robot].Push(RobotDoing.Wait);
+            }
+            else
+            {
+                plannedActions[robot] = m_pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading);
+            }
+        }
+
+        
     }
 }

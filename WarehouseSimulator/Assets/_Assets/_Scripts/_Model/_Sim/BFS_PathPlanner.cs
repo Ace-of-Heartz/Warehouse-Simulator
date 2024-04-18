@@ -73,10 +73,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
                 foreach((var node,var dir,var inst) in GetNeighbouringNodes(currentNode,currentDir))
                 {
-                    Debug.Log("---------------");
-                    Debug.Log("\tNode:" + node);
-                    Debug.Log("\tDir:" + dir);
-                    Debug.Log("\tInst:" + inst);
+
                     switch (inst)
                     {
                         case RobotDoing.Forward:
@@ -85,7 +82,6 @@ namespace WarehouseSimulator.Model.Sim
 
                                 if (m_map.GetTileAt(node) == TileType.Wall)
                                 {
-                                    Debug.Log("Wall at: " + node);
                                     break; // Don't move into a wall
                                 }
                                 else
@@ -124,14 +120,9 @@ namespace WarehouseSimulator.Model.Sim
             while ((currentNode,currentDir) != (start,facing))
             {
                     
-                Debug.Log(m_map.GetTileAt(currentNode));
-                Debug.Log(currentNode);
-                Debug.Log(currentDir);
                 instructions.Push(m_pathDict[(currentNode, currentDir)].Item2);
-                Debug.Log(instructions.Peek());
                 (currentNode, currentDir) = m_pathDict[(currentNode, currentDir)].Item1;
             }
-            Debug.Log("---------------------------------------------");
 
             return instructions;
         }

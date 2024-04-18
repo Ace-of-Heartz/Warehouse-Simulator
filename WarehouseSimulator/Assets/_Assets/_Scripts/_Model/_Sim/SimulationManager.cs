@@ -52,7 +52,7 @@ namespace WarehouseSimulator.Model.Sim
             
             _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
             centralController.Preprocess(map);
-            centralController.PlanNextMoves(map);
+            centralController.PlanNextMovesForAll(map);
         }
         
         public void Tick()
