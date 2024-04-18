@@ -8,6 +8,8 @@ namespace WarehouseSimulator.Model.PB
     public class PbGoalManager
     {
         private Dictionary<int,PbGoal> _allGoals;
+        
+        public event EventHandler<GoalAssignedEventArgs>? GoalAssignedEvent;
 
         public PbGoalManager()
         {
@@ -21,6 +23,7 @@ namespace WarehouseSimulator.Model.PB
             {
                 var nextGoal = new PbGoal(nextid, new Vector2Int(task.X, task.Y));
                 _allGoals.Add(nextid,nextGoal);
+                GoalAssignedEvent?.Invoke(this, new GoalAssignedEventArgs(nextGoal));
                 nextid++;
             }
             
