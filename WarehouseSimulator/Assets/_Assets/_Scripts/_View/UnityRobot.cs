@@ -37,12 +37,6 @@ namespace WarehouseSimulator.View
             get => m_robotData;
         }
         #endregion
-        
-        // Start is called before the first frame update
-        void Start()
-        {
-            //Do we even need this blaaa?
-        }
 
         // Update is called once per frame
         void Update()
@@ -84,7 +78,5 @@ namespace WarehouseSimulator.View
             id.text = _roboModel.Id.ToString();
             m_robotData = _roboModel.RobotData;
         }
-
-    
     }
 }    
