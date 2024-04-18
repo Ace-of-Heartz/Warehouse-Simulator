@@ -101,7 +101,7 @@ namespace WarehouseSimulator.Model.Sim
             //     if (!robie.TryPerformActionRequested(what, mapie)) return false; //TODO => Blaaa: Async?
             // }
             
-            var tasks = actions.Select(async tuple => await Task.FromResult(tuple.robie.TryPerformActionRequestedAsync(tuple.action, mapie)));
+            var tasks = actions.Select(async tuple => await Task.FromResult(tuple.robie.TryPerformActionRequested(tuple.action, mapie)));
             (bool success, SimRobot? whoTripped)[]? results = await Task.WhenAll(tasks);
 
             SimRobot? hitter = null;
