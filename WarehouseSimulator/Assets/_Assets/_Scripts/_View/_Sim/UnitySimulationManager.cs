@@ -5,6 +5,7 @@ using UnityEngine;
 using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model.Sim;
+using WarehouseSimulator.Model;
 using WarehouseSimulator.View.MainMenu;
 
 namespace WarehouseSimulator.View.Sim
@@ -71,18 +72,30 @@ namespace WarehouseSimulator.View.Sim
 
         private void AddUnitySimRobot(object sender, RobotCreatedEventArgs e)
         {
-            Debug.Log("Robot added to UnitySimulationManager. ID:" + e.SimRobot.Id);
-            GameObject rob  = Instantiate(robie);
-            UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
-            robieManager.MyThingies(e.SimRobot,unityMap,simulationManager.StepTime);
+            if (e.Robot is SimRobot simRobie)
+            {
+                Debug.Log("Robot added to UnitySimulationManager. ID:" + simRobie.Id);
+                GameObject rob  = Instantiate(robie);
+                UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
+                robieManager.MyThingies(simRobie,unityMap,simulationManager.StepTime);
+            }
+            else
+            {
+                #if DEBUG
+                throw new ArgumentException("Nagyon rossz robotot adtunk át a UnitySimulationManager-nek");
+                #endif
+            }
         }
         
         private void AddUnityGoal(object sender, GoalAssignedEventArgs e)
         {
-            Debug.Log("Robot added to UnitySimulationManager. ID:" + e.SimGoal.SimRobot.Id);
-            GameObject gooo = Instantiate(golie);
-            UnityGoal golieMan = gooo.GetComponent<UnityGoal>();
-            golieMan.GiveGoalModel(e.SimGoal,unityMap);
+            if (e.Goal is SimGoal simGolie)
+            {
+                Debug.Log("Robot added to UnitySimulationManager. ID:" + simGolie.SimRobot.Id);
+                GameObject gooo = Instantiate(golie);
+                UnityGoal golieMan = gooo.GetComponent<UnityGoal>();
+                golieMan.GiveGoalModel(simGolie,unityMap);
+            }
         }
     }   
 }
