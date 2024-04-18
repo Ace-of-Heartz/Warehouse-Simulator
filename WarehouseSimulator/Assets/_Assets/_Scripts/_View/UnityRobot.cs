@@ -69,11 +69,10 @@ namespace WarehouseSimulator.View
                     break;
                 case Direction.West:
                     _texture.transform.rotation = Quaternion.Euler(0, 0, 90);
-                    
+
 
                     break;
             }
-            
         }
 
         public void MyThingies(SimRobot dis, UnityMap dat, float speedMultiplier)

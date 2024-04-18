@@ -48,18 +48,13 @@ namespace WarehouseSimulator.Model.Sim
                     {
                         //TODO => Blaaa: CC react and LOG
                         return (false, this);
-                        //return ((false, this));
-                    }
-                    // else if (mapie.GetTileAt(nextPos) == TileType.RoboOccupied)
-                    // {
-                    //     //TODO => Blaaa: CC react and LOG
-                    // }
+                    } 
                     break;
                 case (RobotDoing.Rotate90):
-                    RobotData.m_heading = (Direction)(((int)RobotData.m_heading + 1) % 4);
+                    RobotData.m_heading = (Direction)(((int)RobotData.m_heading - 1) % 4);
                     break;
                 case (RobotDoing.RotateNeg90):
-                    RobotData.m_heading = (Direction)(((int)RobotData.m_heading - 1) % 4);
+                    RobotData.m_heading = (Direction)(((int)RobotData.m_heading + 1) % 4);
                     break;
             }
 
