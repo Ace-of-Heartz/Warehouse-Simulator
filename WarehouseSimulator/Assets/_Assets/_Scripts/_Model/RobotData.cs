@@ -1,7 +1,6 @@
 ﻿using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
-using WarehouseSimulator.Model.Sim;
 
 
 namespace WarehouseSimulator.Model
@@ -14,5 +13,6 @@ namespace WarehouseSimulator.Model
         public Direction m_heading;
         [CanBeNull] public GoalLike m_goal;
         public RobotBeing m_state;
+        
     }
 }

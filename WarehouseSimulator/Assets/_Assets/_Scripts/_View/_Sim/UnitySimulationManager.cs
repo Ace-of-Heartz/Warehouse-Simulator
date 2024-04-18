@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model.Sim;
 using WarehouseSimulator.View.MainMenu;

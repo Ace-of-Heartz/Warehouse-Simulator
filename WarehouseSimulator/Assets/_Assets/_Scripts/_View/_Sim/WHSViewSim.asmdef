@@ -1,0 +1,10 @@
+﻿{
+  "name": "WHSViewSim",
+  "references": [
+    "WarehouseSimulatorModel",
+    "WHSModelSim",
+    "WHSModelEnum",
+    "WarehouseSimulatorView",
+    "WHSViewMainMenu"
+  ]
+}
