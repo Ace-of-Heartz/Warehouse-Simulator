@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -7,7 +9,7 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class CentralController
     {
-        private Dictionary<SimRobot, Queue<RobotDoing>> plannedActions;
+        private Dictionary<SimRobot, Stack<RobotDoing>> plannedActions;
 
         private IPathPlanner m_pathPlanner;
         
@@ -23,8 +25,8 @@ namespace WarehouseSimulator.Model.Sim
         
         public void AddRobotToPlanner(SimRobot simRobot)
         {
-            var q = new Queue<RobotDoing>();
-            q.Enqueue(RobotDoing.Wait);
+            var q = new Stack<RobotDoing>();
+            q.Push(RobotDoing.Wait);
             plannedActions.Add(simRobot, q);
         }
         
@@ -41,63 +43,44 @@ namespace WarehouseSimulator.Model.Sim
             foreach (var (robot, actions) in plannedActions)
             {
                 if(actions.Count == 0) continue;
-                var a = actions.Dequeue();
+                var a = actions.Pop();
                 robot.TryPerformActionRequested(a, map);
                 robot.MakeStep(map);
             }
         }
+        
 
-        public void PlanNextMoves(Map map)
+        public void PlanNextMovesForAll(Map map)
         {
             var robots = plannedActions.Keys.ToList();
+            
+            //TODO: Make async
             foreach (var robot in robots)
             {
-                var q = new Queue<RobotDoing>();
-                q.Enqueue(RobotDoing.Timeout);
-                plannedActions[robot] = q;
-            }
-
-            List<RobotDoing> plannedActionsForRobot;
-            foreach (var robot in robots)
-            {
-                Debug.Log(robot.Heading);
-                //Robot starting point
-                Debug.Log(robot.GridPosition);
-                //Robot ending point
-                Debug.Log(robot.Goal.GridPosition);
-                //Robot planned actions
-                plannedActionsForRobot = m_pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading).Result;
-                plannedActions[robot] = new Queue<RobotDoing>(plannedActionsForRobot);
-
-                foreach (var a in plannedActionsForRobot)
-                {
-                    switch (a)
-                    {
-                        case RobotDoing.Forward:
-                            Debug.Log("Moving forward.");
-                            break;
-                        case RobotDoing.Rotate90:
-                            Debug.Log("Rotating clockwise.");
-                            break;
-                        case RobotDoing.RotateNeg90:
-                            Debug.Log("Rotating counter-clockwise.");
-                            break;
-                        default:
-                            Debug.Log("Doing something sus.");
-                            break;
-                    }
-                }
-                
+                PlanNextMoves(map,robot);
             }
             
-            
-            
-            //TODO: make async
-            // random moves for now
-            // foreach (var robot in robots)
-            // {
-            //     plannedActions[robot] = (RobotDoing) new Random().Next(0, 4);
-            // }
         }
+
+        public void PlanNextMoves(Map map,SimRobot robot)
+        {
+            //TODO: Calc how many waits we need for one request
+
+            if (plannedActions[robot] == null)
+            {
+                plannedActions[robot] = new Stack<RobotDoing>();
+            }
+            
+            if (robot.Goal == null)
+            {
+                plannedActions[robot].Push(RobotDoing.Wait);
+            }
+            else
+            {
+                plannedActions[robot] = m_pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading);
+            }
+        }
+
+        
     }
 }

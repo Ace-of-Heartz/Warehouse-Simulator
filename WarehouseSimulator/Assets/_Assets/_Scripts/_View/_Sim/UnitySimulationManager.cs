@@ -32,8 +32,10 @@ namespace WarehouseSimulator.View.Sim
             simulationManager.SimRobotManager.GoalAssignedEvent += AddUnityGoal;
             if (DebugMode)
             {
-                DebugSetup();
-                simulationManager.Setup(debugSimInputArgs);
+                simulationManager.Setup(MainMenuManager.simInputArgs); 
+
+                // DebugSetup();
+                // simulationManager.Setup(debugSimInputArgs);
             }
             else
                 simulationManager.Setup(MainMenuManager.simInputArgs);
