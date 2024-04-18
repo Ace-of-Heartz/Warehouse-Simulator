@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model.Structs;
 
@@ -10,7 +12,7 @@ namespace WarehouseSimulator.Model.Sim
     {
         private static CustomLog instance;
         public static CustomLog Instance => instance ??= new CustomLog();
-        private CustomLog() {}
+        private CustomLog() { Init(); }
         
         
         private string actionModel = null;
@@ -44,21 +46,22 @@ namespace WarehouseSimulator.Model.Sim
             taskData = new List<TaskInfo>();
         }
 
+        
         //CAUTION: NOT YET FINISHED
-        public void SaveLog()
+        public void SaveLog(string path)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("{");
 
             //actionModel
-            sb.Append($"\"actionModel\":\"{actionModel}\"");
+            sb.Append($"\"actionModel\":\"{actionModel}\",");
             //allValid
             string valid = allValid ? "true" : "false";
-            sb.Append($",\"allValid\":{valid}");
+            sb.Append($"\"allValid\":{valid},");
             //teamSIze
-            sb.Append($",\"teamSize\":{teamSize}");
+            sb.Append($"\"teamSize\":{teamSize},");
             //start(robot start positions)
-            sb.Append(",\"start\":[");
+            sb.Append("\"start\":[");
             for (int i = 0; i < startPos.Count; i++)
             {
                 string heading = "";
@@ -81,42 +84,42 @@ namespace WarehouseSimulator.Model.Sim
                 if (i != startPos.Count - 1)
                     sb.Append(",");
             }
-            sb.Append("]");
+            sb.Append("],");
             //numTasksFinished
-            sb.Append($",\"numTasksFinished\":{taskCompletedCount}");
+            sb.Append($"\"numTasksFinished\":{taskCompletedCount},");
             //sumOfCosts
-            sb.Append($",\"sumOfCosts\":{sumOfCost}");
+            sb.Append($"\"sumOfCosts\":{sumOfCost},");
             //makespan
-            sb.Append($",\"makespan\":{makespan}");
+            sb.Append($"\"makespan\":{makespan},");
             //actualPaths
-            sb.Append(",\"actualPaths\":[");
+            sb.Append("\"actualPaths\":[");
             for (int i = 0; i < teamSize; i++)
             {
                 sb.Append($"\"{robotActions[i]}\"");
                 if (i != teamSize - 1)
                     sb.Append(",");
             }
-            sb.Append("]");
+            sb.Append("],");
             //plannerPaths
-            sb.Append("],\"plannerPaths\":[");
+            sb.Append("\"plannerPaths\":[");
             for (int i = 0; i < teamSize; i++)
             {
                 sb.Append($"\"{plannerActions[i]}\"");
                 if (i != teamSize - 1)
                     sb.Append(",");
             }
-            sb.Append("]");
+            sb.Append("],");
             //errors
-            sb.Append(",\"errors\":[");
+            sb.Append("\"errors\":[");
             for (int i = 0; i < errors.Count; i++)
             {
                 sb.Append($"[{errors[i].robot1},{errors[i].robot2},{errors[i].step},\"{errors[i].action}\"]");
                 if (i != errors.Count - 1)
                     sb.Append(",");
             }
-            sb.Append("]");
+            sb.Append("],");
             //events
-            sb.Append(",\"events\":[");
+            sb.Append("\"events\":[");
             for (int i = 0; i < teamSize; i++)
             {
                 sb.Append("[");
@@ -130,9 +133,9 @@ namespace WarehouseSimulator.Model.Sim
                 if (i != teamSize - 1)
                     sb.Append(",");
             }
-            sb.Append("]");
+            sb.Append("],");
             //tasks(task spawn and id)
-            sb.Append(",\"tasks\":[");
+            sb.Append("\"tasks\":[");
             for (int i = 0; i < taskData.Count; i++)
             {
                 sb.Append($"[{taskData[i].Task},{taskData[i].X},{taskData[i].Y}]");
@@ -143,7 +146,8 @@ namespace WarehouseSimulator.Model.Sim
             sb.Append("}");
 
             String json = sb.ToString();
-            //TODO: WRITE TO FILE
+            using StreamWriter writer = new StreamWriter(path);
+            writer.Write(json);
         }
         
         public void SetActionModel(string actionModel)

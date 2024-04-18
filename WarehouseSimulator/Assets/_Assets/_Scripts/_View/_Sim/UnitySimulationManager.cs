@@ -62,7 +62,7 @@ namespace WarehouseSimulator.View.Sim
             debugSimInputArgs.PreparationTime = 1;
             debugSimInputArgs.IntervalOfSteps = 3;
             debugSimInputArgs.NumberOfSteps = 100;
-            debugSimInputArgs.EventLogPath = "/Users/gergogalig/log.log";
+            debugSimInputArgs.EventLogPath = "/Users/gergogalig/Desktop/log.log";
             debugSimInputArgs.SearchAlgorithm = SEARCH_ALGORITHM.BFS;
         }
 
