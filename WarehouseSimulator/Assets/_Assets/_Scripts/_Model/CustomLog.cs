@@ -46,6 +46,39 @@ namespace WarehouseSimulator.Model.Sim
             taskData = new List<TaskInfo>();
         }
 
+        public void DummyData()
+        {
+            actionModel = "cica";
+            allValid = false;
+            teamSize = 2;
+            startPos = new List<RobotStartPos>();
+            startPos.Add(new RobotStartPos(5, 5, Direction.North));
+            startPos.Add(new RobotStartPos(1, 0, Direction.West));
+            taskCompletedCount = 2;
+            sumOfCost = 10;
+            makespan = 10;
+            robotActions = new Dictionary<int, String>();
+            robotActions.Add(0, "FFRRFFLLFF");
+            robotActions.Add(1, "FFRRFFLLFF");
+            plannerActions = new Dictionary<int, String>();
+            plannerActions.Add(0, "FFRRFFLLFF");
+            plannerActions.Add(1, "FFRRFFLLFF");
+            plannerTimes = new List<double>();
+            plannerTimes.Add(0.1);
+            plannerTimes.Add(0.1);
+            errors = new List<LogError>();
+            errors.Add(new LogError(0, 1, 5, "F"));
+            taskEvents = new Dictionary<int, List<EventInfo>>();
+            taskEvents.Add(0, new List<EventInfo>());
+            taskEvents[0].Add(new EventInfo(0, 0, "spawned"));
+            taskEvents[0].Add(new EventInfo(0, 1, "finished"));
+            taskEvents.Add(1, new List<EventInfo>());
+            taskEvents[1].Add(new EventInfo(1, 0, "spawned"));
+            taskEvents[1].Add(new EventInfo(1, 1, "finished"));
+            taskData = new List<TaskInfo>();
+            taskData.Add(new TaskInfo(0, 0, 0));
+            taskData.Add(new TaskInfo(1, 15, 8));
+        }
         
         //CAUTION: NOT YET FINISHED
         public void SaveLog(string path)
