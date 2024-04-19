@@ -54,7 +54,7 @@ namespace WarehouseSimulator.Model.Sim
                 throw new InvalidFileException("Invalid file format: First line not a number");
             }
 
-            int nextid = 0;
+            int nextid = 1;
             for (int i = 0; i < robn; i++)
             {   
                 string? line = rid.ReadLine();

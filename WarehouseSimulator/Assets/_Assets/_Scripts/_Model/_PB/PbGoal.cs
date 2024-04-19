@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace WarehouseSimulator.Model.PB
@@ -8,18 +10,15 @@ namespace WarehouseSimulator.Model.PB
     {
         private int _aliveFrom;
         private int _aliveTo;
-        private bool _currentlyAlive;
         private int _roboId;
+        private bool _currentlyAlive;
 
         #region Properties
 
         public Vector2Int GridPos => GoalData.m_gridPosition;
-
-        public int AliveFrom => _aliveFrom;
     
         public int AliveTo
         {
-            get => _aliveTo;
             set
             {
                 if (_aliveTo == -1)
@@ -33,14 +32,16 @@ namespace WarehouseSimulator.Model.PB
             }
         }
 
-        public bool IsAlive => _currentlyAlive;
-
         public int RoboNumber => _roboId;
 
         public int SelfId => GoalData.m_id;
+
+        public bool CurrentlyAlive => _currentlyAlive;
         
         #endregion
 
+        [CanBeNull] public event EventHandler jesusEvent;
+        
         public PbGoal(int selfId, Vector2Int gridPos, bool currentlyAlive = false) : base(selfId,gridPos)
         {
             _aliveFrom = _aliveTo = _roboId = -1;
@@ -51,8 +52,21 @@ namespace WarehouseSimulator.Model.PB
         {
             if (step > _aliveTo || step < _aliveFrom)
             {
-                _currentlyAlive = false;
+                if (_currentlyAlive)
+                {
+                    _currentlyAlive = false;
+                    jesusEvent?.Invoke(this,EventArgs.Empty);
+                }
             }
+            else
+            {
+                if (!_currentlyAlive)
+                {
+                    _currentlyAlive = true;
+                    jesusEvent?.Invoke(this, EventArgs.Empty);
+                }
+            }
+            
         }
 
         public void SetAliveFrom(int from, int roboId)
