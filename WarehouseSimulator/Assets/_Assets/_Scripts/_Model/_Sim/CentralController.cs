@@ -10,13 +10,18 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class CentralController
     {
+        
+        #region Fields
         private Dictionary<SimRobot, Stack<RobotDoing>> _plannedActions;
 
         private IPathPlanner _pathPlanner;
+
+        private Task taskBeforeNextStep;
+        
         
         private bool _isPreprocessDone;
         private bool _isPathPlanningDone;
-
+        #endregion
 
         public bool IsPathPlanningDone
         {
@@ -48,7 +53,11 @@ namespace WarehouseSimulator.Model.Sim
 
         public void TimeToMove(Map map)
         {
-            //TODO: abort planNextMoves if still in progress
+            if (!(IsPathPlanningDone || IsPreprocessDone))
+            {
+                Debug.Log("Processes not finished until next step. Timeout sent.");
+                //TODO: Send Timeout
+            }
             foreach (var (robot, actions) in _plannedActions)
             {
                 if(actions.Count == 0) continue;
@@ -61,7 +70,7 @@ namespace WarehouseSimulator.Model.Sim
         public async void PlanNextMovesForRobotAsync(Map map, SimRobot robot)
         {
             IsPathPlanningDone = false;
-            await PlanNextMoves(map,robot);
+            taskBeforeNextStep = PlanNextMoves(map, robot);
             IsPathPlanningDone = true;
         }
         
@@ -80,8 +89,8 @@ namespace WarehouseSimulator.Model.Sim
                 tasks.Add(PlanNextMoves(map,robot));
             }
 
-            Task t = Task.WhenAll(tasks);
-            await t;
+            taskBeforeNextStep = Task.WhenAll(tasks);
+            await taskBeforeNextStep;
             
             IsPathPlanningDone = true;
 
