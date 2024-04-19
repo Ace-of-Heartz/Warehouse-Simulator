@@ -59,7 +59,7 @@ namespace WarehouseSimulator.Model.Sim
                     } 
                     break;
                 case (RobotDoing.Rotate90):
-                    RobotData.m_heading = (Direction)(((int)RobotData.m_heading - 1) % 4);
+                    RobotData.m_heading = (Direction)( (((int)RobotData.m_heading - 1)+4) % 4);
                     break;
                 case (RobotDoing.RotateNeg90):
                     RobotData.m_heading = (Direction)(((int)RobotData.m_heading + 1) % 4);
