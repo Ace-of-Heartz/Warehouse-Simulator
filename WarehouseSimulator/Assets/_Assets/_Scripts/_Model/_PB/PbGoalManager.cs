@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model.Structs;
 
@@ -9,7 +10,7 @@ namespace WarehouseSimulator.Model.PB
     {
         private Dictionary<int,PbGoal> _allGoals;
         
-        public event EventHandler<GoalAssignedEventArgs>? GoalAssignedEvent;
+        [CanBeNull] public event EventHandler<GoalAssignedEventArgs> GoalAssignedEvent;
 
         public PbGoalManager()
         {
