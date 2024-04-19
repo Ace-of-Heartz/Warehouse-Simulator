@@ -36,7 +36,13 @@ namespace WarehouseSimulator.Model.Sim
             centralController = new CentralController(map);
             
             //event for adding robot to path planning
-            _simRobotManager.RobotAddedEvent += (sender, args) => centralController.AddRobotToPlanner(args.SimRobot);
+            _simRobotManager.RobotAddedEvent += (sender, args) =>
+            {
+                if (args.Robot is SimRobot robie)
+                {
+                    centralController.AddRobotToPlanner(robie);
+                }
+            };
         }
         
         public void Setup(SimInputArgs simulationArgs)
