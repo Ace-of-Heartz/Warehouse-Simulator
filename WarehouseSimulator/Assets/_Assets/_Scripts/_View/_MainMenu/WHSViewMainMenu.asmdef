@@ -1,0 +1,10 @@
+﻿{
+  "name": "WHSViewMainMenu",
+  "references": [
+    "WarehouseSimulatorModel",
+    "WHSModelEnum",
+    "WarehouseSimulatorView",
+    "SimpleFileBrowser.Runtime",
+    "Unity.TextMeshPro"
+  ]
+}

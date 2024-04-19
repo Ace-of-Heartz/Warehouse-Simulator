@@ -23,7 +23,12 @@ namespace WarehouseSimulator.View
             //Do we even need this blaaa?
         }
 
-        public void GiveGoalModel(SimGoal g, UnityMap dis)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="dis"></param>
+        public void GiveGoalModel(SimGoal g, UnityMap dis) //TODO: Are we sure that SimGoal is what we need?
         {
             _goalModel = g;
             _mapie = dis;

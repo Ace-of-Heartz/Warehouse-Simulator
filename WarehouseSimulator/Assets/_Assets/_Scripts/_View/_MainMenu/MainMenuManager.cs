@@ -8,8 +8,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
-using WarehouseSimulator.View.Sim;  
 
 namespace WarehouseSimulator.View.MainMenu {
 public class MainMenuManager : MonoBehaviour

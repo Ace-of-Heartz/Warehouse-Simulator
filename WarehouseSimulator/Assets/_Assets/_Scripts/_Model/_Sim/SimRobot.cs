@@ -10,9 +10,17 @@ namespace WarehouseSimulator.Model.Sim
     {
         private Vector2Int _nextPos;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="i">ID of robot</param>
+        /// <param name="gridPos">Initial position of robot</param>
+        /// <param name="heading">Initial direction of robot</param>
+        /// <param name="goal">Goal assigned to robot</param>
+        /// <param name="state">Initial state of robot</param>
         public SimRobot(int i,
             Vector2Int gridPos,
-            Direction heading = Direction.North,
+            WarehouseSimulator.Model.Enums.Direction heading = Direction.North,
             SimGoal? goal = null,
             RobotBeing state = RobotBeing.Free)
                 : base(i, gridPos, heading, state, goal)

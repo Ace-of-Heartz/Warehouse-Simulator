@@ -1,6 +1,6 @@
 ﻿using WarehouseSimulator.Model.Enums;
 
-namespace WarehouseSimulator.View.MainMenu
+namespace WarehouseSimulator.Model
 {
     public struct SimInputArgs
     {
