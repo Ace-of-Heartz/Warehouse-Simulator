@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
+using WarehouseSimulator.Model;
 
 namespace WarehouseSimulator.Model.Sim
 {
@@ -29,20 +30,29 @@ namespace WarehouseSimulator.Model.Sim
 
         public Vector2Int NextPos => _nextPos;
         
-        public void AssignGoal(SimGoal goTo)
+        public void AssignGoal(SimGoal? goTo)
         {
-            if (State == RobotBeing.Free)
+            if (goTo is null)
             {
-                goTo.AssignedTo(this);
-                Goal = goTo;
-                RobotData.m_state = RobotBeing.InTask;
+                #if DEBUG
+                    throw new ArgumentException("The robot assigned cannot be null or PBRobot!");
+                #endif
             }
             else
             {
-                #if DEBUG
-                    throw new Exception($"The robot {Id} is already doing a task, you cannot assign another goal to it");
-                #endif
+                if (State == RobotBeing.Free)
+                {
+                    goTo.AssignedTo(this);
+                    Goal = goTo;
+                }
+                else
+                {
+                    #if DEBUG
+                        throw new InvalidOperationException($"The robot {Id} is already doing a task, you cannot assign another goal to it");
+                    #endif
+                }
             }
+            
         }
 
         public (bool,SimRobot?) TryPerformActionRequested(RobotDoing watt, Map mapie)
@@ -90,13 +100,11 @@ namespace WarehouseSimulator.Model.Sim
         
         private void GoalCompleted()
         {
-            if (Goal is SimGoal)
-            {
-                var bla = (SimGoal)Goal;
-                bla.FinishTask();
+            if (Goal is SimGoal simgolie)
+            { 
+                simgolie.FinishTask();
+                Goal = null;
             }
-            Goal = null;
-            RobotData.m_state = RobotBeing.Free;
         }
     }
 }
