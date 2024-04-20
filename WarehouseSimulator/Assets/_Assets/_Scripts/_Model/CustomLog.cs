@@ -21,7 +21,7 @@ namespace WarehouseSimulator.Model.Sim
         private List<RobotStartPos> startPos = null;
         private int taskCompletedCount = 0;
         private int sumOfCost = 0;
-        private int makespan = 0;
+        private int stepsCompleted = 0;
         private Dictionary<int, String> robotActions = null;
         private Dictionary<int, String> plannerActions = null;
         private List<double> plannerTimes = null;
@@ -37,7 +37,7 @@ namespace WarehouseSimulator.Model.Sim
             startPos = new List<RobotStartPos>();
             taskCompletedCount = 0;
             sumOfCost = 0;
-            makespan = 0;
+            stepsCompleted = 0;
             robotActions = new Dictionary<int, String>();
             plannerActions = new Dictionary<int, String>();
             plannerTimes = new List<double>();
@@ -56,7 +56,7 @@ namespace WarehouseSimulator.Model.Sim
             startPos.Add(new RobotStartPos(1, 0, Direction.West));
             taskCompletedCount = 2;
             sumOfCost = 10;
-            makespan = 10;
+            stepsCompleted = 10;
             robotActions = new Dictionary<int, String>();
             robotActions.Add(0, "FFRRFFLLFF");
             robotActions.Add(1, "FFRRFFLLFF");
@@ -122,7 +122,7 @@ namespace WarehouseSimulator.Model.Sim
             //sumOfCosts
             sb.Append($"\"sumOfCosts\":{sumOfCost},");
             //makespan
-            sb.Append($"\"makespan\":{makespan},");
+            sb.Append($"\"makespan\":{stepsCompleted},");
             //actualPaths
             sb.Append("\"actualPaths\":[");
             for (int i = 0; i < teamSize; i++)
@@ -253,7 +253,7 @@ namespace WarehouseSimulator.Model.Sim
             }
             taskCompletedCount = int.Parse(keyValueDict["numTasksFinished"]);
             sumOfCost = int.Parse(keyValueDict["sumOfCosts"]);
-            makespan = int.Parse(keyValueDict["makespan"]);
+            stepsCompleted = int.Parse(keyValueDict["makespan"]);
             string[] actualPaths = keyValueDict["actualPaths"].Trim('[').Trim(']').Replace("\"", "").Split(",");
             for (int i = 0; i < teamSize; i++)
             {
@@ -346,11 +346,11 @@ namespace WarehouseSimulator.Model.Sim
             teamSize++;
         }
         
-        public void TaskEvents(int robotId, int taskId, int step, string action)
+        public void AddTaskEvent(int robotId, int taskId, string action)
         {
             if(action == "finished")
                 taskCompletedCount++;
-            taskEvents[robotId].Add(new EventInfo(taskId, step, action));
+            taskEvents[robotId].Add(new EventInfo(taskId, stepsCompleted + 1, action));//assume current step to be the next step
         }
         
         public void AddTaskData(int taskId, int x, int y)
@@ -358,9 +358,9 @@ namespace WarehouseSimulator.Model.Sim
             taskData.Add(new TaskInfo(taskId, x, y));
         }
         
-        public void AddSimulationStep()
+        public void SimulationStepCompleted()
         {
-            makespan++;
+            stepsCompleted++;
         }
         
         public void AddError(int robot1, int robot2, int step, string action)
