@@ -67,7 +67,7 @@ namespace WarehouseSimulator.Model.Sim
                 throw new InvalidFileException($"Invalid file format: The number of agents (currently: {robn}) cannot be less than zero!");
             }
             
-            int nextid = 1;
+            int nextid = 0;
             for (int i = 0; i < robn; i++)
             {   
                 string? line = rid.ReadLine();

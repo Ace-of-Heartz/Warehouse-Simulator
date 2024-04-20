@@ -17,6 +17,8 @@ namespace WarehouseSimulator.Model
         public RobotData RobotData => m_robotData;
         
         public int Id => m_robotData.m_id;
+        
+        public int ShownId => m_robotData.m_id + 1;
 
         public Vector2Int GridPosition => m_robotData.m_gridPosition;
     
