@@ -42,7 +42,6 @@ namespace WarehouseSimulator.Model.Sim
 
         public void Preprocess(Map map)
         {
-            //TODO: async?
             _isPreprocessDone = true;
         }
 

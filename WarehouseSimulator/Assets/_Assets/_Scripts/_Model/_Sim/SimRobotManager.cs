@@ -105,18 +105,18 @@ namespace WarehouseSimulator.Model.Sim
         /// <exception cref="ArgumentException">Is thrown when the length of the actions array isn't valid</exception>
         ///<example>
         ///     <code>
-        ///(bool success, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
-        ///if (!results.success)
-        ///{
-        ///    //replan with the robies
-        ///}
-        ///else
-        ///{
-        ///     foreach (SimRobot robie in _plannedActions.Keys)
-        ///     {
-        ///         robie.MakeStep(map);
-        ///     }
-        ///}
+        ///         (bool success, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
+        ///         if (!results.success)
+        ///         {
+        ///             //replan with the robies
+        ///         }
+        ///         else
+        ///         {
+        ///              foreach (SimRobot robie in _plannedActions.Keys)
+        ///              {
+        ///                  robie.MakeStep(map);
+        ///              }
+        ///         }
         ///     </code>
         ///</example>
         public async Task<(bool,SimRobot?,SimRobot?)> CheckValidSteps(Dictionary<SimRobot, Stack<RobotDoing>> actions,Map mapie)
