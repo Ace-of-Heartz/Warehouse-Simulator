@@ -15,6 +15,7 @@ namespace WarehouseSimulator.Model.Sim
         private int currentStep;
 
         private SimulationData m_simulationData;
+        private string logFilePath;
         #endregion
         
         private Map map;
@@ -53,6 +54,7 @@ namespace WarehouseSimulator.Model.Sim
             maxSteps = simulationArgs.NumberOfSteps;
             stepTime = simulationArgs.IntervalOfSteps;
             preparationTime = simulationArgs.PreparationTime;
+            logFilePath = simulationArgs.EventLogPath;
             
             config = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(simulationArgs.ConfigFilePath));//todo: error handling
             config.basePath = Path.GetDirectoryName(simulationArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
