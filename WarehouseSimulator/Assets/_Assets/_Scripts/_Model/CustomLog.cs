@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
-using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model.Structs;
 
@@ -80,7 +80,6 @@ namespace WarehouseSimulator.Model.Sim
             taskData.Add(new TaskInfo(1, 15, 8));
         }
         
-        //CAUTION: NOT YET FINISHED
         public void SaveLog(string path)
         {
             StringBuilder sb = new StringBuilder();
@@ -91,7 +90,7 @@ namespace WarehouseSimulator.Model.Sim
             //allValid
             string valid = allValid ? "true" : "false";
             sb.Append($"\"allValid\":{valid},");
-            //teamSIze
+            //teamSize
             sb.Append($"\"teamSize\":{teamSize},");
             //start(robot start positions)
             sb.Append("\"start\":[");
@@ -142,6 +141,16 @@ namespace WarehouseSimulator.Model.Sim
                     sb.Append(",");
             }
             sb.Append("],");
+            //plannerTimes
+            sb.Append("\"plannerTimes\":[");
+            for (int i = 0; i < plannerTimes.Count; i++)
+            {
+                string s = plannerTimes[i].ToString(CultureInfo.InvariantCulture);
+                sb.Append(s);
+                if (i != plannerTimes.Count - 1)
+                    sb.Append(",");
+            }
+            sb.Append("],");
             //errors
             sb.Append("\"errors\":[");
             for (int i = 0; i < errors.Count; i++)
@@ -182,6 +191,146 @@ namespace WarehouseSimulator.Model.Sim
             using StreamWriter writer = new StreamWriter(path);
             writer.Write(json);
         }
+
+        public void LoadLog(string path)
+        {
+            using StreamReader reader = new StreamReader(path);
+            string jsonString = reader.ReadToEnd();
+            
+            //preprocess json
+            jsonString = jsonString.Replace(" ", "");
+            jsonString = jsonString.TrimStart('{').TrimEnd('}');
+            
+            string[] keyValCandidates = jsonString.Split(',');
+            //split properties
+            List<string> keyValuePairsList = new List<string>();
+            foreach (string candidate in keyValCandidates)
+            {
+                if (candidate.Contains(":"))
+                    keyValuePairsList.Add(candidate);
+                else
+                    keyValuePairsList[^1] += "," + candidate;
+            }
+            
+            //make key-value dictionary
+            Dictionary<string, string> keyValueDict = new Dictionary<string, string>();
+            foreach (string keyValuePair in keyValuePairsList)
+            {
+                string[] parts = keyValuePair.Split(':');
+                string key = parts[0].Trim('"');
+                string value = parts[1];
+                keyValueDict.Add(key, value);
+            }
+            
+            //parse values
+            Init();
+            actionModel = keyValueDict["actionModel"].Trim('"');
+            allValid = keyValueDict["allValid"].Trim('"') == "true";
+            teamSize = int.Parse(keyValueDict["teamSize"]);
+            string[] start = keyValueDict["start"].Trim('[').Trim(']').Split("],[");
+            foreach (string s in start)
+            {
+                string[] parts = s.Split(',');
+                int x = int.Parse(parts[0]);
+                int y = int.Parse(parts[1]);
+                Direction heading = Direction.North;
+                switch (parts[2].Trim('"'))
+                {
+                    case "N":
+                        heading = Direction.North;
+                        break;
+                    case "E":
+                        heading = Direction.East;
+                        break;
+                    case "S":
+                        heading = Direction.South;
+                        break;
+                    case "W":
+                        heading = Direction.West;
+                        break;
+                }
+                startPos.Add(new RobotStartPos(x, y, heading));
+            }
+            taskCompletedCount = int.Parse(keyValueDict["numTasksFinished"]);
+            sumOfCost = int.Parse(keyValueDict["sumOfCosts"]);
+            makespan = int.Parse(keyValueDict["makespan"]);
+            string[] actualPaths = keyValueDict["actualPaths"].Trim('[').Trim(']').Replace("\"", "").Split(",");
+            for (int i = 0; i < teamSize; i++)
+            {
+                robotActions.Add(i, actualPaths[i]);
+            }
+            string[] plannerPaths = keyValueDict["plannerPaths"].Trim('[').Trim(']').Replace("\"", "").Split(",");
+            for (int i = 0; i < teamSize; i++)
+            {
+                plannerActions.Add(i, plannerPaths[i]);
+            }
+            string[] plannerTimesStr = keyValueDict["plannerTimes"].Trim('[').Trim(']').Split(",");
+            foreach (string s in plannerTimesStr)
+            {
+                plannerTimes.Add(double.Parse(s, CultureInfo.InvariantCulture));
+            }
+            string[] errorsStr = keyValueDict["errors"].Trim('[').Trim(']').Split("],[");
+            foreach (string s in errorsStr)
+            {
+                if (s == "") break;//empty list
+                string[] parts = s.Split(',');
+                int robot1 = int.Parse(parts[0]);
+                int robot2 = int.Parse(parts[1]);
+                int step = int.Parse(parts[2]);
+                string action = parts[3].Trim('"');
+                errors.Add(new LogError(robot1, robot2, step, action));
+            }
+            string eventS = keyValueDict["events"];
+            if (eventS[0] == '[' && eventS[^1] == ']')
+                eventS = eventS.Substring(1, eventS.Length - 2);
+            List<String> eventInfosPerRobot = new List<String>();
+            int level = 0;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < eventS.Length; i++)
+            {
+                sb.Append(eventS[i]);
+                if (eventS[i] == '[')
+                {
+                    level++;
+                }
+                else if (eventS[i] == ']')
+                {
+                    level--;
+                    if (level == 0)
+                    {
+                        eventInfosPerRobot.Add(sb.ToString().Trim(new []{',', '[', ']'}));
+                        sb.Clear();
+                    }
+                }
+            }
+            foreach(var robotEvents in eventInfosPerRobot)
+            {
+                string[] events = robotEvents.Split("],[");
+                
+                List<EventInfo> eventInfos = new List<EventInfo>();
+                foreach (string e in events)
+                {
+                    if (e == "") break;//empty list
+                    string[] parts1 = e.Split(',');
+                    int task = int.Parse(parts1[0]);
+                    int step = int.Parse(parts1[1]);
+                    string action = parts1[2].Trim('"');
+                    eventInfos.Add(new EventInfo(task, step, action));
+                }
+                taskEvents.Add(taskEvents.Count, eventInfos);
+            }
+            string[] tasksStr = keyValueDict["tasks"].Trim('[').Trim(']').Split("],[");
+            foreach (string s in tasksStr)
+            {
+                if (s == "") break;//empty list
+                string[] parts = s.Split(',');
+                int task = int.Parse(parts[0]);
+                int x = int.Parse(parts[1]);
+                int y = int.Parse(parts[2]);
+                taskData.Add(new TaskInfo(task, x, y));
+            }
+        }
+
         
         public void SetActionModel(string actionModel)
         {
