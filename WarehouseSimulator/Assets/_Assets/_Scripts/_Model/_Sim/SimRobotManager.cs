@@ -101,6 +101,22 @@ namespace WarehouseSimulator.Model.Sim
         /// The second robot value represents the second robot included in the possible invalid step (if only one robot was included, or the step is valid, this will be null)
         /// </returns>
         /// <exception cref="ArgumentException">Is thrown when the length of the actions array isn't valid</exception>
+        ///<example>
+        ///     <code>
+        ///(bool success, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
+        ///if (!results.success)
+        ///{
+        ///    //replan with the robies
+        ///}
+        ///else
+        ///{
+        ///     foreach (SimRobot robie in _plannedActions.Keys)
+        ///     {
+        ///         robie.MakeStep(map);
+        ///     }
+        ///}
+        ///     </code>
+        ///</example>
         public async Task<(bool,SimRobot?,SimRobot?)> CheckValidSteps(Dictionary<SimRobot, Stack<RobotDoing>> actions,Map mapie)
         {
             if (actions.Count != _allRobots.Count)

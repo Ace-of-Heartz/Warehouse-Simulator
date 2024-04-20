@@ -50,19 +50,6 @@ namespace WarehouseSimulator.Model.Sim
         {
             //TODO: abort planNextMoves if still in progress
             
-            // (bool success, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
-            // if (!results.success)
-            // {
-            //     //replan with the robies
-            // }
-            // else
-            // {
-            //     foreach (SimRobot robie in _plannedActions.Keys)
-            //     {
-            //         robie.MakeStep(map);
-            //     }
-            // }
-            
             foreach (var (robot, actions) in _plannedActions)
             {
                 if(actions.Count == 0) continue;

@@ -20,7 +20,6 @@ namespace WarehouseSimulator.View
 
         private Map map;
         
-        
         public Vector2 GetMapCentrer()
         {
             if(map is null) return Vector2.zero;
