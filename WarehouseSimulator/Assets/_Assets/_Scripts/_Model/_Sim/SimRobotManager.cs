@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
@@ -90,18 +91,23 @@ namespace WarehouseSimulator.Model.Sim
         /// The second robot value represents the second robot included in the possible invalid step (if only one robot was included, or the step is valid, this will be null)
         /// </returns>
         /// <exception cref="ArgumentException">Is thrown when the length of the actions array isn't valid</exception>
-        public async Task<(bool,SimRobot?,SimRobot?)> CheckValidSteps((SimRobot robie, RobotDoing action)[] actions,Map mapie)
+        public async Task<(bool,SimRobot?,SimRobot?)> CheckValidSteps(Dictionary<SimRobot, Stack<RobotDoing>> actions,Map mapie)
         {
-            if (actions.Length != _allRobots.Count)
+            if (actions.Count != _allRobots.Count)
             {
-                throw new ArgumentException($"Error in checking valid steps, the number of robots ({actions.Length}) given actions does not equal the number of all robots {_allRobots.Count}");
+                throw new ArgumentException($"Error in checking valid steps, the number of robots ({actions.Count}) given actions does not equal the number of all robots {_allRobots.Count}");
             }
             // foreach ((SimRobot robie,RobotDoing what) in actions)
             // {
             //     if (!robie.TryPerformActionRequested(what, mapie)) return false; //TODO => Blaaa: Async?
             // }
+
+            foreach (var pair in actions)
+            {
+                pair.Key.TryPerformActionRequested(pair.Value.Pop(),mapie);
+            }
             
-            var tasks = actions.Select(async tuple => await Task.FromResult(tuple.robie.TryPerformActionRequested(tuple.action, mapie)));
+            var tasks = actions.Select(async pair => await Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value.Pop(),mapie)));
             (bool success, SimRobot? whoTripped)[]? results = await Task.WhenAll(tasks);
 
             SimRobot? hitter = null;
