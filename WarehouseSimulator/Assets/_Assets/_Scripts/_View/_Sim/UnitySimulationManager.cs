@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model.Sim;
-using WarehouseSimulator.Model;
 using WarehouseSimulator.View.MainMenu;
 
 namespace WarehouseSimulator.View.Sim
@@ -33,10 +30,8 @@ namespace WarehouseSimulator.View.Sim
             simulationManager.SimRobotManager.GoalAssignedEvent += AddUnityGoal;
             if (DebugMode)
             {
-                simulationManager.Setup(MainMenuManager.simInputArgs); 
-
-                // DebugSetup();
-                // simulationManager.Setup(debugSimInputArgs);
+                DebugSetup();
+                simulationManager.Setup(debugSimInputArgs);
             }
             else
                 simulationManager.Setup(MainMenuManager.simInputArgs);
