@@ -97,7 +97,7 @@ namespace WarehouseSimulator.Model.Sim
                 _plannedActions[robot] = new Stack<RobotDoing>();
             }
             
-            if (robot.Goal == null)
+            if (robot.RobotData.m_state == RobotBeing.Free)
             {
                 _plannedActions[robot].Push(RobotDoing.Wait);
             }

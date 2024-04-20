@@ -13,6 +13,8 @@ namespace WarehouseSimulator.Model.Sim
     public class SimRobotManager
     {
         private List<SimRobot> _allRobots;
+        
+        public int RobotCount => _allRobots.Count;
 
         public event EventHandler<RobotCreatedEventArgs>? RobotAddedEvent;
         public event EventHandler<GoalAssignedEventArgs>? GoalAssignedEvent;

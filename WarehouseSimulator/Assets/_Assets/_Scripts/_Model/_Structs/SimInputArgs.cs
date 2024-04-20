@@ -7,7 +7,7 @@ namespace WarehouseSimulator.Model
         public string ConfigFilePath;
         public int NumberOfSteps;
         public int IntervalOfSteps;
-        public float PreparationTime;
+        public int PreparationTime;
         public string EventLogPath;
         public SEARCH_ALGORITHM SearchAlgorithm;
         

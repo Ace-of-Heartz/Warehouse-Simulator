@@ -21,7 +21,7 @@ namespace WarehouseSimulator.View.Sim
         public bool DebugMode = false;
         public SimInputArgs debugSimInputArgs = new SimInputArgs();
 
-        private float timeSinceLastTick = 0;
+        private float timeToNextTickCountdown = 0;
         
         void Start()
         {
@@ -46,19 +46,19 @@ namespace WarehouseSimulator.View.Sim
             if(!simulationManager.IsPreprocessDone)
                 return;
             
-            timeSinceLastTick += Time.deltaTime;
-            if (timeSinceLastTick >= simulationManager.StepTime)
+            timeToNextTickCountdown -= Time.deltaTime;
+            if (timeToNextTickCountdown <= 0)
             {
                 simulationManager.Tick();
-                timeSinceLastTick = 0;
+                timeToNextTickCountdown= simulationManager.SimulationData.m_stepTime / 1000.0f;
             }
         }
 
         void DebugSetup()
         {
             debugSimInputArgs.ConfigFilePath = "/Users/gergogalig/Library/CloudStorage/OneDrive-EotvosLorandTudomanyegyetem/FourthSemester/Szofttech/sample_files/warehouse_100_config.json";
-            debugSimInputArgs.PreparationTime = 1;
-            debugSimInputArgs.IntervalOfSteps = 3;
+            debugSimInputArgs.PreparationTime = 1000;
+            debugSimInputArgs.IntervalOfSteps = 800;
             debugSimInputArgs.NumberOfSteps = 100;
             debugSimInputArgs.EventLogPath = "/Users/gergogalig/Desktop/log.log";
             debugSimInputArgs.SearchAlgorithm = SEARCH_ALGORITHM.BFS;
@@ -68,10 +68,9 @@ namespace WarehouseSimulator.View.Sim
         {
             if (e.Robot is SimRobot simRobie)
             {
-                Debug.Log("Robot added to UnitySimulationManager. ID:" + simRobie.Id);
                 GameObject rob  = Instantiate(robie);
                 UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
-                robieManager.MyThingies(simRobie,unityMap,simulationManager.StepTime);
+                robieManager.MyThingies(simRobie,unityMap,simulationManager.SimulationData.m_stepTime);
             }
             else
             {
@@ -85,7 +84,6 @@ namespace WarehouseSimulator.View.Sim
         {
             if (e.Goal is SimGoal simGolie)
             {
-                Debug.Log("Robot added to UnitySimulationManager. ID:" + simGolie.SimRobot.Id);
                 GameObject gooo = Instantiate(golie);
                 UnityGoal golieMan = gooo.GetComponent<UnityGoal>();
                 golieMan.GiveGoalModel(simGolie,unityMap);

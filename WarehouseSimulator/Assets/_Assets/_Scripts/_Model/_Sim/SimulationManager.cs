@@ -1,7 +1,5 @@
-using System;
 using System.IO;
 using UnityEngine;
-
 
 namespace WarehouseSimulator.Model.Sim
 {
@@ -9,11 +7,6 @@ namespace WarehouseSimulator.Model.Sim
     {
         #region Config Fields
         private SimulationConfig config;
-        private int maxSteps;
-        private float stepTime;
-        private float preparationTime;
-        private int currentStep;
-
         private SimulationData m_simulationData;
         private string logFilePath;
         #endregion
@@ -28,7 +21,7 @@ namespace WarehouseSimulator.Model.Sim
         public Map Map => map;
         public SimGoalManager SimGoalManager => _simGoalManager;
         public SimRobotManager SimRobotManager => _simRobotManager;
-        public float StepTime => stepTime;
+        public SimulationData SimulationData => m_simulationData;
         public bool IsPreprocessDone => centralController.IsPreprocessDone;
         #endregion
         
@@ -38,6 +31,7 @@ namespace WarehouseSimulator.Model.Sim
             _simGoalManager = new SimGoalManager();
             _simRobotManager = new SimRobotManager();
             centralController = new CentralController(map);
+            m_simulationData = ScriptableObject.CreateInstance<SimulationData>();
             
             //event for adding robot to path planning
             _simRobotManager.RobotAddedEvent += (sender, args) =>
@@ -51,9 +45,15 @@ namespace WarehouseSimulator.Model.Sim
         
         public void Setup(SimInputArgs simulationArgs)
         {
-            maxSteps = simulationArgs.NumberOfSteps;
-            stepTime = simulationArgs.IntervalOfSteps;
-            preparationTime = simulationArgs.PreparationTime;
+            m_simulationData.m_maxStepAmount = simulationArgs.NumberOfSteps;
+            m_simulationData.m_currentStep = 1;
+            m_simulationData.m_robotAmount = 0;
+            m_simulationData.m_goalAmount = 0;
+            m_simulationData.m_goalsRemaining = 0;
+            m_simulationData.m_stepTime = simulationArgs.IntervalOfSteps;
+            m_simulationData.m_preprocessTime = simulationArgs.PreparationTime;
+            m_simulationData.m_isFinished = false;
+            
             logFilePath = simulationArgs.EventLogPath;
             
             config = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(simulationArgs.ConfigFilePath));//todo: error handling
@@ -63,18 +63,26 @@ namespace WarehouseSimulator.Model.Sim
             _simGoalManager.ReadGoals(config.basePath + config.taskFile, map);
             _simRobotManager.RoboRead(config.basePath + config.agentFile, map,config.teamSize);
             
-            _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
+            m_simulationData.m_robotAmount = _simRobotManager.RobotCount;
+            m_simulationData.m_goalAmount = _simGoalManager.GoalCount;
+            m_simulationData.m_goalsRemaining = m_simulationData.m_goalAmount;
+            
             centralController.Preprocess(map);
+            _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
             centralController.PlanNextMovesForAllAsync(map);
         }
         
         public void Tick()
         {
-            if (maxSteps < currentStep)
+            if (m_simulationData.m_currentStep <= m_simulationData.m_maxStepAmount)
             {
+                Debug.Log("stepping");
                 centralController.TimeToMove(map,_simRobotManager);
                 //centralController.PlanNextMoves(map);
                 _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
+                
+                m_simulationData.m_currentStep++;
+                m_simulationData.m_goalsRemaining = _simGoalManager.GoalCount;
             }
             else
             {
