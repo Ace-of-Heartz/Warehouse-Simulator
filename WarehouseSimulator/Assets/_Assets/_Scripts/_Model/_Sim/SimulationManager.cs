@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using UnityEngine;
 
 
 namespace WarehouseSimulator.Model.Sim
@@ -10,6 +12,7 @@ namespace WarehouseSimulator.Model.Sim
         private int maxSteps;
         private float stepTime;
         private float preparationTime;
+        private int currentStep;
 
         private SimulationData m_simulationData;
         #endregion
@@ -65,21 +68,29 @@ namespace WarehouseSimulator.Model.Sim
         
         public void Tick()
         {
-            centralController.TimeToMove(map,_simRobotManager);
-            //centralController.PlanNextMoves(map);
-            _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
+            if (maxSteps < currentStep)
+            {
+                centralController.TimeToMove(map,_simRobotManager);
+                //centralController.PlanNextMoves(map);
+                _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
+            }
+            else
+            {
+                Finished();
+            }
         }
 
         // info: simulation completed
         public void Finished()
         {
-            
+            m_simulationData.m_isFinished = true;
+            //TODO => Blaaa
         }
 
         // info: exit simultaion before completion
         public void Abort()
         {
-            
+            //TODO => Blaaa
         }
     }
 }
