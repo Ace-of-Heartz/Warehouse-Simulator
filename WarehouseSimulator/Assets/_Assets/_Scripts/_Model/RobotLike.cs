@@ -25,7 +25,7 @@ namespace WarehouseSimulator.Model
         public GoalLike Goal
         {
             get => m_robotData.m_goal;
-            private set
+            protected set
             {
                 m_robotData.m_state = value == null ? RobotBeing.Free : RobotBeing.InTask;
                 m_robotData.m_goal = value;
