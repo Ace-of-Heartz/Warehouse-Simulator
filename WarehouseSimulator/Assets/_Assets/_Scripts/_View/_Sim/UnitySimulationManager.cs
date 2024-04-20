@@ -15,7 +15,6 @@ namespace WarehouseSimulator.View.Sim
         [SerializeField] private GameObject robie;
         [SerializeField] private GameObject golie;
 
-
         
         [SerializeField]
         private UnityMap unityMap;
@@ -82,7 +81,7 @@ namespace WarehouseSimulator.View.Sim
             else
             {
                 #if DEBUG
-                throw new ArgumentException("Nagyon rossz robotot adtunk át a UnitySimulationManager-nek");
+                    throw new ArgumentException("Nagyon rossz robotot adtunk át a UnitySimulationManager-nek");
                 #endif
             }
         }
@@ -96,6 +95,11 @@ namespace WarehouseSimulator.View.Sim
                 UnityGoal golieMan = gooo.GetComponent<UnityGoal>();
                 golieMan.GiveGoalModel(simGolie,unityMap);
             }
+        }
+
+        public void AddNewGoal(Vector2Int position)
+        {
+            simulationManager.SimGoalManager.AddNewGoal(position);
         }
     }   
 }

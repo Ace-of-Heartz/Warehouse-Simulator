@@ -12,5 +12,6 @@ namespace WarehouseSimulator.Model.Sim
         public int m_goalsRemaining;
         public int m_stepTime;
         public int m_preprocessTime;
+        public bool m_isFinished;
     }
 }
