@@ -56,7 +56,7 @@ namespace WarehouseSimulator.Model.Sim
             
             map.LoadMap(config.basePath + config.mapFile);
             _simGoalManager.ReadGoals(config.basePath + config.taskFile, map);
-            _simRobotManager.RoboRead(config.basePath + config.agentFile, map);
+            _simRobotManager.RoboRead(config.basePath + config.agentFile, map,config.teamSize);
             
             _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
             centralController.Preprocess(map);

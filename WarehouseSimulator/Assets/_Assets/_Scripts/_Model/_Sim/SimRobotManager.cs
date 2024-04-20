@@ -47,7 +47,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
             }
         }
-        public void RoboRead(string from, Map mapie)
+        public void RoboRead(string from, Map mapie, int robotN)
         {
             using StreamReader rid = new(from);
             if (!int.TryParse(rid.ReadLine(), out int robn))
@@ -55,6 +55,16 @@ namespace WarehouseSimulator.Model.Sim
                 throw new InvalidFileException("Invalid file format: First line not a number");
             }
 
+            if (robn != robotN)
+            {
+                throw new InvalidFileException($"Invalid file format: The number of robots given in the Configuration File ({robotN}) does not equal the number of robots given in the Agents File ({robn})");
+            }
+
+            if (robn < 0)
+            {
+                throw new InvalidFileException($"Invalid file format: The number of agents (currently: {robn}) cannot be less than zero!");
+            }
+            
             int nextid = 1;
             for (int i = 0; i < robn; i++)
             {   
