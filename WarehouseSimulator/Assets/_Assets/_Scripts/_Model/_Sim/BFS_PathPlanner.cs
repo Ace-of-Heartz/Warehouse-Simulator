@@ -16,24 +16,26 @@ namespace WarehouseSimulator.Model.Sim
         
         
         /// <summary>
-        /// 
+        /// Constructor of BFS_PathPlanner class
         /// </summary>
-        /// <param name="map"></param>
+        /// <param name="map">Map loaded in from config file</param>
         public BFS_PathPlanner(Map map)
         {
             m_map = map;
         } 
             
         /// <summary>
-        /// 
+        /// Gets the shortest path from a starting position to a finish position, with the initial direction in mind.
+        /// Can check additionally check for occupied tiles instead of only walls.
         /// </summary>
         /// <param name="start"></param>
         /// <param name="finish"></param>
         /// <param name="dir"></param>
+        /// <param name="checkForRobots"></param>
         /// <returns></returns>
-        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction dir)
+        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction dir, bool checkForRobots = false)
         {
-            var instructions = GetInstructions(start, finish, dir);
+            var instructions = GetInstructions(start, finish, dir, checkForRobots);
             return instructions;
         }
 
@@ -43,8 +45,9 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="start"></param>
         /// <param name="finish"></param>
         /// <param name="facing"></param>
+        /// <param name="checkForRobots"></param>
         /// <returns></returns>
-        private Stack<RobotDoing> GetInstructions(Vector2Int start, Vector2Int finish, Direction facing)
+        private Stack<RobotDoing> GetInstructions(Vector2Int start, Vector2Int finish, Direction facing,bool checkForRobots)
         {
             Dictionary<
                 (Vector2Int,Direction)
@@ -74,7 +77,7 @@ namespace WarehouseSimulator.Model.Sim
                     is_finish_found = true;
                     break;
                 }
-                foreach((var node,var dir,var inst) in GetNeighbouringNodes(currentNode,currentDir))
+                foreach((var node,var dir,var inst) in (this as IPathPlanner).GetNeighbouringNodes(currentNode,currentDir))
                 {
 
                     switch (inst)
@@ -83,7 +86,7 @@ namespace WarehouseSimulator.Model.Sim
                             if (!pathDict.Keys.ToList().Exists(p => p.Item1 == node )) //Never move forward to an already trod path
                             {
 
-                                if (m_map.GetTileAt(node) == TileType.Wall)
+                                if (m_map.GetTileAt(node) == TileType.Wall ||  (checkForRobots && m_map.GetTileAt(node) == TileType.RoboOccupied)  )
                                 {
                                     break; // Don't move into a wall
                                 }
@@ -129,62 +132,7 @@ namespace WarehouseSimulator.Model.Sim
             return instructions;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="currentNode"></param>
-        /// <param name="facing"></param>
-        /// <returns></returns>
-        private IEnumerable<(Vector2Int, Direction,RobotDoing)> GetNeighbouringNodes(Vector2Int currentNode, Direction facing)
-        {
-            (Vector2Int forwardNode,Direction leftNode,Direction rightNode)  = GetNextNodes(currentNode, facing);
-            yield return (forwardNode, facing,RobotDoing.Forward);
-            yield return (currentNode, leftNode,RobotDoing.Rotate90);
-            yield return (currentNode, rightNode,RobotDoing.RotateNeg90);
-        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="currentNode"></param>
-        /// <param name="facing"></param>
-        /// <returns></returns>
-        private (Vector2Int,Direction, Direction) GetNextNodes(Vector2Int currentNode, Direction facing)
-        {
-            Vector2Int forwardNode;
-            Direction leftNode, rightNode;
-            
-            switch (facing)
-            {
-                case Direction.North:
-                    forwardNode = currentNode + Vector2Int.down;
-                    leftNode    = Direction.West;
-                    rightNode   = Direction.East;
-                    break;
-                case Direction.South:
-                    forwardNode = currentNode + Vector2Int.up;
-                    leftNode    = Direction.East;
-                    rightNode   = Direction.West;
-                    break;    
-                case Direction.East:
-                    forwardNode = currentNode + Vector2Int.right;
-                    leftNode    = Direction.North;
-                    rightNode   = Direction.South;
-                    break;
-                case Direction.West:
-                    forwardNode = currentNode + Vector2Int.left;
-                    leftNode    = Direction.South;
-                    rightNode   = Direction.North;
-                    break;
-                default:
-                    forwardNode = currentNode;
-                    leftNode    = facing;
-                    rightNode   = facing;
-                    break;
-            }
-
-            return (forwardNode,leftNode,rightNode);
-        }
         
 
 
