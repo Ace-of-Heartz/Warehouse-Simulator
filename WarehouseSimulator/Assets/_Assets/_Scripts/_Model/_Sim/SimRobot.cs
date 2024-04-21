@@ -44,6 +44,7 @@ namespace WarehouseSimulator.Model.Sim
                 {
                     goTo.AssignedTo(this);
                     Goal = goTo;
+                    CustomLog.Instance.AddTaskEvent(Id, goTo.GoalID, "assigned");
                 }
                 else
                 {
@@ -103,6 +104,7 @@ namespace WarehouseSimulator.Model.Sim
             if (Goal is SimGoal simgolie)
             { 
                 simgolie.FinishTask();
+                CustomLog.Instance.AddTaskEvent(Id, Goal.GoalID, "finished");
                 Goal = null;
             }
         }
