@@ -363,26 +363,45 @@ namespace WarehouseSimulator.Model.Sim
             stepsCompleted++;
         }
         
-        public void AddError(int robot1, int robot2, int step, string action)
+        public void AddError(int robot1, int robot2)
         {
-            errors.Add(new LogError(robot1, robot2, step, action));
+            errors.Add(new LogError(robot1, robot2, stepsCompleted + 1, "Invalid move"));
             allValid = false;
         }
         
-        public void AddRobotAction(int robot, string action)
+        public void AddRobotAction(int robot, RobotDoing action)
         {
             sumOfCost++;
-            robotActions[robot] += action;
+            robotActions[robot] += RobotActionToString(action);
         }
         
-        public void AddPlannerAction(int robot, string action)
+        public void AddPlannerAction(int robot, RobotDoing action)
         {
-            plannerActions[robot] += action;
+            plannerActions[robot] += RobotActionToString(action);
         }
         
         public void AddPlannerTime(double time)
         {
             plannerTimes.Add(time);
+        }
+
+        private string RobotActionToString(RobotDoing action)
+        {
+            switch (action)
+            {
+                case RobotDoing.Forward:
+                    return "F";
+                case RobotDoing.Rotate90:
+                    return "C";
+                case RobotDoing.RotateNeg90:
+                    return "R";
+                case RobotDoing.Wait:
+                    return "W";
+                case RobotDoing.Timeout:
+                    return "T";
+                default:
+                    return "";
+            }
         }
     }
 }
