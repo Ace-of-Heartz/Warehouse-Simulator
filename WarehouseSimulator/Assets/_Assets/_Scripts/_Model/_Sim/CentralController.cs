@@ -45,6 +45,11 @@ namespace WarehouseSimulator.Model.Sim
             _isPreprocessDone = false;
         }
         
+        public void AddPathPlanner(IPathPlanner pathPlanner)
+        {
+            _pathPlanner = pathPlanner;
+        }
+        
         /// <summary>
         /// Adds robot to dictionary of CentralController.
         /// Initializes the robot's planned moves with one Wait instruction.
