@@ -70,12 +70,13 @@ namespace WarehouseSimulator.Model.Sim
         {
             _isPreprocessDone = true;
         }
-
-        public async void TimeToMove(Map map,SimRobotManager robieMan)
-        /// <param name="map">Map loaded in from config file</param>
-        /// </summary>
-        /// Tries moving all robots according to their precalculated instructions.
+        
         /// <summary>
+        /// Tries moving all robots according to their precalculated instructions.
+        /// </summary>
+        /// <param name="map">Map loaded in from config file</param>
+        /// <param name="robieMan">SimRobotManager</param>
+        public async void TimeToMove(Map map,SimRobotManager robieMan)
         {
             if (!(IsPathPlanningDone || IsPreprocessDone))
             {
@@ -90,6 +91,23 @@ namespace WarehouseSimulator.Model.Sim
                 robot.TryPerformActionRequested(a, map);
                 robot.MakeStep(map);
             }
+
+            // (bool success, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
+            // if (!results.success)
+            // {
+            //     foreach (var e in _plannedActions)
+            //     {
+            //         //CustomLog.Instance.AddRobotAction(e.Key.Id,RobotDoing.Wait);
+            //     }
+            //     //replan with the robies
+            // }
+            // else
+            // {
+            //      foreach (SimRobot robie in _plannedActions.Keys)
+            //      {
+            //          robie.MakeStep(map);
+            //      }
+            // }
         }
         
         /// <summary>
