@@ -126,10 +126,6 @@ namespace WarehouseSimulator.Model.Sim
             {
                 throw new ArgumentException($"Error in checking valid steps, the number of robots ({actions.Count}) given actions does not equal the number of all robots {_allRobots.Count}");
             }
-            // foreach ((SimRobot robie,RobotDoing what) in actions)
-            // {
-            //     if (!robie.TryPerformActionRequested(what, mapie)) return false; //TODO => Blaaa: Async?
-            // }
 
             foreach (var pair in actions)
             {
@@ -159,21 +155,11 @@ namespace WarehouseSimulator.Model.Sim
                 }
                 catch (Exception) { /*ignored because this means there were no problems in the operations so far*/ }
 
-                if (hitter != null) return (false, robie, hitter);
-
-                // foreach (SimRobot compRobie in _allRobots)
-                // {
-                //     if (robie.RobotData.m_id == compRobie.RobotData.m_id) continue; //if it's the same robot, we skip the step
-                //     
-                //     if (compRobie.NextPos == robie.NextPos) return (false,compRobie,robie); 
-                //     //we check whether there are matching future positions, because this would mean that the step is invalid
-                //
-                //     if (compRobie.NextPos == robie.RobotData.m_gridPosition
-                //         & robie.NextPos == compRobie.RobotData.m_gridPosition) return (false,compRobie,robie);
-                //     //we check whether they want to step in each other's places ("jump over each other") because this would mean the step is invalid
-                //     
-                //     //TODO => Nincs más, amit meg kéne nézni?
-                // }
+                if (hitter != null)
+                {
+                    CustomLog.Instance.AddError(robie.Id,hitter.Id);
+                    return (false, robie, hitter);
+                }
             }
             
             return (true,null,null);
@@ -183,13 +169,13 @@ namespace WarehouseSimulator.Model.Sim
         {
             if (thisOne.RobotData.m_id == notThisOne.RobotData.m_id) return (true,null); //if it's the same robot, we skip the step
 
-            if (notThisOne.NextPos == thisOne.NextPos) return (false,thisOne);//(false,notThisOne,thisOne); 
+            if (notThisOne.NextPos == thisOne.NextPos) return (false,thisOne);
             //we check whether there are matching future positions, because this would mean that the step is invalid
 
             if (notThisOne.NextPos == thisOne.RobotData.m_gridPosition
-                & thisOne.NextPos == notThisOne.RobotData.m_gridPosition) return (false,thisOne); //(false,notThisOne,thisOne);
+                & thisOne.NextPos == notThisOne.RobotData.m_gridPosition) return (false,thisOne); 
             //we check whether they want to step in each other's places ("jump over each other") because this would mean the step is invalid
-            //TODO => Nincs más, amit meg kéne nézni?
+            
             return (true,null);
         }
     }

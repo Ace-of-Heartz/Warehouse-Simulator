@@ -13,7 +13,7 @@ using Direction = WarehouseSimulator.Model.Enums.Direction;
 public class RobotUnitTest
 {
     private Map _emptyMap;
-    private Map _33map;
+    private Map _33Map;
     private SimRobot? _robie;
     private SimGoal? _golie;
     [SetUp]
@@ -23,8 +23,8 @@ public class RobotUnitTest
         _robie = new(0, Vector2Int.one);
         _golie = new SimGoal(Vector2Int.one,0);
         string[] input = {"h 3","w 3","map","...","...","..."};
-        _33map = new Map();
-        _33map.CreateMap(input);
+        _33Map = new Map();
+        _33Map.CreateMap(input);
     }
     
     [TestCase(0,Direction.North,RobotBeing.InTask)]
@@ -92,6 +92,8 @@ public class RobotUnitTest
 
         _robie.TryPerformActionRequested(RobotDoing.RotateNeg90, _emptyMap);
         
+        _robie.MakeStep(_emptyMap);
+        
         Assert.AreEqual(result,_robie.Heading);
     }
     
@@ -104,6 +106,8 @@ public class RobotUnitTest
         _robie = new SimRobot(0,Vector2Int.one,starting);
 
         _robie.TryPerformActionRequested(RobotDoing.Rotate90, _emptyMap);
+        
+        _robie.MakeStep(_emptyMap);
         
         Assert.AreEqual(result,_robie.Heading);
     }
@@ -124,7 +128,7 @@ public class RobotUnitTest
         Vector2Int expectedNextPos = new(resultX,resultY);
         
         (bool,SimRobot) res = (true, null!);
-        Assert.AreEqual(res,_robie!.TryPerformActionRequested(what,_33map));
+        Assert.AreEqual(res,_robie!.TryPerformActionRequested(what,_33Map));
         
         _robie.MakeStep(_emptyMap);
         
@@ -134,16 +138,16 @@ public class RobotUnitTest
     [Test]
     public void SimRobot_TryPerformActionRequested_WallessMap_ResultingCorrectMapChange()
     {
-        _robie!.TryPerformActionRequested(RobotDoing.Forward, _33map);
+        _robie!.TryPerformActionRequested(RobotDoing.Forward, _33Map);
         
-        _robie.MakeStep(_emptyMap);
+        _robie.MakeStep(_33Map);
         
-        Assert.AreEqual(TileType.RoboOccupied,_emptyMap.GetTileAt(_robie!.GridPosition));
+        Assert.AreEqual(TileType.RoboOccupied,_33Map.GetTileAt(_robie!.GridPosition));
     }
 
     [TestCase(0,0)]
     [TestCase(1,1)]
-    public void SimRobot_TryPerformActionRequested_ResultingInvalidStep(int startX, int startY)
+    public void SimRobot_TryPerformActionRequested_ResultingInvalidStep(int startX, int startY) 
     {
         _robie = new(0,new Vector2Int(startX,startY));
         string[] input = {"h 3","w 3","map",".@.","...","..."};
@@ -158,27 +162,8 @@ public class RobotUnitTest
     public void SimRobot_TryPerformActionRequested_ResultingGoalCompleted()
     {
         _golie = new SimGoal(new Vector2Int(1, 0), 0);
-        _robie!.TryPerformActionRequested(RobotDoing.Forward,_33map);
+        _robie!.TryPerformActionRequested(RobotDoing.Forward,_33Map);
         Assert.AreEqual(null!,_robie.Goal);
         Assert.AreEqual(RobotBeing.Free,_robie.State);
-    }
-    
-    public void SimGoal_TryPerformActionRequested_ResultingGoalCompleted()
-    {
-        _golie = new SimGoal(new Vector2Int(1, 0), 0);
-        _robie!.TryPerformActionRequested(RobotDoing.Forward,_33map);
-        //TODO => Move this to the GoalUnitTest class
-    }
-    
-    
-
-    // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
-    // `yield return null;` to skip a frame.
-    [UnityTest]
-    public IEnumerator RobotUnitTestWithEnumeratorPasses()
-    {
-        // Use the Assert class to test conditions.
-        // Use yield to skip a frame.
-        yield return null;
     }
 }
