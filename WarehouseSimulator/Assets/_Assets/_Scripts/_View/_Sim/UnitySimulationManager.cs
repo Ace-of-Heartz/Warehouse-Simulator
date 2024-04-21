@@ -38,6 +38,8 @@ namespace WarehouseSimulator.View.Sim
 
             unityMap.AssignMap(simulationManager.Map);
             unityMap.GenerateMap();
+            
+            GameObject.Find("UIGlobalManager").GetComponent<BindingSetupManager>().SetupSimBinding(simulationManager.SimulationData);
         }
 
         void Update()

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Properties;
+using UnityEngine;
 
 namespace WarehouseSimulator.Model.Sim
 {
