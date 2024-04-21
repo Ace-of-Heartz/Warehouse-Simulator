@@ -438,7 +438,7 @@ MonoBehaviour:
   robie: {fileID: 5341832969892438612, guid: 0361f3004294314478132977bd9ca1e7, type: 3}
   golie: {fileID: 3784796534712091687, guid: 199d7d99c4258d9469c2e64440d029b9, type: 3}
   unityMap: {fileID: 1331381516}
-  DebugMode: 1
+  DebugMode: 0
 --- !u!4 &1475599734
 Transform:
   m_ObjectHideFlags: 0

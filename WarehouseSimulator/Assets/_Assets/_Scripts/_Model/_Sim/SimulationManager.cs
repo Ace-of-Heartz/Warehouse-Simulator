@@ -1,5 +1,6 @@
 using System.IO;
 using UnityEngine;
+using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
@@ -71,6 +72,24 @@ namespace WarehouseSimulator.Model.Sim
             
             centralController.Preprocess(map);
             _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
+
+            IPathPlanner pathPlanner;
+            switch (simulationArgs.SearchAlgorithm)
+            {
+                case SEARCH_ALGORITHM.BFS:
+                    pathPlanner = new BFS_PathPlanner(map);
+                    break;
+                case SEARCH_ALGORITHM.A_STAR:
+                    pathPlanner = new AStar_PathPlanner(map);
+                    break;
+                case SEARCH_ALGORITHM.COOP_A_STAR:
+                    pathPlanner = new CoopAStar_PathPlanner(map);
+                    break;
+                default:
+                    throw new System.ArgumentException("Invalid search algorithm");
+            }
+            centralController.AddPathPlanner(pathPlanner);
+            centralController.Preprocess(map);
             centralController.PlanNextMovesForAllAsync(map);
         }
         

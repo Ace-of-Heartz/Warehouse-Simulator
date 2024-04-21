@@ -57,7 +57,7 @@ namespace WarehouseSimulator.View
         /// Used for calling a message box on screen with 1 button.
         /// Can only result in "MessageBoxResponse.CONFIRMED", "MessageBoxResponse.CANCELED" and "MessageBoxResponse.DECLINED" state.
         /// </summary>
-        /// <example>  UIMessageManager.GetInstance().MessageBox(
+        /// <example><code>  UIMessageManager.GetInstance().MessageBox(
         ///            "Fatal error occured! File explore could not be opened!",
         ///            response => {
         ///             switch (response){
@@ -67,7 +67,7 @@ namespace WarehouseSimulator.View
         ///             }
         ///             }
         ///            ,new ComplexMessageBoxTypeSelector(ComplexMessageBoxTypeSelector.MessageBoxType.CONFIRM_DECLINE_CANCEL));
-        ///                </example>
+        ///                </code></example>
         /// <param name="msg">Message to be displayed for the user.</param>
         /// <param name="onDone">Action to be executed upon any button click. Will receive result of message box query.</param>
         /// <param name="type">Type of MessageBox to be used.</param>
@@ -100,7 +100,9 @@ namespace WarehouseSimulator.View
         /// Used for calling a message box on screen with 1 button.
         /// Can only result in "MessageBoxResponse.CONFIRMED" and "MessageBoxResponse.CANCELED" state.
         /// </summary>
-        /// <example>  UIMessageManager.GetInstance().MessageBox(
+        /// 
+        /// <example>
+        /// <code>UIMessageManager.GetInstance().MessageBox(
         ///            "Fatal error occured! File explore could not be opened!",
         ///            response => {
         ///             switch (response){
@@ -109,7 +111,7 @@ namespace WarehouseSimulator.View
         ///             }
         ///             }
         ///            ,new SimpleMessageBoxTypeSelector(SimpleMessageBoxTypeSelector.MessageBoxType.OK_CANCEL));
-        ///                </example>
+        ///                </code></example>
         /// <param name="msg">Message to be displayed for the user.</param>
         /// <param name="onDone">Action to be executed upon any button click. Will receive result of message box query.</param>
         /// <param name="type">Type of MessageBox to be used.</param>
@@ -141,11 +143,11 @@ namespace WarehouseSimulator.View
         /// Used for calling a message box on screen with 1 button.
         /// Can only result in "MessageBoxResponse.CONFIRMED" state.
         /// </summary>
-        /// <example>  UIMessageManager.GetInstance().MessageBox(
+        /// <example><code>  UIMessageManager.GetInstance().MessageBox(
         ///            "Fatal error occured! File explore could not be opened!",
         ///            response => { }
         ///            ,new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK));
-        ///                </example>
+        ///                </code></example>
         /// <param name="msg">Message to be displayed for the user.</param>
         /// <param name="onDone">Action to be executed upon any button click. Will receive result of message box query.</param>
         /// <param name="type">Type of MessageBox to be used.</param>

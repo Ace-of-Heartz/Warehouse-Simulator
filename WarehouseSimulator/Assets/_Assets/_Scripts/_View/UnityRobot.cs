@@ -75,7 +75,7 @@ namespace WarehouseSimulator.View
             _mapie = dat;
             _speed = speedMultiplier;
             transform.position = _mapie.GetWorldPosition(_roboModel.GridPosition);
-            id.text = _roboModel.Id.ToString();
+            id.text = _roboModel.ShownId.ToString();
             m_robotData = _roboModel.RobotData;
         }
     }
