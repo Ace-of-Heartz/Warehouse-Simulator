@@ -32,7 +32,7 @@ namespace WarehouseSimulator.Model
             using StreamReader reader = new(filePath);
             reader.ReadLine(); // "type octile". Not needed, throw away
             string all = reader.ReadToEnd();
-            string[] lines = all.Split('\n');
+            string[] lines = all.Replace("\r","").Split('\n');
             
             CreateMap(lines);
         }
@@ -67,11 +67,12 @@ namespace WarehouseSimulator.Model
                 {
                     if (i + 3 >= input.Length)
                     {
-                        throw new InvalidFileException("The content of the file wasn't in the right format.");
+                        throw new InvalidFileException("The content of the file wasn't in the right format.\nExpected more lines.");
                     }
                     string line = input[i+3];
                     if (line.Length != mapSize.x)
-                        throw new InvalidFileException("The content of the file wasn't in the right format.");
+
+                        throw new InvalidFileException($"The content of the file wasn't in the right format.\nExpected {mapSize.x} characters, got {line.Length} with content:\n{line}");
                 
                     for (int j = 0; j < mapSize.x; j++)
                     {
