@@ -36,6 +36,7 @@ namespace WarehouseSimulator.Model.Sim
                 goTo.AssignedTo(this);
                 Goal = goTo;
                 RobotData.m_state = RobotBeing.InTask;
+                CustomLog.Instance.AddTaskEvent(Id, goTo.GoalID, "assigned");
             }
             else
             {
@@ -92,6 +93,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             if (Goal is SimGoal)
             {
+                CustomLog.Instance.AddTaskEvent(Id, Goal.GoalID, "finished");
                 var bla = (SimGoal)Goal;
                 bla.FinishTask();
             }

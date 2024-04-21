@@ -28,6 +28,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             SimRobot newR = new(i, pos);
             _allRobots.Add(newR);
+            CustomLog.Instance.AddRobotStart(i, pos.x, pos.y, Direction.North);
             RobotAddedEvent?.Invoke(this, new(newR));
         }
     

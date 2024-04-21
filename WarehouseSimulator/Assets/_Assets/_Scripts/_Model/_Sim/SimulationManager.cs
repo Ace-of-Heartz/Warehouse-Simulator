@@ -45,6 +45,8 @@ namespace WarehouseSimulator.Model.Sim
         
         public void Setup(SimInputArgs simulationArgs)
         {
+            CustomLog.Instance.SetActionModel("almafa");
+            
             m_simulationData.m_maxStepAmount = simulationArgs.NumberOfSteps;
             m_simulationData.m_currentStep = 1;
             m_simulationData.m_robotAmount = 0;
@@ -83,6 +85,7 @@ namespace WarehouseSimulator.Model.Sim
                 
                 m_simulationData.m_currentStep++;
                 m_simulationData.m_goalsRemaining = _simGoalManager.GoalCount;
+                CustomLog.Instance.SimulationStepCompleted();
             }
             else
             {
