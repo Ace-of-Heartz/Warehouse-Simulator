@@ -1,8 +1,8 @@
 #nullable enable
 using System;
-using System.Threading.Tasks;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
+using WarehouseSimulator.Model;
 
 namespace WarehouseSimulator.Model.Sim
 {
@@ -11,7 +11,7 @@ namespace WarehouseSimulator.Model.Sim
         private Vector2Int _nextPos;
 
         /// <summary>
-        /// 
+        /// Constructor for SimRobot
         /// </summary>
         /// <param name="i">ID of robot</param>
         /// <param name="gridPos">Initial position of robot</param>
@@ -20,7 +20,7 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="state">Initial state of robot</param>
         public SimRobot(int i,
             Vector2Int gridPos,
-            WarehouseSimulator.Model.Enums.Direction heading = Direction.North,
+            Direction heading = Direction.North,
             SimGoal? goal = null,
             RobotBeing state = RobotBeing.Free)
                 : base(i, gridPos, heading, state, goal)
@@ -30,11 +30,29 @@ namespace WarehouseSimulator.Model.Sim
 
         public Vector2Int NextPos => _nextPos;
         
-        public void AssignGoal(SimGoal goTo)
+        public void AssignGoal(SimGoal? goTo)
         {
-            goTo.AssignedTo(this);
-            RobotData.m_goal = goTo;
-            RobotData.m_state = RobotBeing.InTask;
+            if (goTo is null)
+            {
+                #if DEBUG
+                    throw new ArgumentException("The robot assigned cannot be null or PBRobot!");
+                #endif
+            }
+            else
+            {
+                if (State == RobotBeing.Free)
+                {
+                    goTo.AssignedTo(this);
+                    Goal = goTo;
+                }
+                else
+                {
+                    #if DEBUG
+                        throw new InvalidOperationException($"The robot {Id} is already doing a task, you cannot assign another goal to it");
+                    #endif
+                }
+            }
+            
         }
 
         public (bool,SimRobot?) TryPerformActionRequested(RobotDoing watt, Map mapie)
@@ -74,7 +92,7 @@ namespace WarehouseSimulator.Model.Sim
             mipieMap.DeoccupyTile(RobotData.m_gridPosition);
             RobotData.m_gridPosition = _nextPos;
             mipieMap.OccupyTile(RobotData.m_gridPosition);
-            if (_nextPos == RobotData.m_goal?.GridPosition)
+            if (_nextPos == Goal?.GridPosition)
             {
                 GoalCompleted();
             }
@@ -82,13 +100,11 @@ namespace WarehouseSimulator.Model.Sim
         
         private void GoalCompleted()
         {
-            if (RobotData.m_goal is SimGoal)
-            {
-                var bla = (SimGoal)RobotData.m_goal;
-                bla.FinishTask();
+            if (Goal is SimGoal simgolie)
+            { 
+                simgolie.FinishTask();
+                Goal = null;
             }
-            RobotData.m_goal = null;
-            RobotData.m_state = RobotBeing.Free;
         }
     }
 }

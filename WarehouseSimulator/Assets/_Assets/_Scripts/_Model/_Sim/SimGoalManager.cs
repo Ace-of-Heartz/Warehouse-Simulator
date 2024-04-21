@@ -11,6 +11,8 @@ namespace WarehouseSimulator.Model.Sim
     {
         private Queue<SimGoal> _goalsRemaining;
         private int _nextid;
+        
+        public int GoalCount => _goalsRemaining.Count;
 
         public SimGoalManager()
         {

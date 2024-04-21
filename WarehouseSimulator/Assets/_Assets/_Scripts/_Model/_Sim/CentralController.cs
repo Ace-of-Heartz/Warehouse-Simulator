@@ -68,15 +68,14 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="map"></param>
         public void Preprocess(Map map)
         {
-            //TODO: async?
             _isPreprocessDone = true;
         }
 
-        /// <summary>
-        /// Tries moving all robots according to their precalculated instructions.
-        /// </summary>
+        public async void TimeToMove(Map map,SimRobotManager robieMan)
         /// <param name="map">Map loaded in from config file</param>
-        public void TimeToMove(Map map)
+        /// </summary>
+        /// Tries moving all robots according to their precalculated instructions.
+        /// <summary>
         {
             if (!(IsPathPlanningDone || IsPreprocessDone))
             {
@@ -156,7 +155,7 @@ namespace WarehouseSimulator.Model.Sim
                 _plannedActions[robot] = new Stack<RobotDoing>();
             }
             
-            if (robot.Goal == null)
+            if (robot.RobotData.m_state == RobotBeing.Free)
             {
                 _plannedActions[robot].Push(RobotDoing.Wait);
             }

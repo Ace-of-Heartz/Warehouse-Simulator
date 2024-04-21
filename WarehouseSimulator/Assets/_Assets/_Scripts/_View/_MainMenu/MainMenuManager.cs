@@ -98,7 +98,7 @@ public class MainMenuManager : MonoBehaviour
             simInputArgs.ConfigFilePath = GameObject.Find("InputField_SimConfigFileLocation").GetComponent<TMP_InputField>().text;
             simInputArgs.NumberOfSteps = int.Parse(GameObject.Find("InputField_NumberOfSteps").GetComponent<TMP_InputField>().text);
             simInputArgs.IntervalOfSteps = int.Parse(GameObject.Find("InputField_IntervalOfSteps").GetComponent<TMP_InputField>().text);
-            simInputArgs.PreparationTime = float.Parse(GameObject.Find("InputField_PreparationTime").GetComponent<TMP_InputField>().text);
+            simInputArgs.PreparationTime = int.Parse(GameObject.Find("InputField_PreparationTime").GetComponent<TMP_InputField>().text);
             simInputArgs.EventLogPath = GameObject.Find("InputField_SimPathToEventLog").GetComponent<TMP_InputField>().text;
             var res = GameObject.Find("Dropdown_SearchAlgorithm").GetComponent<TMP_Dropdown>().value;
             simInputArgs.SearchAlgorithm = res == 1 ? SEARCH_ALGORITHM.A_STAR :
