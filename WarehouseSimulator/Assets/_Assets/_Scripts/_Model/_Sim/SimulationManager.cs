@@ -113,10 +113,10 @@ namespace WarehouseSimulator.Model.Sim
         }
 
         // info: simulation completed
-        public void Finished()
+        private void Finished()
         {
             m_simulationData.m_isFinished = true;
-            //TODO => Blaaa
+            CustomLog.Instance.SaveLog(logFilePath);
         }
 
         // info: exit simultaion before completion
