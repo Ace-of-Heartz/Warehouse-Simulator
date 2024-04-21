@@ -26,8 +26,10 @@ namespace WarehouseSimulator.Model.Sim
             {
                 throw new InvalidFileException($"Invalid file format: {_nextid + 2}. line does not provide a valid position");
             }
-            _goalsRemaining.Enqueue(new SimGoal(here,_nextid));
+            SimGoal newGoal = new(here,_nextid);
             _nextid++;
+            _goalsRemaining.Enqueue(newGoal);
+            CustomLog.Instance.AddTaskData(newGoal.GoalID, newGoal.GridPosition.x, newGoal.GridPosition.y);
         }
 
         [CanBeNull]
@@ -68,8 +70,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
 
                 Vector2Int nextPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
-                _goalsRemaining.Enqueue(new SimGoal(nextPos,_nextid));
-                _nextid++;
+                AddNewGoal(nextPos);
             }
         }
     }

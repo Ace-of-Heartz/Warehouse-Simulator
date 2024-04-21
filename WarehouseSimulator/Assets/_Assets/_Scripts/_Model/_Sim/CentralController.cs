@@ -70,12 +70,13 @@ namespace WarehouseSimulator.Model.Sim
         {
             _isPreprocessDone = true;
         }
-
-        public async void TimeToMove(Map map,SimRobotManager robieMan)
-        /// <param name="map">Map loaded in from config file</param>
-        /// </summary>
-        /// Tries moving all robots according to their precalculated instructions.
+        
         /// <summary>
+        /// Tries moving all robots according to their precalculated instructions.
+        /// </summary>
+        /// <param name="map">Map loaded in from config file</param>
+        /// <param name="robieMan">SimRobotManager</param>
+        public async void TimeToMove(Map map,SimRobotManager robieMan)
         {
             if (!(IsPathPlanningDone || IsPreprocessDone))
             {
@@ -90,24 +91,23 @@ namespace WarehouseSimulator.Model.Sim
                 robot.TryPerformActionRequested(a, map);
                 robot.MakeStep(map);
             }
-        }
-        
-        /// <summary>
-        /// Plan the move instruction for a single robot.
-        /// Async method.
-        /// </summary>
-        /// <param name="map"></param>
-        /// <param name="robot"></param>
-        public async void PlanNextMovesForRobotAsync(Map map, SimRobot robot)
-        {
-            if ((_taskBeforeNextStep == null ? TaskStatus.WaitingToRun :  _taskBeforeNextStep.Status) == TaskStatus.Running)
-            {
-                _taskBeforeNextStep.Wait();
-            }
-            
-            IsPathPlanningDone = false;
-            _taskBeforeNextStep = PlanNextMoves(map, robot);
-            IsPathPlanningDone = true;
+
+            // (bool success, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
+            // if (!results.success)
+            // {
+            //     foreach (var e in _plannedActions)
+            //     {
+            //         CustomLog.Instance.AddRobotAction(e.Key.Id,RobotDoing.Wait);
+            //     }
+            //     //replan with the robies
+            // }
+            // else
+            // {
+            //      foreach (SimRobot robie in _plannedActions.Keys)
+            //      {
+            //          robie.MakeStep(map);
+            //      }
+            // }
         }
         
         /// <summary>
@@ -128,11 +128,10 @@ namespace WarehouseSimulator.Model.Sim
             var robots = _plannedActions.Keys.ToList();
             var tasks = new List<Task>();
             
-            
-            //TODO: Make async
             foreach (var robot in robots)
             {
-                tasks.Add(PlanNextMoves(map,robot));
+                if(_plannedActions[robot].Count == 0)
+                    tasks.Add(PlanNextMoves(robot));
             }
 
             _taskBeforeNextStep = Task.WhenAll(tasks);
@@ -142,14 +141,12 @@ namespace WarehouseSimulator.Model.Sim
 
         }
         /// <summary>
-        /// Plans a list of instructions for an individual robot without taking the position of other robots into consideration. How rebellious.
+        /// Plans a list of instructions for an individual robot with(out) taking the position of other robots into consideration. How rebellious.
         /// </summary>
-        /// <param name="map"></param>
         /// <param name="robot"></param>
-        private async Task PlanNextMoves(Map map,SimRobot robot)
+        /// <param name="avoidRobots">Whether to take the position of other robots into consideration</param>
+        private async Task PlanNextMoves(SimRobot robot, bool avoidRobots = false)
         {
-            //TODO: Calc how many waits we need for one request
-
             if (_plannedActions[robot] == null)
             {
                 _plannedActions[robot] = new Stack<RobotDoing>();
@@ -161,31 +158,9 @@ namespace WarehouseSimulator.Model.Sim
             }
             else
             {
-                _plannedActions[robot] = _pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading,false);
+                _plannedActions[robot] = _pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading, avoidRobots);
             }
         }
-        /// <summary>
-        /// Plans a list of instructions for an individual robot while also considering the positions of other robots. How polite.
-        /// </summary>
-        /// <param name="map"></param>
-        /// <param name="robot"></param>
-        private async Task PlanReroute(Map map, SimRobot robot)
-        {
-            if (_plannedActions[robot] == null)
-            {
-                _plannedActions[robot] = new Stack<RobotDoing>();
-            }
-            
-            if (robot.Goal == null)
-            {
-                _plannedActions[robot].Push(RobotDoing.Wait);
-            }
-            else
-            {
-                _plannedActions[robot] = _pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading,true);
-            }
-        }
-
         
     }
 }
