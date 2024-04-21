@@ -63,8 +63,10 @@ namespace WarehouseSimulator.View.MainMenu
             else
                 throw new ArgumentException(); 
             
-            FileBrowser.SetFilters(true,"JSON",".json");
-            FileBrowser.SetDefaultFilter(".json");
+            FileBrowser.SetFilters(true,
+                inputExtension.extension.ToString().ToUpper(),
+                inputExtension.extension.ToString().ToLower());
+            FileBrowser.SetDefaultFilter(inputExtension.extension.ToString().ToLower());
             
             if (!FileBrowser.ShowSaveDialog(
                     (path =>
