@@ -51,6 +51,8 @@ namespace WarehouseSimulator.View.Sim
 
             unityMap.AssignMap(simulationManager.Map);
             unityMap.GenerateMap();
+            
+            GameObject.Find("UIGlobalManager").GetComponent<BindingSetupManager>().SetupSimBinding(simulationManager);
         }
 
         void Update()
@@ -105,7 +107,7 @@ namespace WarehouseSimulator.View.Sim
 
         public void AddNewGoal(Vector2Int position)
         {
-            simulationManager.SimGoalManager.AddNewGoal(position);
+            simulationManager.SimGoalManager.AddNewGoal(position, simulationManager.Map);
         }
     }   
 }

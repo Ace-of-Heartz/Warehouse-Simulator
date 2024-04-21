@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Properties;
+using UnityEngine;
 
 namespace WarehouseSimulator.Model.Sim
 {
@@ -10,6 +11,11 @@ namespace WarehouseSimulator.Model.Sim
         public int m_robotAmount;
         public int m_goalAmount;
         public int m_goalsRemaining;
+        public int GoalsRemaining
+        {
+            get => m_goalsRemaining;
+            set => m_goalsRemaining = value;
+        }
         public int m_stepTime;
         public int m_preprocessTime;
         public bool m_isFinished;
