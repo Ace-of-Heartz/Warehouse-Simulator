@@ -20,8 +20,12 @@ namespace WarehouseSimulator.Model.Sim
             _nextid = 0;
         }
 
-        public void AddNewGoal(Vector2Int here)
+        public void AddNewGoal(Vector2Int here, Map mapie)
         {
+            if (mapie.GetTileAt(here) != TileType.Empty)
+            {
+                throw new InvalidFileException($"Invalid file format: {_nextid + 2}. line does not provide a valid position");
+            }
             _goalsRemaining.Enqueue(new SimGoal(here,_nextid));
             _nextid++;
         }

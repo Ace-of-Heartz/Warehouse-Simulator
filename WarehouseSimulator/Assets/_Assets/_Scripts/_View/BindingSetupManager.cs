@@ -10,7 +10,7 @@ namespace WarehouseSimulator.View
 {
     public class BindingSetupManager : MonoBehaviour
     {
-        public void SetupSimBinding(SimulationData data)
+        public void SetupSimBinding(SimulationManager man)
         {
             var doc = SceneHandler.GetDocOfID(1);
             var button = doc.rootVisualElement
@@ -36,10 +36,24 @@ namespace WarehouseSimulator.View
                 .Q("BottomBar")
                 .Q("BottomCenter")
                 .Q<Label>("MaxStepProgressLabel");
-            var currStepsProperty = new SerializedObject(data).FindProperty("m_currentStep");
-            var maxStepsProperty = new SerializedObject(data).FindProperty("m_maxStepAmount");
+            var currStepsProperty = new SerializedObject(man.SimulationData).FindProperty("m_currentStep");
+            var maxStepsProperty = new SerializedObject(man.SimulationData).FindProperty("m_maxStepAmount");
             SetupStepsProgressBar(maxProgressLabel,progressLabel,progressBar,currStepsProperty,maxStepsProperty);
         
+            var goalAddButton = doc.rootVisualElement
+                .Q("SimulationCanvas")
+                .Q("RightSideBar")
+                .Q("GoalInputPanel")
+                .Q<Button>("GoalInputAddButton");
+            var goalInputField = doc.rootVisualElement
+                .Q("SimulationCanvas")
+                .Q("RightSideBar")
+                .Q("GoalInputPanel")
+                .Q<Vector2IntField>("GoalInputPositionField");
+            
+            SetupDynamicGoalAddition(goalAddButton,goalInputField,man);
+            
+            
         }
 
         private void SetupAbortFor(Button button)
@@ -74,6 +88,16 @@ namespace WarehouseSimulator.View
             progressBar.BindProperty(currStepsProperty);
             progressLabel.BindProperty(currStepsProperty);
             maxProgressLabel.BindProperty(maxStepsProperty);
+        }
+
+        private void SetupDynamicGoalAddition(Button button,Vector2IntField coordinatesField, SimulationManager man)
+        {
+
+            button.clickable.clicked += () =>
+            {
+                man.SimGoalManager.AddNewGoal(coordinatesField.value,man.Map);
+            };
+
         }
 
         public void SetupPlaybackBinding()
