@@ -37,12 +37,6 @@ namespace WarehouseSimulator.View
             get => m_robotData;
         }
         #endregion
-        
-        // Start is called before the first frame update
-        void Start()
-        {
-            //Do we even need this blaaa?
-        }
 
         // Update is called once per frame
         void Update()
@@ -69,11 +63,10 @@ namespace WarehouseSimulator.View
                     break;
                 case Direction.West:
                     _texture.transform.rotation = Quaternion.Euler(0, 0, 90);
-                    
+
 
                     break;
             }
-            
         }
 
         public void MyThingies(SimRobot dis, UnityMap dat, float speedMultiplier)
@@ -82,10 +75,8 @@ namespace WarehouseSimulator.View
             _mapie = dat;
             _speed = speedMultiplier;
             transform.position = _mapie.GetWorldPosition(_roboModel.GridPosition);
-            id.text = _roboModel.Id.ToString();
+            id.text = _roboModel.ShownId.ToString();
             m_robotData = _roboModel.RobotData;
         }
-
-    
     }
 }    

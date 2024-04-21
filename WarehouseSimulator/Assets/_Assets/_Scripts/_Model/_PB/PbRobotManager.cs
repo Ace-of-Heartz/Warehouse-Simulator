@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -8,6 +11,8 @@ namespace WarehouseSimulator.Model.PB
     public class PbRobotManager
     {
         private List<PbRobot> _allRobots;
+        
+        [CanBeNull] public event EventHandler<RobotCreatedEventArgs> RobotAddedEvent;
 
         public PbRobotManager()
         {
@@ -29,10 +34,11 @@ namespace WarehouseSimulator.Model.PB
             int i = 1;
             foreach ((var coordin, var dirr) in whoWhere)
             {
-                var robie = new PbRobot(i, coordin, stepNumber,dirr);
-                robie.CalcTimeLine(robiesDoing[i-1]); //TODO => Blaaa: async?
+                var robie = new PbRobot(i, coordin, stepNumber, dirr);
+                robie.CalcTimeLine(robiesDoing[i-1]);
                 i++;
                 _allRobots.Add(robie);
+                RobotAddedEvent?.Invoke(this, new RobotCreatedEventArgs(robie));
             }
         }
 

@@ -1,0 +1,9 @@
+{
+	"name": "WarehouseSimulatorView",
+	"references": [
+		"Unity.TextMeshPro",
+		"WarehouseSimulatorModel",
+		"WHSModelEnum",
+		"WHSModelSim"
+	]
+}

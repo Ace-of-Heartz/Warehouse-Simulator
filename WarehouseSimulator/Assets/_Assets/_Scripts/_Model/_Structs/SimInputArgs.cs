@@ -1,13 +1,13 @@
 ﻿using WarehouseSimulator.Model.Enums;
 
-namespace WarehouseSimulator.View.MainMenu
+namespace WarehouseSimulator.Model
 {
     public struct SimInputArgs
     {
         public string ConfigFilePath;
         public int NumberOfSteps;
         public int IntervalOfSteps;
-        public float PreparationTime;
+        public int PreparationTime;
         public string EventLogPath;
         public SEARCH_ALGORITHM SearchAlgorithm;
         

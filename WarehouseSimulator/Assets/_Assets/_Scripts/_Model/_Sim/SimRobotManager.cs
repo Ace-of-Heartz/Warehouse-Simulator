@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
@@ -12,6 +13,8 @@ namespace WarehouseSimulator.Model.Sim
     public class SimRobotManager
     {
         private List<SimRobot> _allRobots;
+        
+        public int RobotCount => _allRobots.Count;
 
         public event EventHandler<RobotCreatedEventArgs>? RobotAddedEvent;
         public event EventHandler<GoalAssignedEventArgs>? GoalAssignedEvent;
@@ -46,7 +49,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
             }
         }
-        public void RoboRead(string from, Map mapie)
+        public void RoboRead(string from, Map mapie, int robotN)
         {
             using StreamReader rid = new(from);
             if (!int.TryParse(rid.ReadLine(), out int robn))
@@ -54,6 +57,16 @@ namespace WarehouseSimulator.Model.Sim
                 throw new InvalidFileException("Invalid file format: First line not a number");
             }
 
+            if (robn != robotN)
+            {
+                throw new InvalidFileException($"Invalid file format: The number of robots given in the Configuration File ({robotN}) does not equal the number of robots given in the Agents File ({robn})");
+            }
+
+            if (robn < 0)
+            {
+                throw new InvalidFileException($"Invalid file format: The number of agents (currently: {robn}) cannot be less than zero!");
+            }
+            
             int nextid = 0;
             for (int i = 0; i < robn; i++)
             {   
@@ -90,18 +103,39 @@ namespace WarehouseSimulator.Model.Sim
         /// The second robot value represents the second robot included in the possible invalid step (if only one robot was included, or the step is valid, this will be null)
         /// </returns>
         /// <exception cref="ArgumentException">Is thrown when the length of the actions array isn't valid</exception>
-        public async Task<(bool,SimRobot?,SimRobot?)> CheckValidSteps((SimRobot robie, RobotDoing action)[] actions,Map mapie)
+        ///<example>
+        ///     <code>
+        ///         (bool success, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
+        ///         if (!results.success)
+        ///         {
+        ///             //replan with the robies
+        ///         }
+        ///         else
+        ///         {
+        ///              foreach (SimRobot robie in _plannedActions.Keys)
+        ///              {
+        ///                  robie.MakeStep(map);
+        ///              }
+        ///         }
+        ///     </code>
+        ///</example>
+        public async Task<(bool,SimRobot?,SimRobot?)> CheckValidSteps(Dictionary<SimRobot, Stack<RobotDoing>> actions,Map mapie)
         {
-            if (actions.Length != _allRobots.Count)
+            if (actions.Count != _allRobots.Count)
             {
-                throw new ArgumentException($"Error in checking valid steps, the number of robots ({actions.Length}) given actions does not equal the number of all robots {_allRobots.Count}");
+                throw new ArgumentException($"Error in checking valid steps, the number of robots ({actions.Count}) given actions does not equal the number of all robots {_allRobots.Count}");
             }
             // foreach ((SimRobot robie,RobotDoing what) in actions)
             // {
             //     if (!robie.TryPerformActionRequested(what, mapie)) return false; //TODO => Blaaa: Async?
             // }
+
+            foreach (var pair in actions)
+            {
+                pair.Key.TryPerformActionRequested(pair.Value.Pop(),mapie);
+            }
             
-            var tasks = actions.Select(async tuple => await Task.FromResult(tuple.robie.TryPerformActionRequestedAsync(tuple.action, mapie)));
+            var tasks = actions.Select(async pair => await Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value.Pop(),mapie)));
             (bool success, SimRobot? whoTripped)[]? results = await Task.WhenAll(tasks);
 
             SimRobot? hitter = null;

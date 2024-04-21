@@ -1,0 +1,6 @@
+{
+	"name": "WarehouseSimulatorModel",
+	"references": [
+		"WHSModelEnum"
+	]
+}

@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -7,97 +10,182 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class CentralController
     {
-        private Dictionary<SimRobot, Queue<RobotDoing>> plannedActions;
+        
+        #region Fields
+        private Dictionary<SimRobot, Stack<RobotDoing>> _plannedActions;
 
-        private IPathPlanner m_pathPlanner;
+        private IPathPlanner _pathPlanner;
+
+        [CanBeNull] private Task _taskBeforeNextStep;
         
-        private bool isPreprocessDone;
-        public bool IsPreprocessDone => isPreprocessDone;
         
+        private bool _isPreprocessDone;
+        private bool _isPathPlanningDone;
+        #endregion
+
+        /// <summary>
+        /// Get returns true if all paths have been calculated for the robots, else false
+        /// Set is private
+        /// </summary>
+        public bool IsPathPlanningDone
+        {
+            get => _isPathPlanningDone;
+            private set => _isPathPlanningDone = value;
+        }
+        public bool IsPreprocessDone => _isPreprocessDone;
+        
+        /// <summary>
+        /// Constructor of CentralController 
+        /// </summary>
+        /// <param name="map">Map loaded in from config file</param>
         public CentralController(Map map)
         {
-            m_pathPlanner = new BFS_PathPlanner(map);
-            plannedActions = new();
-            isPreprocessDone = false;
+            _pathPlanner = new AStar_PathPlanner(map);
+            _plannedActions = new();
+            _isPreprocessDone = false;
         }
         
+        public void AddPathPlanner(IPathPlanner pathPlanner)
+        {
+            _pathPlanner = pathPlanner;
+        }
+        
+        /// <summary>
+        /// Adds robot to dictionary of CentralController.
+        /// Initializes the robot's planned moves with one Wait instruction.
+        /// </summary>
+        /// <param name="simRobot">Simulation robot model</param>
         public void AddRobotToPlanner(SimRobot simRobot)
         {
-            var q = new Queue<RobotDoing>();
-            q.Enqueue(RobotDoing.Wait);
-            plannedActions.Add(simRobot, q);
+            var q = new Stack<RobotDoing>();
+            q.Push(RobotDoing.Wait);
+            _plannedActions.Add(simRobot, q);
         }
         
-
+        /// <summary>
+        /// Preprocess
+        /// </summary>
+        /// <param name="map"></param>
         public void Preprocess(Map map)
         {
-            //TODO: async?
-            isPreprocessDone = true;
+            _isPreprocessDone = true;
         }
 
-        public void TimeToMove(Map map)
+        public async void TimeToMove(Map map,SimRobotManager robieMan)
+        /// <param name="map">Map loaded in from config file</param>
+        /// </summary>
+        /// Tries moving all robots according to their precalculated instructions.
+        /// <summary>
         {
-            //TODO: abort planNextMoves if still in progress
-            foreach (var (robot, actions) in plannedActions)
+            if (!(IsPathPlanningDone || IsPreprocessDone))
+            {
+                Debug.Log("Processes not finished until next step. Timeout sent.");
+                //_taskBeforeNextStep.Dispose();
+                //TODO: Send Timeout
+            }
+            foreach (var (robot, actions) in _plannedActions)
             {
                 if(actions.Count == 0) continue;
-                var a = actions.Dequeue();
-                robot.TryPerformActionRequestedAsync(a, map);
+                var a = actions.Pop();
+                robot.TryPerformActionRequested(a, map);
                 robot.MakeStep(map);
             }
         }
-
-        public void PlanNextMoves(Map map)
+        
+        /// <summary>
+        /// Plan the move instruction for a single robot.
+        /// Async method.
+        /// </summary>
+        /// <param name="map"></param>
+        /// <param name="robot"></param>
+        public async void PlanNextMovesForRobotAsync(Map map, SimRobot robot)
         {
-            var robots = plannedActions.Keys.ToList();
-            foreach (var robot in robots)
+            if ((_taskBeforeNextStep == null ? TaskStatus.WaitingToRun :  _taskBeforeNextStep.Status) == TaskStatus.Running)
             {
-                var q = new Queue<RobotDoing>();
-                q.Enqueue(RobotDoing.Timeout);
-                plannedActions[robot] = q;
-            }
-
-            List<RobotDoing> plannedActionsForRobot;
-            foreach (var robot in robots)
-            {
-                Debug.Log(robot.Heading);
-                //Robot starting point
-                Debug.Log(robot.GridPosition);
-                //Robot ending point
-                Debug.Log(robot.Goal.GridPosition);
-                //Robot planned actions
-                plannedActionsForRobot = m_pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading).Result;
-                plannedActions[robot] = new Queue<RobotDoing>(plannedActionsForRobot);
-
-                foreach (var a in plannedActionsForRobot)
-                {
-                    switch (a)
-                    {
-                        case RobotDoing.Forward:
-                            Debug.Log("Moving forward.");
-                            break;
-                        case RobotDoing.Rotate90:
-                            Debug.Log("Rotating clockwise.");
-                            break;
-                        case RobotDoing.RotateNeg90:
-                            Debug.Log("Rotating counter-clockwise.");
-                            break;
-                        default:
-                            Debug.Log("Doing something sus.");
-                            break;
-                    }
-                }
-                
+                _taskBeforeNextStep.Wait();
             }
             
-            
-            
-            //TODO: make async
-            // random moves for now
-            // foreach (var robot in robots)
-            // {
-            //     plannedActions[robot] = (RobotDoing) new Random().Next(0, 4);
-            // }
+            IsPathPlanningDone = false;
+            _taskBeforeNextStep = PlanNextMoves(map, robot);
+            IsPathPlanningDone = true;
         }
+        
+        /// <summary>
+        /// Plan the move instructions for all robots present in the simulation.
+        /// Async method.
+        /// </summary>
+        /// <param name="map">Map loaded from config file</param>
+        public async void PlanNextMovesForAllAsync(Map map)
+        {
+            if ((_taskBeforeNextStep == null ? TaskStatus.WaitingToRun :  _taskBeforeNextStep.Status) == TaskStatus.Running)
+            {
+                _taskBeforeNextStep.Wait();
+            }
+            
+            
+            IsPathPlanningDone = false;
+            
+            var robots = _plannedActions.Keys.ToList();
+            var tasks = new List<Task>();
+            
+            
+            //TODO: Make async
+            foreach (var robot in robots)
+            {
+                tasks.Add(PlanNextMoves(map,robot));
+            }
+
+            _taskBeforeNextStep = Task.WhenAll(tasks);
+            await _taskBeforeNextStep;
+            
+            IsPathPlanningDone = true;
+
+        }
+        /// <summary>
+        /// Plans a list of instructions for an individual robot without taking the position of other robots into consideration. How rebellious.
+        /// </summary>
+        /// <param name="map"></param>
+        /// <param name="robot"></param>
+        private async Task PlanNextMoves(Map map,SimRobot robot)
+        {
+            //TODO: Calc how many waits we need for one request
+
+            if (_plannedActions[robot] == null)
+            {
+                _plannedActions[robot] = new Stack<RobotDoing>();
+            }
+            
+            if (robot.RobotData.m_state == RobotBeing.Free)
+            {
+                _plannedActions[robot].Push(RobotDoing.Wait);
+            }
+            else
+            {
+                _plannedActions[robot] = _pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading,false);
+            }
+        }
+        /// <summary>
+        /// Plans a list of instructions for an individual robot while also considering the positions of other robots. How polite.
+        /// </summary>
+        /// <param name="map"></param>
+        /// <param name="robot"></param>
+        private async Task PlanReroute(Map map, SimRobot robot)
+        {
+            if (_plannedActions[robot] == null)
+            {
+                _plannedActions[robot] = new Stack<RobotDoing>();
+            }
+            
+            if (robot.Goal == null)
+            {
+                _plannedActions[robot].Push(RobotDoing.Wait);
+            }
+            else
+            {
+                _plannedActions[robot] = _pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading,true);
+            }
+        }
+
+        
     }
 }
