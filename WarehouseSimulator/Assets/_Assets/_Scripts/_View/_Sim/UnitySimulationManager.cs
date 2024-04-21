@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model.Sim;
@@ -28,13 +29,26 @@ namespace WarehouseSimulator.View.Sim
             simulationManager = new SimulationManager();
             simulationManager.SimRobotManager.RobotAddedEvent += AddUnitySimRobot;
             simulationManager.SimRobotManager.GoalAssignedEvent += AddUnityGoal;
-            if (DebugMode)
+            try
             {
-                DebugSetup();
-                simulationManager.Setup(debugSimInputArgs);
+                if (DebugMode)
+                {
+                    DebugSetup();
+                    simulationManager.Setup(debugSimInputArgs);
+                }
+                else
+                    simulationManager.Setup(MainMenuManager.simInputArgs);
+                throw new Exception("This is a test");
             }
-            else
-                simulationManager.Setup(MainMenuManager.simInputArgs);
+            catch (Exception e)
+            {
+                UIMessageManager.GetInstance().MessageBox("Error during setup", response =>
+                {
+                    SceneHandler.GetInstance().SetCurrentScene(0);
+                    SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
+                }, new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK));
+                return;
+            }
 
             unityMap.AssignMap(simulationManager.Map);
             unityMap.GenerateMap();
