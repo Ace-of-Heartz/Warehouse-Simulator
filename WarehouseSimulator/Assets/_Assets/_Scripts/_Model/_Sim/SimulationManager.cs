@@ -70,7 +70,6 @@ namespace WarehouseSimulator.Model.Sim
             m_simulationData.m_goalAmount = _simGoalManager.GoalCount;
             m_simulationData.m_goalsRemaining = m_simulationData.m_goalAmount;
             
-            centralController.Preprocess(map);
             _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
 
             IPathPlanner pathPlanner;
@@ -99,8 +98,8 @@ namespace WarehouseSimulator.Model.Sim
             {
                 Debug.Log("stepping");
                 centralController.TimeToMove(map,_simRobotManager);
-                //centralController.PlanNextMoves(map);
                 _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
+                centralController.PlanNextMovesForAllAsync(map);
                 
                 m_simulationData.m_currentStep++;
                 m_simulationData.m_goalsRemaining = _simGoalManager.GoalCount;
