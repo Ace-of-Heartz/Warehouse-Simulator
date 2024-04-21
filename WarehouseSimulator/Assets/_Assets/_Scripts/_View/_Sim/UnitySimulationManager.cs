@@ -38,7 +38,6 @@ namespace WarehouseSimulator.View.Sim
                 }
                 else
                     simulationManager.Setup(MainMenuManager.simInputArgs);
-                throw new Exception("This is a test");
             }
             catch (Exception e)
             {
