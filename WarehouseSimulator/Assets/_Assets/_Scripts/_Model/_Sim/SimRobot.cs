@@ -59,7 +59,7 @@ namespace WarehouseSimulator.Model.Sim
 
         public (bool,SimRobot?) TryPerformActionRequested(RobotDoing watt, Map mapie)
         {
-            //CustomLog.Instance.AddPlannerAction(Id,watt);
+            CustomLog.Instance.AddPlannerAction(Id,watt);
             
             if (watt == RobotDoing.Timeout) watt = RobotDoing.Wait;
             
@@ -77,7 +77,7 @@ namespace WarehouseSimulator.Model.Sim
                     _nexties.nextPos = WhereToMove(RobotData.m_gridPosition);
                     if (mapie.GetTileAt(_nexties.nextPos) == TileType.Wall)
                     {
-                        //CustomLog.Instance.AddError(Id,-1);
+                        CustomLog.Instance.AddError(Id,-1);
                         return (false, this);
                     } 
                     break;
@@ -94,7 +94,7 @@ namespace WarehouseSimulator.Model.Sim
 
         public void MakeStep(Map mipieMap)
         {
-            //CustomLog.Instance.AddRobotAction(Id,_nexties.what);
+            CustomLog.Instance.AddRobotAction(Id,_nexties.what);
             if (_nexties.nextPos != RobotData.m_gridPosition)
             {
                 mipieMap.DeoccupyTile(RobotData.m_gridPosition);

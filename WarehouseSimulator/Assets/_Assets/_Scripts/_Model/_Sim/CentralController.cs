@@ -97,7 +97,7 @@ namespace WarehouseSimulator.Model.Sim
             // {
             //     foreach (var e in _plannedActions)
             //     {
-            //         //CustomLog.Instance.AddRobotAction(e.Key.Id,RobotDoing.Wait);
+            //         CustomLog.Instance.AddRobotAction(e.Key.Id,RobotDoing.Wait);
             //     }
             //     //replan with the robies
             // }

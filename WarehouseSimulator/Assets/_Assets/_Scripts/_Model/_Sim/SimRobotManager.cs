@@ -157,7 +157,7 @@ namespace WarehouseSimulator.Model.Sim
 
                 if (hitter != null)
                 {
-                    //CustomLog.Instance.AddError(robie.Id,hitter.Id);
+                    CustomLog.Instance.AddError(robie.Id,hitter.Id);
                     return (false, robie, hitter);
                 }
             }
