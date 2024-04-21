@@ -5,10 +5,10 @@
             <ui:Toggle label="Highlight Goals" />
             <ui:Toggle label="Highlight Robots" />
         </ui:RadioButtonGroup>
-        <ui:Foldout text="Config information">
-            <ui:Label tabindex="-1" text="Number of robots:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RobotCountLabel" />
-            <ui:Label tabindex="-1" text="Goals remaining" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GoalCountLabel" />
-            <ui:Label tabindex="-1" text="Goals remaining:" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GoalRemainingLabel" />
+        <ui:Foldout text="Config information" name="GlobalInfos">
+            <ui:TextField picking-mode="Ignore" label="Text Field" value="filler text" name="RobotsAmount" />
+            <ui:TextField picking-mode="Ignore" label="Text Field" value="filler text" name="GoalsAmount" />
+            <ui:TextField picking-mode="Ignore" label="Text Field" value="filler text" name="GoalsRemaining" />
         </ui:Foldout>
     </ui:VisualElement>
 </ui:UXML>

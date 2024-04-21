@@ -11,7 +11,7 @@
         <ui:VisualElement name="BottomBar" picking-mode="Ignore" style="flex-grow: 1; -unity-text-align: middle-center; background-color: rgb(87, 87, 87); align-items: stretch; justify-content: center; flex-direction: row; align-self: auto; max-height: 150px;">
             <ui:VisualElement name="BottomLeft" picking-mode="Ignore" style="flex-grow: 1; width: auto; max-width: 10%;" />
             <ui:VisualElement name="BottomCenter" picking-mode="Ignore" style="flex-grow: 1; justify-content: center; align-items: center; max-width: 80%;">
-                <ui:ProgressBar value="22" title="my-progress" style="width: 1000px; height: auto; max-width: 1000px; min-width: 600px;" />
+                <ui:ProgressBar value="22" title="my-progress" name="StepsProgressBar" style="width: 1000px; height: auto; max-width: 1000px; min-width: 600px;" />
             </ui:VisualElement>
             <ui:VisualElement name="BottomRight" picking-mode="Ignore" style="flex-grow: 1; max-width: 10%;">
                 <ui:GroupBox name="ButtonBox">

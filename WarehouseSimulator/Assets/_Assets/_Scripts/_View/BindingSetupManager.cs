@@ -1,35 +1,30 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 namespace WarehouseSimulator.View
 {
-    public class BindingSetupManager
+    public class BindingSetupManager : MonoBehaviour
     {
-        public static void SetupBindings()
-        {
-            SetupMainMenuBinding();
-            SetupSimBinding();
-            SetupPlaybackBinding();
-        }
-
-        private static void SetupSimBinding()
-        {
-            SetupSimAbortButton();
-            
-            
-        }
-
-        private static void SetupSimAbortButton()
+        public void SetupSimBinding()
         {
             var doc = SceneHandler.GetDocOfID(1);
-            doc.rootVisualElement
+            var button = doc.rootVisualElement
                 .Q("SimulationCanvas")
                 .Q("BottomBar")
                 .Q("BottomRight")
                 .Q("ButtonBox")
-                .Q<Button>("Button_Abort")
-                .clickable.clicked += () => UIMessageManager.GetInstance().MessageBox("Abort simulation?",
+                .Q<Button>("Button_Abort");
+            SetupAbortFor(button);
+            
+            
+
+        }
+
+        private void SetupAbortFor(Button button)
+        {
+            button.clickable.clicked += () => UIMessageManager.GetInstance().MessageBox("Abort simulation?",
                 response =>
                 {
                     switch (response)
@@ -47,13 +42,23 @@ namespace WarehouseSimulator.View
                 new SimpleMessageBoxTypeSelector(SimpleMessageBoxTypeSelector.MessageBoxType.CONFIRM_CANCEL)
             );
         }
+
+        private void SetupInfoPanel(VisualElement infoPanel)
+        {
+            infoPanel
+        }
         
-        private static void SetupPlaybackBinding()
+        private void SetupStepsProgressBar(VisualElement progressBar)
+        {
+            progressBar
+        }
+
+        public void SetupPlaybackBinding()
         {
             var doc = SceneHandler.GetDocOfID(2);
         }
 
-        private static void SetupMainMenuBinding()
+        public void SetupMainMenuBinding()
         {
             var doc = SceneHandler.GetDocOfID(0);
         }
