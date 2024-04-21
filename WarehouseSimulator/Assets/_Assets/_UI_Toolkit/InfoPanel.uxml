@@ -1,11 +1,11 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:VisualElement name="SimulationInfo" style="flex-grow: 1; background-color: rgb(173, 173, 173); max-width: 400px; min-width: 320px;">
-        <ui:Label tabindex="-1" text="Simulation Info" parse-escape-sequences="true" display-tooltip-when-elided="true" name="InfoLabel" />
-        <ui:RadioButtonGroup value="-1" name="ToggleButtonGroup">
+    <ui:VisualElement name="SimulationInfo" style="flex-grow: 1; background-color: rgb(173, 173, 173); max-width: 400px; min-width: 320px; font-size: 14px; -unity-text-outline-width: 0; border-left-color: rgb(26, 26, 26); border-right-color: rgb(26, 26, 26); border-top-color: rgb(26, 26, 26); border-bottom-color: rgb(26, 26, 26); border-top-width: 10px; border-right-width: 10px; border-bottom-width: 10px; border-left-width: 10px; border-top-left-radius: 15px; border-top-right-radius: 15px; border-bottom-right-radius: 15px; border-bottom-left-radius: 15px;">
+        <ui:Label tabindex="-1" text="Simulation Info" parse-escape-sequences="true" display-tooltip-when-elided="true" name="InfoLabel" style="font-size: 22%; -unity-background-scale-mode: stretch-to-fill; -unity-font-style: bold;" />
+        <ui:RadioButtonGroup value="-1" name="ToggleButtonGroup" style="font-size: 18px; -unity-font-style: bold;">
             <ui:Toggle label="Highlight Goals" />
             <ui:Toggle label="Highlight Robots" />
         </ui:RadioButtonGroup>
-        <ui:Foldout text="Config information" name="GlobalInfos">
+        <ui:Foldout text="Config Information" name="GlobalInfos" style="font-size: 18px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0);">
             <ui:TextField picking-mode="Ignore" label="Text Field" value="filler text" name="RobotsAmount" />
             <ui:TextField picking-mode="Ignore" label="Text Field" value="filler text" name="GoalsAmount" />
             <ui:TextField picking-mode="Ignore" label="Text Field" value="filler text" name="GoalsRemaining" />
