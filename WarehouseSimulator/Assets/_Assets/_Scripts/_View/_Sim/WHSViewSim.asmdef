@@ -5,6 +5,7 @@
     "WHSModelSim",
     "WHSModelEnum",
     "WarehouseSimulatorView",
-    "WHSViewMainMenu"
+    "WHSViewMainMenu",
+    "SimpleFileBrowser.Runtime"
   ]
 }

@@ -1,17 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using UnityEditor.Rendering;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
-using WarehouseSimulator.Model.Sim;
 
 namespace WarehouseSimulator.Model.Sim
 {
     public class BFS_PathPlanner : IPathPlanner
     {
         #region Fields
-        private Map m_map;
+        private readonly Map _map;
         #endregion
         
         
@@ -21,7 +18,7 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="map">Map loaded in from config file</param>
         public BFS_PathPlanner(Map map)
         {
-            m_map = map;
+            _map = map;
         } 
             
         /// <summary>
@@ -35,8 +32,7 @@ namespace WarehouseSimulator.Model.Sim
         /// <returns></returns>
         public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction dir, bool checkForRobots = false)
         {
-            var instructions = GetInstructions(start, finish, dir, checkForRobots);
-            return instructions;
+            return GetInstructions(start, finish, dir, checkForRobots);
         }
 
         /// <summary>
@@ -57,7 +53,7 @@ namespace WarehouseSimulator.Model.Sim
             
             Queue<(Vector2Int,Direction)> dfsQueue;
             
-            bool is_finish_found = false;
+            bool isFinishFound = false;
             
             Stack<RobotDoing> instructions = new();
             pathDict = new();
@@ -74,7 +70,7 @@ namespace WarehouseSimulator.Model.Sim
                 (currentNode,currentDir) = dfsQueue.Dequeue();
                 if (currentNode == finish)
                 {
-                    is_finish_found = true;
+                    isFinishFound = true;
                     break;
                 }
                 foreach((var node,var dir,var inst) in (this as IPathPlanner).GetNeighbouringNodes(currentNode,currentDir))
@@ -86,7 +82,7 @@ namespace WarehouseSimulator.Model.Sim
                             if (!pathDict.Keys.ToList().Exists(p => p.Item1 == node )) //Never move forward to an already trod path
                             {
 
-                                if (m_map.GetTileAt(node) == TileType.Wall ||  (checkForRobots && m_map.GetTileAt(node) == TileType.RoboOccupied)  )
+                                if (_map.GetTileAt(node) == TileType.Wall ||  (checkForRobots && _map.GetTileAt(node) == TileType.RoboOccupied)  )
                                 {
                                     break; // Don't move into a wall
                                 }
@@ -113,7 +109,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
             }
 
-            if (!is_finish_found)
+            if (!isFinishFound)
             {
                 return instructions; //Could not find finish -> don't do anything
             }
