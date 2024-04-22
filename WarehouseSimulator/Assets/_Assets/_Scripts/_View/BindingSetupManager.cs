@@ -95,7 +95,18 @@ namespace WarehouseSimulator.View
 
             button.clickable.clicked += () =>
             {
-                man.SimGoalManager.AddNewGoal(coordinatesField.value,man.Map);
+                try
+                {
+                    man.SimGoalManager.AddNewGoal(coordinatesField.value, man.Map);
+                }
+                catch (ArgumentException e)
+                {
+                    UIMessageManager.GetInstance().MessageBox(e.Message,
+                        response => { },
+                        new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK));
+                }
+                
+                 
             };
 
         }
