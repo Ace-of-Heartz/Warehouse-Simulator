@@ -15,7 +15,7 @@ namespace WarehouseSimulator.View.Sim
 
         public void SelectRobot()
         {
-            Debug.Log($"Kerfus-{m_unityRobot.RobotData.m_id} reporting for duty!");
+            // Debug.Log($"Kerfus-{m_unityRobot.RobotData.m_id} reporting for duty!");
             var sceneHandler = SceneHandler.GetInstance();
             if (sceneHandler.CurrentSceneID == 0)
             {

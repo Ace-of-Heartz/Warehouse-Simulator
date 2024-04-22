@@ -20,8 +20,12 @@ namespace WarehouseSimulator.Model.Sim
             _nextid = 0;
         }
 
-        public void AddNewGoal(Vector2Int here)
+        public void AddNewGoal(Vector2Int here, Map mapie)
         {
+            if (mapie.GetTileAt(here) != TileType.Empty)
+            {
+                throw new ArgumentException($"Invalid position given: map tile at {here} is not empty.");
+            }
             SimGoal newGoal = new(here,_nextid);
             _nextid++;
             _goalsRemaining.Enqueue(newGoal);
@@ -66,7 +70,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
 
                 Vector2Int nextPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
-                AddNewGoal(nextPos);
+                AddNewGoal(nextPos,mapie);
             }
         }
     }
