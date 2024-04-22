@@ -90,6 +90,10 @@ namespace WarehouseSimulator.Model
             taskData.Add(new TaskInfo(1, 15, 8));
         }
         
+        /// <summary>
+        /// Saves logged data to a file
+        /// </summary>
+        /// <param name="path"></param>
         public void SaveLog(string path)
         {
             StringBuilder sb = new StringBuilder();
@@ -137,7 +141,7 @@ namespace WarehouseSimulator.Model
             sb.Append("\"actualPaths\":[");
             for (int i = 0; i < teamSize; i++)
             {
-                sb.Append($"\"{robotActions[i]}\"");
+                sb.Append($"\"{ActionStringAddCommas(robotActions[i])}\"");
                 if (i != teamSize - 1)
                     sb.Append(",");
             }
@@ -146,7 +150,7 @@ namespace WarehouseSimulator.Model
             sb.Append("\"plannerPaths\":[");
             for (int i = 0; i < teamSize; i++)
             {
-                sb.Append($"\"{plannerActions[i]}\"");
+                sb.Append($"\"{ActionStringAddCommas(plannerActions[i])}\"");
                 if (i != teamSize - 1)
                     sb.Append(",");
             }
@@ -201,7 +205,11 @@ namespace WarehouseSimulator.Model
             using StreamWriter writer = new StreamWriter(path);
             writer.Write(json);
         }
-
+        
+        /// <summary>
+        /// Load log file. Throws Exception if the file is not in the correct format
+        /// </summary>
+        /// <param name="path"></param>
         public void LoadLog(string path)
         {
             using StreamReader reader = new StreamReader(path);
@@ -235,7 +243,7 @@ namespace WarehouseSimulator.Model
             //parse values
             Init();
             actionModel = keyValueDict["actionModel"].Trim('"');
-            allValid = keyValueDict["allValid"].Trim('"') == "true";
+            allValid = keyValueDict["allValid"].Trim('"') == "Yes";
             teamSize = int.Parse(keyValueDict["teamSize"]);
             string[] start = keyValueDict["start"].Trim('[').Trim(']').Split("],[");
             foreach (string s in start)
@@ -264,15 +272,15 @@ namespace WarehouseSimulator.Model
             taskCompletedCount = int.Parse(keyValueDict["numTasksFinished"]);
             sumOfCost = int.Parse(keyValueDict["sumOfCosts"]);
             stepsCompleted = int.Parse(keyValueDict["makespan"]);
-            string[] actualPaths = keyValueDict["actualPaths"].Trim('[').Trim(']').Replace("\"", "").Split(",");
+            string[] actualPaths = keyValueDict["actualPaths"].Trim('[').Trim(']').Split("\",");
             for (int i = 0; i < teamSize; i++)
             {
-                robotActions.Add(i, actualPaths[i]);
+                robotActions.Add(i, CommafiedActionStringToActionString(actualPaths[i].Trim('\"')));
             }
-            string[] plannerPaths = keyValueDict["plannerPaths"].Trim('[').Trim(']').Replace("\"", "").Split(",");
+            string[] plannerPaths = keyValueDict["plannerPaths"].Trim('[').Trim(']').Split("\",");
             for (int i = 0; i < teamSize; i++)
             {
-                plannerActions.Add(i, plannerPaths[i]);
+                plannerActions.Add(i, CommafiedActionStringToActionString(plannerPaths[i].Trim('\"')));
             }
             string[] plannerTimesStr = keyValueDict["plannerTimes"].Trim('[').Trim(']').Split(",");
             foreach (string s in plannerTimesStr)
@@ -445,6 +453,23 @@ namespace WarehouseSimulator.Model
                 default:
                     return "";
             }
+        }
+
+        private string ActionStringAddCommas(string s)
+        {
+            StringBuilder sb = new();
+            for(int i = 0; i < s.Length; i++)
+            {
+                sb.Append(s[i]);
+                if (i != s.Length - 1)
+                    sb.Append(",");
+            }
+            return sb.ToString();
+        }
+
+        private string CommafiedActionStringToActionString(string s)
+        {
+            return s.Replace(",", "");
         }
     }
 }
