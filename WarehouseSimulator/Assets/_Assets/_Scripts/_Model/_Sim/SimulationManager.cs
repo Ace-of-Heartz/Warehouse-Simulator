@@ -97,7 +97,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             if (_simulationData.m_currentStep <= _simulationData.m_maxStepAmount)
             {
-                _centralController.TimeToMove(map,_simRobotManager);
+                _centralController.TimeToMove(_map,_simRobotManager);
                 _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
                 _centralController.PlanNextMovesForAllAsync(_map);
                 
