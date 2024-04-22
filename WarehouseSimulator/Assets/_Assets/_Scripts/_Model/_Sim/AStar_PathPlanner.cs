@@ -49,7 +49,6 @@ namespace WarehouseSimulator.Model.Sim
             {
                 (k, (currentNode, currentDir)) = aStarQueue.ExtractDominating();
                 
-                Debug.Log($"K:= {k}\tCurrentNode:= {currentNode}\tCurrentDir:= {currentDir}");
 
                 
                 if (currentNode == finish)
@@ -62,7 +61,6 @@ namespace WarehouseSimulator.Model.Sim
                              currentDir))
                 {
                     var w = GetWeightFactor(t + 1, dir, node, finish);
-                    Debug.Log($"\tWeight:= {w}\tTime:= {t}\tNode:= {node}\tDir:= {dir}\tInst:= {inst}");
                     bool b; //Logical value to check if the path is already trodden or has a lower weight than the ones already trodden
                     b = !pathDict.ContainsKey((node, dir));
                     b = b ? true : (pathDict[(node, dir)].Item4 > w && !b);
@@ -102,7 +100,7 @@ namespace WarehouseSimulator.Model.Sim
             
             if (!is_finish_found)
             {
-                Debug.Log("Couldn't find finish for robot.");
+                //Debug.Log("Couldn't find finish for robot.");
                 return instructions; //Could not find finish -> don't do anything
             }
 

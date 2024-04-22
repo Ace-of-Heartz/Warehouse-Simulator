@@ -115,7 +115,6 @@ namespace WarehouseSimulator.Model.Sim
 
             if (!is_finish_found)
             {
-                Debug.Log("Couldn't find finish for robot.");
                 return instructions; //Could not find finish -> don't do anything
             }
 
