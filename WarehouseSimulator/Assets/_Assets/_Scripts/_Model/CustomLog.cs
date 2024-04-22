@@ -6,14 +6,13 @@ using System.Text;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model.Structs;
 
-namespace WarehouseSimulator.Model.Sim
+namespace WarehouseSimulator.Model
 {
     public class CustomLog
     {
         private static CustomLog instance;
         public static CustomLog Instance => instance ??= new CustomLog();
         private CustomLog() { Init(); }
-        
         
         private string actionModel = null;
         private bool allValid = true;
@@ -28,6 +27,17 @@ namespace WarehouseSimulator.Model.Sim
         private List<LogError> errors = null;
         private Dictionary<int, List<EventInfo>> taskEvents = null;
         private List<TaskInfo> taskData = null;
+
+        #region Property
+
+        public int TeamSize => teamSize;
+        public List<RobotStartPos> StartPos => startPos;
+        public int StepsCompleted => stepsCompleted;
+        public Dictionary<int, String> RobotActions => robotActions;
+        public Dictionary<int, List<EventInfo>> TaskEvents => taskEvents;
+        public List<TaskInfo> TaskData => taskData;
+
+        #endregion
 
         public void Init()
         {
@@ -383,6 +393,39 @@ namespace WarehouseSimulator.Model.Sim
         public void AddPlannerTime(double time)
         {
             plannerTimes.Add(time);
+        }
+
+        public List<RobotDoing> GetAllActions(int roboId)
+        { 
+            List<RobotDoing> res = new();
+            string all = robotActions[roboId];
+            char[] charactions = all.ToCharArray();
+            foreach (char action in charactions)
+            {
+                res.Add(CharToRobotAction(action));
+            }
+
+            return res;
+        }
+
+        private RobotDoing CharToRobotAction(char action)
+        {
+            switch (action)
+            {
+                case 'F':
+                    return RobotDoing.Forward;
+                case 'C':
+                    return RobotDoing.Rotate90;
+                case 'R':
+                    return RobotDoing.RotateNeg90;
+                case 'W':
+                    return RobotDoing.Wait;
+                case 'T':
+                    return RobotDoing.Timeout;
+                default:
+                    throw new InvalidFileException("The format of the log file was in an incorrect format: the robotactions must be one of the following letters:" +
+                                                   "\n\"F\",\"C\",\"R\",\"W\",\"T\"");
+            }
         }
 
         private string RobotActionToString(RobotDoing action)

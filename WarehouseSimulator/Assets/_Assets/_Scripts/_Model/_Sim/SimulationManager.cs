@@ -32,7 +32,8 @@ namespace WarehouseSimulator.Model.Sim
             _simGoalManager = new SimGoalManager();
             _simRobotManager = new SimRobotManager();
             _centralController = new CentralController(map);
-            _simulationData = ScriptableObject.CreateInstance<SimulationData>();
+            m_simulationData = ScriptableObject.CreateInstance<SimulationData>();
+            CustomLog.Instance.Init();
             
             //event for adding robot to path planning
             _simRobotManager.RobotAddedEvent += (sender, args) =>

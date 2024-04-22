@@ -34,11 +34,6 @@ namespace WarehouseSimulator.Model.Sim
     
         public void AssignTasksToFreeRobots(SimGoalManager from)
         {
-            if (from is null)
-            {
-                throw new ArgumentException("Error in robot managing! The GoalManager doesn't exist!");
-            }
-            
             foreach (var robie in _allRobots)
             {
                 if (robie.State == RobotBeing.Free)
