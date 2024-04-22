@@ -46,6 +46,7 @@ namespace WarehouseSimulator.View
 
             Camera cam = GetComponent<Camera>();
             cam.orthographicSize = Math.Max(mapSize.y, mapSize.x / cam.aspect) / 2 * 1.5f;
+            
         }
     }
    

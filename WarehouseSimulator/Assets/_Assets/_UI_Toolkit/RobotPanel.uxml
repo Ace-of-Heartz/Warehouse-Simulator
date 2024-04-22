@@ -1,15 +1,14 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:Template name="GoalPanel" src="project://database/Assets/_Assets/_UI_Toolkit/GoalPanel.uxml?fileID=9197481963319205126&amp;guid=891919a25a2d7c144ac9353bf75abf0e&amp;type=3#GoalPanel" />
-    <ui:VisualElement name="RobotPanel" picking-mode="Ignore" style="flex-grow: 1; background-color: rgb(144, 144, 144); flex-direction: column; border-left-color: rgb(26, 26, 26); border-right-color: rgb(26, 26, 26); border-top-color: rgb(26, 26, 26); border-bottom-color: rgb(26, 26, 26); border-top-width: 8px; border-right-width: 8px; border-bottom-width: 8px; border-left-width: 8px; border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; width: 400px; height: 555px;">
-        <ui:IntegerField label="Integer Field" value="42" name="IDField" readonly="true" style="-unity-font-style: bold;" />
-        <ui:EnumField label="Direction" type="WarehouseSimulator.Model.Enums.Direction, Assembly-CSharp" name="DirectionField" picking-mode="Ignore" style="-unity-font-style: bold;" />
-        <ui:EnumField label="State" type="WarehouseSimulator.Model.Enums.RobotBeing, Assembly-CSharp" name="StateField" picking-mode="Ignore" style="-unity-font-style: bold;" />
-        <ui:Vector2IntField label="Position" name="PositionField" picking-mode="Ignore" style="-unity-font-style: bold; align-items: stretch; flex-direction: column;" />
-        <ui:Label tabindex="-1" text="Current Task:" parse-escape-sequences="true" display-tooltip-when-elided="true" style="-unity-font-style: bold; font-size: 18px; text-overflow: clip; white-space: nowrap; -unity-text-align: upper-left;" />
-        <ui:VisualElement name="RobotDisplay" style="flex-grow: 1; -unity-background-image-tint-color: rgb(208, 0, 122); background-color: rgb(255, 0, 42);" />
-        <ui:VisualElement name="GoalDisplay" picking-mode="Ignore" style="flex-grow: 1; background-color: rgb(255, 0, 216);">
+    <ui:VisualElement name="RobotPanel" picking-mode="Ignore" style="flex-grow: 1; background-color: rgb(144, 144, 144); flex-direction: column; border-left-color: rgb(26, 26, 26); border-right-color: rgb(26, 26, 26); border-top-color: rgb(26, 26, 26); border-bottom-color: rgb(26, 26, 26); border-top-width: 8px; border-right-width: 8px; border-bottom-width: 8px; border-left-width: 8px; border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 20px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; width: auto; height: auto; min-width: auto; max-width: 400px; max-height: none;">
+        <ui:IntegerField label="Robot ID:" value="42" name="IDField" readonly="true" picking-mode="Ignore" focusable="false" style="-unity-font-style: bold; font-size: 18px;" />
+        <ui:EnumField label="Direction:" type="WarehouseSimulator.Model.Enums.Direction, WHSModelEnum" name="DirectionField" picking-mode="Ignore" focusable="false" style="-unity-font-style: bold; font-size: 18px;" />
+        <ui:EnumField label="State:&#10;" type="WarehouseSimulator.Model.Enums.RobotBeing, WHSModelEnum" name="StateField" picking-mode="Ignore" focusable="false" style="-unity-font-style: bold; font-size: 18px;" />
+        <ui:Vector2IntField label="Coordinates:" name="PositionField" picking-mode="Ignore" focusable="false" style="-unity-font-style: bold; align-items: stretch; flex-direction: column; font-size: 18px;" />
+        <ui:Label tabindex="-1" text="Current Task:" parse-escape-sequences="true" display-tooltip-when-elided="true" style="-unity-font-style: bold; font-size: 24px; text-overflow: clip; white-space: nowrap; -unity-text-align: upper-left;" />
+        <ui:VisualElement name="RobotDisplay" picking-mode="Ignore" style="flex-grow: 1; -unity-background-image-tint-color: rgb(208, 0, 122); background-color: rgb(144, 144, 144);" />
+        <ui:VisualElement name="GoalDisplay" picking-mode="Ignore" style="flex-grow: 1; background-color: rgb(144, 144, 144);">
             <ui:Instance template="GoalPanel" name="GoalPanel" picking-mode="Ignore" />
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:VisualElement focusable="false" style="flex-grow: 1; position: absolute; height: 546px; width: 396px;" />
 </ui:UXML>
