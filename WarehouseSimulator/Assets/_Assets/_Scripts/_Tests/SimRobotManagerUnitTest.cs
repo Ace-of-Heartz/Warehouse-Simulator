@@ -1,0 +1,91 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.TestTools;
+using WarehouseSimulator.Model;
+using WarehouseSimulator.Model.Enums;
+using WarehouseSimulator.Model.Sim;
+using ArgumentException = System.ArgumentException;
+
+namespace _Assets._Scripts._Tests
+{
+    public class TestingRobotManager : SimRobotManager
+    {
+        public void AddRobot(int i, Vector2Int pos)
+        {
+            SimRobot newR = new(i, pos);
+            _allRobots.Add(newR);
+            CustomLog.Instance.AddRobotStart(i, pos.x, pos.y, Direction.North);
+        }
+    }
+    
+    [TestFixture]
+    public class SimRobotManagerUnitTest
+    {
+        private Map _emptyMap;
+        private Map _33Map;
+        private SimRobot _robie;
+        private TestingRobotManager _robieMan;
+        private SimGoalManager _golieMan;
+        [SetUp]
+        public void Setup()
+        {
+            _robie = new(0, Vector2Int.one);
+            _robieMan = new();
+            _golieMan = new();
+            _emptyMap = new Map();
+            string[] input = {"h 3","w 3","map","...","...","..."};
+            _33Map = new Map();
+            _33Map.CreateMap(input);
+            CustomLog.Instance.Init();
+        }
+
+        [Test]
+        public void AssignTasksToFreeRobots_ResultingEventInvoked()
+        {
+            _robieMan.GoalAssignedEvent += Handler;
+            _golieMan.AddNewGoal(Vector2Int.one);
+            _robieMan.AddRobot(0,Vector2Int.one);
+            _robieMan.AddRobot(1,Vector2Int.left);
+            _robieMan.AssignTasksToFreeRobots(_golieMan);
+
+            void Handler(object sender, EventArgs e)
+            {
+                Assert.IsTrue(true);
+            }
+        }
+        
+        [Test]
+        public void AssignTasksToFreeRobots_ResultingEventNotInvoked()
+        {
+            _robieMan.GoalAssignedEvent += Handler;
+            _robieMan.AddRobot(0,Vector2Int.one);
+            _robieMan.AddRobot(1,Vector2Int.left);
+            _robieMan.AssignTasksToFreeRobots(_golieMan);
+
+            void Handler(object sender, EventArgs e)
+            {
+                Assert.IsTrue(false);
+            }
+            Assert.IsTrue(true);
+        }
+        
+        [UnityTest]
+        public IEnumerator CheckValidSteps_ResultingArgumentExceptionThrown()
+        { 
+            //Magic?
+            Dictionary<SimRobot, Stack<RobotDoing>> dicc = new();
+            dicc.Add(_robie,new Stack<RobotDoing>());
+
+            var runner = _robieMan.CheckValidSteps(dicc,_emptyMap);
+
+            yield return new WaitUntil(() => runner.IsCompleted);
+            
+            Assert.IsTrue(runner.IsFaulted);
+            Assert.IsTrue(runner.Exception?.InnerExceptions[0] is ArgumentException);
+        }
+    }
+}

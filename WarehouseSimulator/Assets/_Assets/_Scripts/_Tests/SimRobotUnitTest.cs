@@ -12,8 +12,8 @@ using Direction = WarehouseSimulator.Model.Enums.Direction;
 
 public class SimRobotUnitTest
 {
-    private Map _emptyMap;
-    private Map _33Map;
+    private Map? _emptyMap;
+    private Map? _33Map;
     private SimRobot? _robie;
     private SimGoal? _golie;
     [SetUp]
@@ -94,9 +94,9 @@ public class SimRobotUnitTest
     {
         _robie = new SimRobot(0,Vector2Int.one,starting);
 
-        _robie.TryPerformActionRequested(RobotDoing.RotateNeg90, _emptyMap);
+        _robie.TryPerformActionRequested(RobotDoing.RotateNeg90, _emptyMap!);
         
-        _robie.MakeStep(_emptyMap);
+        _robie.MakeStep(_emptyMap!);
         
         Assert.AreEqual(result,_robie.Heading);
     }
@@ -109,9 +109,9 @@ public class SimRobotUnitTest
     {
         _robie = new SimRobot(0,Vector2Int.one,starting);
 
-        _robie.TryPerformActionRequested(RobotDoing.Rotate90, _emptyMap);
+        _robie.TryPerformActionRequested(RobotDoing.Rotate90, _emptyMap!);
         
-        _robie.MakeStep(_emptyMap);
+        _robie.MakeStep(_emptyMap!);
         
         Assert.AreEqual(result,_robie.Heading);
     }
@@ -132,9 +132,9 @@ public class SimRobotUnitTest
         Vector2Int expectedNextPos = new(resultX,resultY);
         
         (bool,SimRobot) res = (true, null!);
-        Assert.AreEqual(res,_robie!.TryPerformActionRequested(what,_33Map));
+        Assert.AreEqual(res,_robie!.TryPerformActionRequested(what,_33Map!));
         
-        _robie.MakeStep(_emptyMap);
+        _robie.MakeStep(_emptyMap!);
         
         Assert.AreEqual(expectedNextPos,_robie!.GridPosition);
     }
@@ -142,11 +142,11 @@ public class SimRobotUnitTest
     [Test]
     public void TryPerformActionRequested_WallessMap_ResultingCorrectMapChange()
     {
-        _robie!.TryPerformActionRequested(RobotDoing.Forward, _33Map);
+        _robie!.TryPerformActionRequested(RobotDoing.Forward, _33Map!);
         
-        _robie.MakeStep(_33Map);
+        _robie.MakeStep(_33Map!);
         
-        Assert.AreEqual(TileType.RoboOccupied,_33Map.GetTileAt(_robie!.GridPosition));
+        Assert.AreEqual(TileType.RoboOccupied,_33Map!.GetTileAt(_robie!.GridPosition));
     }
 
     [TestCase(0,0)]
@@ -155,7 +155,7 @@ public class SimRobotUnitTest
     {
         _robie = new(0,new Vector2Int(startX,startY));
         string[] input = {"h 3","w 3","map",".@.","...","..."};
-        _emptyMap.CreateMap(input);
+        _emptyMap!.CreateMap(input);
         
         (bool,SimRobot) res = (false, _robie);
 
@@ -166,7 +166,7 @@ public class SimRobotUnitTest
     public void TryPerformActionRequested_ResultingGoalCompleted()
     {
         _golie = new SimGoal(new Vector2Int(1, 0), 0);
-        _robie!.TryPerformActionRequested(RobotDoing.Forward,_33Map);
+        _robie!.TryPerformActionRequested(RobotDoing.Forward,_33Map!);
         Assert.AreEqual(null!,_robie.Goal);
         Assert.AreEqual(RobotBeing.Free,_robie.State);
     }
