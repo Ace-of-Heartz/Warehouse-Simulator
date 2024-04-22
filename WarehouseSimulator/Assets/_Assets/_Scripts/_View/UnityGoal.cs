@@ -13,7 +13,7 @@ namespace WarehouseSimulator.View
     {
         private GoalLike _goalModel;
         [SerializeField]
-        private TextMeshPro roboId;
+        private TextMeshPro goalIdText;
 
         private UnityMap _mapie;
 
@@ -23,13 +23,18 @@ namespace WarehouseSimulator.View
             //Do we even need this blaaa?
         }
 
-        public void GiveGoalModel(SimGoal g, UnityMap dis)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="dis"></param>
+        public void GiveGoalModel(SimGoal g, UnityMap dis) //TODO: Are we sure that SimGoal is what we need?
         {
             _goalModel = g;
             _mapie = dis;
             g.GoalFinishedEvent += (_,_) => Destroy(gameObject);
             transform.position = _mapie.GetWorldPosition(_goalModel.GridPosition);
-            roboId.text = _goalModel.RoboId;
+            goalIdText.text = _goalModel.RoboId;
         }
     }
 }    

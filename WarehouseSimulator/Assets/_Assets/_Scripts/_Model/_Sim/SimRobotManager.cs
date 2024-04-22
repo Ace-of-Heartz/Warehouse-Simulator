@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
@@ -12,6 +13,8 @@ namespace WarehouseSimulator.Model.Sim
     public class SimRobotManager
     {
         private List<SimRobot> _allRobots;
+        
+        public int RobotCount => _allRobots.Count;
 
         public event EventHandler<RobotCreatedEventArgs>? RobotAddedEvent;
         public event EventHandler<GoalAssignedEventArgs>? GoalAssignedEvent;
@@ -25,6 +28,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             SimRobot newR = new(i, pos);
             _allRobots.Add(newR);
+            CustomLog.Instance.AddRobotStart(i, pos.x, pos.y, Direction.North);
             RobotAddedEvent?.Invoke(this, new(newR));
         }
     
@@ -46,7 +50,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
             }
         }
-        public void RoboRead(string from, Map mapie)
+        public void RoboRead(string from, Map mapie, int robotN)
         {
             using StreamReader rid = new(from);
             if (!int.TryParse(rid.ReadLine(), out int robn))
@@ -54,6 +58,16 @@ namespace WarehouseSimulator.Model.Sim
                 throw new InvalidFileException("Invalid file format: First line not a number");
             }
 
+            if (robn != robotN)
+            {
+                throw new InvalidFileException($"Invalid file format: The number of robots given in the Configuration File ({robotN}) does not equal the number of robots given in the Agents File ({robn})");
+            }
+
+            if (robn < 0)
+            {
+                throw new InvalidFileException($"Invalid file format: The number of agents (currently: {robn}) cannot be less than zero!");
+            }
+            
             int nextid = 0;
             for (int i = 0; i < robn; i++)
             {   
@@ -90,18 +104,35 @@ namespace WarehouseSimulator.Model.Sim
         /// The second robot value represents the second robot included in the possible invalid step (if only one robot was included, or the step is valid, this will be null)
         /// </returns>
         /// <exception cref="ArgumentException">Is thrown when the length of the actions array isn't valid</exception>
-        public async Task<(bool,SimRobot?,SimRobot?)> CheckValidSteps((SimRobot robie, RobotDoing action)[] actions,Map mapie)
+        ///<example>
+        ///     <code>
+        ///         (bool success, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
+        ///         if (!results.success)
+        ///         {
+        ///             //replan with the robies
+        ///         }
+        ///         else
+        ///         {
+        ///              foreach (SimRobot robie in _plannedActions.Keys)
+        ///              {
+        ///                  robie.MakeStep(map);
+        ///              }
+        ///         }
+        ///     </code>
+        ///</example>
+        public async Task<(bool,SimRobot?,SimRobot?)> CheckValidSteps(Dictionary<SimRobot, Stack<RobotDoing>> actions,Map mapie)
         {
-            if (actions.Length != _allRobots.Count)
+            if (actions.Count != _allRobots.Count)
             {
-                throw new ArgumentException($"Error in checking valid steps, the number of robots ({actions.Length}) given actions does not equal the number of all robots {_allRobots.Count}");
+                throw new ArgumentException($"Error in checking valid steps, the number of robots ({actions.Count}) given actions does not equal the number of all robots {_allRobots.Count}");
             }
-            // foreach ((SimRobot robie,RobotDoing what) in actions)
-            // {
-            //     if (!robie.TryPerformActionRequested(what, mapie)) return false; //TODO => Blaaa: Async?
-            // }
+
+            foreach (var pair in actions)
+            {
+                pair.Key.TryPerformActionRequested(pair.Value.Pop(),mapie);
+            }
             
-            var tasks = actions.Select(async tuple => await Task.FromResult(tuple.robie.TryPerformActionRequestedAsync(tuple.action, mapie)));
+            var tasks = actions.Select(async pair => await Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value.Pop(),mapie)));
             (bool success, SimRobot? whoTripped)[]? results = await Task.WhenAll(tasks);
 
             SimRobot? hitter = null;
@@ -124,21 +155,11 @@ namespace WarehouseSimulator.Model.Sim
                 }
                 catch (Exception) { /*ignored because this means there were no problems in the operations so far*/ }
 
-                if (hitter != null) return (false, robie, hitter);
-
-                // foreach (SimRobot compRobie in _allRobots)
-                // {
-                //     if (robie.RobotData.m_id == compRobie.RobotData.m_id) continue; //if it's the same robot, we skip the step
-                //     
-                //     if (compRobie.NextPos == robie.NextPos) return (false,compRobie,robie); 
-                //     //we check whether there are matching future positions, because this would mean that the step is invalid
-                //
-                //     if (compRobie.NextPos == robie.RobotData.m_gridPosition
-                //         & robie.NextPos == compRobie.RobotData.m_gridPosition) return (false,compRobie,robie);
-                //     //we check whether they want to step in each other's places ("jump over each other") because this would mean the step is invalid
-                //     
-                //     //TODO => Nincs más, amit meg kéne nézni?
-                // }
+                if (hitter != null)
+                {
+                    CustomLog.Instance.AddError(robie.Id,hitter.Id);
+                    return (false, robie, hitter);
+                }
             }
             
             return (true,null,null);
@@ -148,13 +169,13 @@ namespace WarehouseSimulator.Model.Sim
         {
             if (thisOne.RobotData.m_id == notThisOne.RobotData.m_id) return (true,null); //if it's the same robot, we skip the step
 
-            if (notThisOne.NextPos == thisOne.NextPos) return (false,thisOne);//(false,notThisOne,thisOne); 
+            if (notThisOne.NextPos == thisOne.NextPos) return (false,thisOne);
             //we check whether there are matching future positions, because this would mean that the step is invalid
 
             if (notThisOne.NextPos == thisOne.RobotData.m_gridPosition
-                & thisOne.NextPos == notThisOne.RobotData.m_gridPosition) return (false,thisOne); //(false,notThisOne,thisOne);
+                & thisOne.NextPos == notThisOne.RobotData.m_gridPosition) return (false,thisOne); 
             //we check whether they want to step in each other's places ("jump over each other") because this would mean the step is invalid
-            //TODO => Nincs más, amit meg kéne nézni?
+            
             return (true,null);
         }
     }

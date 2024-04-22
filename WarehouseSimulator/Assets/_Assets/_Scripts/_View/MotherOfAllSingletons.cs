@@ -57,7 +57,6 @@ namespace WarehouseSimulator.View
                 SceneHandler.GetInstance().SetCurrentScene(0);
                 m_UIMessageManager.SetUIDocument(SceneHandler.GetInstance().CurrentDoc);
             
-                BindingSetupManager.SetupBindings();
             }
             
         }

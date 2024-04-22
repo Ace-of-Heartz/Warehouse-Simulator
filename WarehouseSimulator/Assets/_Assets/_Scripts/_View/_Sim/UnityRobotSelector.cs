@@ -15,7 +15,7 @@ namespace WarehouseSimulator.View.Sim
 
         public void SelectRobot()
         {
-            Debug.Log($"Kerfus-{m_unityRobot.RobotData.m_id} reporting for duty!");
+            // Debug.Log($"Kerfus-{m_unityRobot.RobotData.m_id} reporting for duty!");
             var sceneHandler = SceneHandler.GetInstance();
             if (sceneHandler.CurrentSceneID == 0)
             {
@@ -27,7 +27,7 @@ namespace WarehouseSimulator.View.Sim
             SerializedObject so = new SerializedObject(m_unityRobot.RobotData);
             robotPanel.Bind(so);
             
-            SerializedProperty sp = so.FindProperty("m_id");
+            SerializedProperty sp = so.FindProperty("m_shownId");
             robotPanel.Q("IDField").Q<IntegerField>("IDField").BindProperty(sp);
 
             sp = so.FindProperty("m_heading");

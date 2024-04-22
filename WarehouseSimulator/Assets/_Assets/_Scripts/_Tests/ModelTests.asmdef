@@ -1,0 +1,12 @@
+{
+    "name": "ModelTests",
+    "references" : [
+      "WarehouseSimulatorModel",
+        "WHSModelEnum",
+        "WHSModelSim",
+        "WHSModelPB"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

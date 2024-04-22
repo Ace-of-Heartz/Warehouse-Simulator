@@ -1,15 +1,24 @@
 #nullable enable
 using System;
-using System.Threading.Tasks;
+using Codice.Client.Commands.WkTree;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
+using WarehouseSimulator.Model;
 
 namespace WarehouseSimulator.Model.Sim
 {
     public class SimRobot : RobotLike
     {
-        private Vector2Int _nextPos;
+        private (Vector2Int nextPos, Direction nextHeading,RobotDoing what) _nexties;
 
+        /// <summary>
+        /// Constructor for SimRobot
+        /// </summary>
+        /// <param name="i">ID of robot</param>
+        /// <param name="gridPos">Initial position of robot</param>
+        /// <param name="heading">Initial direction of robot</param>
+        /// <param name="goal">Goal assigned to robot</param>
+        /// <param name="state">Initial state of robot</param>
         public SimRobot(int i,
             Vector2Int gridPos,
             Direction heading = Direction.North,
@@ -17,21 +26,44 @@ namespace WarehouseSimulator.Model.Sim
             RobotBeing state = RobotBeing.Free)
                 : base(i, gridPos, heading, state, goal)
         {
-            _nextPos = new(-1, -1);
+            _nexties = (new(-1, -1),nextHeading: Direction.North,RobotDoing.Wait);
         }
 
-        public Vector2Int NextPos => _nextPos;
+        public Vector2Int NextPos => _nexties.nextPos;
         
-        public void AssignGoal(SimGoal goTo)
+        public void AssignGoal(SimGoal? goTo)
         {
-            goTo.AssignedTo(this);
-            RobotData.m_goal = goTo;
-            RobotData.m_state = RobotBeing.InTask;
+            if (goTo is null)
+            {
+                #if DEBUG
+                    throw new ArgumentException("The robot assigned cannot be null or PBRobot!");
+                #endif
+            }
+            else
+            {
+                if (State == RobotBeing.Free)
+                {
+                    goTo.AssignedTo(this);
+                    Goal = goTo;
+                    CustomLog.Instance.AddTaskEvent(Id, goTo.GoalID, "assigned");
+                }
+                else
+                {
+                    #if DEBUG
+                        throw new InvalidOperationException($"The robot {Id} is already doing a task, you cannot assign another goal to it");
+                    #endif
+                }
+            }
+            
         }
 
-        public (bool,SimRobot?) TryPerformActionRequestedAsync(RobotDoing watt, Map mapie)
+        public (bool,SimRobot?) TryPerformActionRequested(RobotDoing watt, Map mapie)
         {
-            _nextPos = RobotData.m_gridPosition;
+            CustomLog.Instance.AddPlannerAction(Id,watt);
+            
+            if (watt == RobotDoing.Timeout) watt = RobotDoing.Wait;
+            
+            _nexties= (RobotData.m_gridPosition,RobotData.m_heading,watt);
             if (mapie == null)
             {
                 throw new ArgumentNullException($"The argument: {nameof(mapie)} as the map does not exist");
@@ -39,27 +71,21 @@ namespace WarehouseSimulator.Model.Sim
 
             switch (watt)
             {
-                case (RobotDoing.Timeout):
                 case (RobotDoing.Wait):
                     break;
                 case (RobotDoing.Forward):
-                    _nextPos = WhereToMove(RobotData.m_gridPosition);
-                    if (mapie.GetTileAt(_nextPos) == TileType.Wall)
+                    _nexties.nextPos = WhereToMove(RobotData.m_gridPosition);
+                    if (mapie.GetTileAt(_nexties.nextPos) == TileType.Wall)
                     {
-                        //TODO => Blaaa: CC react and LOG
+                        CustomLog.Instance.AddError(Id,-1);
                         return (false, this);
-                        //return ((false, this));
-                    }
-                    // else if (mapie.GetTileAt(nextPos) == TileType.RoboOccupied)
-                    // {
-                    //     //TODO => Blaaa: CC react and LOG
-                    // }
+                    } 
                     break;
                 case (RobotDoing.Rotate90):
-                    RobotData.m_heading = (Direction)(((int)RobotData.m_heading + 1) % 4);
+                    _nexties.nextHeading = (Direction)( (((int)RobotData.m_heading - 1)+4) % 4);
                     break;
                 case (RobotDoing.RotateNeg90):
-                    RobotData.m_heading = (Direction)(((int)RobotData.m_heading - 1) % 4);
+                    _nexties.nextHeading = (Direction)(((int)RobotData.m_heading + 1) % 4);
                     break;
             }
 
@@ -68,24 +94,28 @@ namespace WarehouseSimulator.Model.Sim
 
         public void MakeStep(Map mipieMap)
         {
-            mipieMap.DeoccupyTile(RobotData.m_gridPosition);
-            RobotData.m_gridPosition = _nextPos;
-            mipieMap.OccupyTile(RobotData.m_gridPosition);
-            if (_nextPos == RobotData.m_goal?.GridPosition)
+            CustomLog.Instance.AddRobotAction(Id,_nexties.what);
+            if (_nexties.nextPos != RobotData.m_gridPosition)
             {
-                GoalCompleted();
+                mipieMap.DeoccupyTile(RobotData.m_gridPosition);
+                RobotData.m_gridPosition = _nexties.nextPos;
+                mipieMap.OccupyTile(RobotData.m_gridPosition);
+                if (_nexties.nextPos == Goal?.GridPosition)
+                {
+                    GoalCompleted();
+                }
             }
+            RobotData.m_heading = _nexties.nextHeading;
         }
         
         private void GoalCompleted()
         {
-            if (RobotData.m_goal is SimGoal)
-            {
-                var bla = (SimGoal)RobotData.m_goal;
-                bla.FinishTask();
+            if (Goal is SimGoal simgolie)
+            { 
+                simgolie.FinishTask();
+                CustomLog.Instance.AddTaskEvent(Id, Goal.GoalID, "finished");
+                Goal = null;
             }
-            RobotData.m_goal = null;
-            RobotData.m_state = RobotBeing.Free;
         }
     }
 }

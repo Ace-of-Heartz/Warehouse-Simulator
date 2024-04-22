@@ -14,7 +14,7 @@ namespace WarehouseSimulator.Model
         
         public int GoalID => m_goalData.m_id;
         
-        public string RoboId => m_goalData.m_robot?.Id.ToString() ?? "unknown";
+        public string RoboId => m_goalData.m_robot?.ShownId.ToString() ?? "unknown";
         
         public Vector2Int GridPosition => m_goalData.m_gridPosition;
 

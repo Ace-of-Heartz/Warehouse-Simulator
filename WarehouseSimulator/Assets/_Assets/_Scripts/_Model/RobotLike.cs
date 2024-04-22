@@ -17,6 +17,8 @@ namespace WarehouseSimulator.Model
         public RobotData RobotData => m_robotData;
         
         public int Id => m_robotData.m_id;
+        
+        public int ShownId => m_robotData.m_shownId;
 
         public Vector2Int GridPosition => m_robotData.m_gridPosition;
     
@@ -25,7 +27,7 @@ namespace WarehouseSimulator.Model
         public GoalLike Goal
         {
             get => m_robotData.m_goal;
-            private set
+            protected set
             {
                 m_robotData.m_state = value == null ? RobotBeing.Free : RobotBeing.InTask;
                 m_robotData.m_goal = value;
@@ -43,6 +45,7 @@ namespace WarehouseSimulator.Model
         {
             m_robotData = ScriptableObject.CreateInstance<RobotData>();
             m_robotData.m_id = i;
+            m_robotData.m_shownId = i + 1;
             m_robotData.m_gridPosition = gPos;
             m_robotData.m_heading = heading;
             m_robotData.m_state = state;

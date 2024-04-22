@@ -63,12 +63,12 @@ namespace WarehouseSimulator.Model.PB
                         break;
                     case RobotDoing.Rotate90:
                         _gridPositionHistory[i] = _gridPositionHistory[i - 1];
-                        _headings[i] = (Direction)( ((int)_headings[i - 1] + 1) % 4 );
+                        _headings[i] = (Direction)( (((int)_headings[i - 1] - 1)+4) % 4);
                         _states[i] = _states[i - 1];
                         break;
                     case RobotDoing.RotateNeg90:
                         _gridPositionHistory[i] = _gridPositionHistory[i - 1];
-                        _headings[i] = (Direction)( ((int)_headings[i - 1] - 1) % 4 );
+                        _headings[i] = (Direction)(((int)_headings[i - 1] + 1) % 4);
                         _states[i] = _states[i - 1];
                         break;
                 }

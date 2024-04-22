@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using JetBrains.Annotations;
@@ -11,6 +11,8 @@ namespace WarehouseSimulator.Model.Sim
     {
         private Queue<SimGoal> _goalsRemaining;
         private int _nextid;
+        
+        public int GoalCount => _goalsRemaining.Count;
 
         public SimGoalManager()
         {
@@ -18,10 +20,16 @@ namespace WarehouseSimulator.Model.Sim
             _nextid = 0;
         }
 
-        public void AddNewGoal(Vector2Int here)
+        public void AddNewGoal(Vector2Int here, Map mapie)
         {
-            _goalsRemaining.Enqueue(new SimGoal(here,_nextid));
+            if (mapie.GetTileAt(here) != TileType.Empty)
+            {
+                throw new InvalidFileException($"Invalid file format: {_nextid + 2}. line does not provide a valid position");
+            }
+            SimGoal newGoal = new(here,_nextid);
             _nextid++;
+            _goalsRemaining.Enqueue(newGoal);
+            CustomLog.Instance.AddTaskData(newGoal.GoalID, newGoal.GridPosition.x, newGoal.GridPosition.y);
         }
 
         [CanBeNull]
@@ -62,8 +70,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
 
                 Vector2Int nextPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
-                _goalsRemaining.Enqueue(new SimGoal(nextPos,_nextid));
-                _nextid++;
+                AddNewGoal(nextPos);
             }
         }
     }
