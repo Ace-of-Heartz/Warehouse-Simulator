@@ -8,7 +8,7 @@
         <ui:VisualElement name="RightSideBar" style="flex-grow: 1; align-self: auto; min-height: 80%; max-width: 400px; justify-content: flex-start; align-items: stretch; flex-direction: column; max-height: 80px; min-width: 400px;">
             <ui:Instance template="GoalInputPanel" name="GoalInputPanel" />
         </ui:VisualElement>
-        <ui:VisualElement name="VisualElement" picking-mode="Ignore" style="flex-grow: 1; -unity-text-align: middle-center; align-self: center; min-height: 80%; min-width: 1120px; max-height: 80px;">
+        <ui:VisualElement name="ViewArea" picking-mode="Ignore" style="flex-grow: 1; -unity-text-align: middle-center; align-self: center; min-height: 80%; min-width: 1120px; max-height: 80px;">
             <ui:Instance template="PopupArea" name="PopupArea" picking-mode="Ignore" style="position: absolute; height: 559px; width: 775px; top: -114px; left: -202px; transform-origin: center; rotate: 0; translate: 50% 50%;" />
         </ui:VisualElement>
         <ui:VisualElement name="LeftSideBar" picking-mode="Ignore" style="flex-grow: 1; align-self: flex-start; max-width: 400px; min-height: 90%; max-height: 90px; min-width: 400px;">
