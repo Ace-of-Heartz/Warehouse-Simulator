@@ -24,7 +24,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             if (mapie.GetTileAt(here) != TileType.Empty)
             {
-                throw new InvalidFileException($"Invalid file format: {_nextid + 2}. line does not provide a valid position");
+                throw new ArgumentException($"Invalid position given: map tile at {here} is not empty.");
             }
             SimGoal newGoal = new(here,_nextid);
             _nextid++;
@@ -70,7 +70,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
 
                 Vector2Int nextPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
-                AddNewGoal(nextPos);
+                AddNewGoal(nextPos,mapie);
             }
         }
     }
