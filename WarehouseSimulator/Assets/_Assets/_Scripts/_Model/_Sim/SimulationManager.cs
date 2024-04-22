@@ -48,14 +48,14 @@ namespace WarehouseSimulator.Model.Sim
         {
             CustomLog.Instance.SetActionModel("almafa");
             
-            m_simulationData.m_maxStepAmount = simulationArgs.NumberOfSteps;
-            m_simulationData.m_currentStep = 0;
-            m_simulationData.m_robotAmount = 0;
-            m_simulationData.m_goalAmount = 0;
-            m_simulationData.m_goalsRemaining = 0;
-            m_simulationData.m_stepTime = simulationArgs.IntervalOfSteps;
-            m_simulationData.m_preprocessTime = simulationArgs.PreparationTime;
-            m_simulationData.m_isFinished = false;
+            _simulationData.m_maxStepAmount = simulationArgs.NumberOfSteps;
+            _simulationData.m_currentStep = 0;
+            _simulationData.m_robotAmount = 0;
+            _simulationData.m_goalAmount = 0;
+            _simulationData.m_goalsRemaining = 0;
+            _simulationData.m_stepTime = simulationArgs.IntervalOfSteps;
+            _simulationData.m_preprocessTime = simulationArgs.PreparationTime;
+            _simulationData.m_isFinished = false;
             
             logFilePath = simulationArgs.EventLogPath;
             
@@ -98,12 +98,12 @@ namespace WarehouseSimulator.Model.Sim
             if (_simulationData.m_currentStep <= _simulationData.m_maxStepAmount)
             {
                 Debug.Log("stepping");
-                centralController.TimeToMove(map,_simRobotManager);
+                _centralController.TimeToMove(map,_simRobotManager);
                 _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
-                centralController.PlanNextMovesForAllAsync(map);
+                _centralController.PlanNextMovesForAllAsync(map);
                 
-                m_simulationData.m_currentStep++;
-                m_simulationData.m_goalsRemaining = _simGoalManager.GoalCount;
+                _simulationData.m_currentStep++;
+                _simulationData.m_goalsRemaining = _simGoalManager.GoalCount;
                 CustomLog.Instance.SimulationStepCompleted();
             }
             else
@@ -115,7 +115,7 @@ namespace WarehouseSimulator.Model.Sim
         // info: simulation completed
         private void Finished()
         {
-            m_simulationData.m_isFinished = true;
+            _simulationData.m_isFinished = true;
             CustomLog.Instance.SaveLog(logFilePath);
         }
 
