@@ -9,7 +9,7 @@ using WarehouseSimulator.Model.Sim;
 namespace _Assets._Scripts.Tests
 {
     [TestFixture]
-    public class GoalUnitTest
+    public class SimGoalUnitTest
     {
         private SimRobot? _robie;
         private SimGoal? _golie;
@@ -22,7 +22,7 @@ namespace _Assets._Scripts.Tests
 
         [TestCase(-1,-1,0)]
         [TestCase(10,111,-6)]
-        public void SimGoal_PropertyCheck(int x, int y, int id)
+        public void PropertyCheck(int x, int y, int id)
         {
             Vector2Int pos = new Vector2Int(x, y);
             _golie = new SimGoal(pos, id);
@@ -32,14 +32,14 @@ namespace _Assets._Scripts.Tests
         }
 
         [Test]
-        public void SimGoal_AssignedTo_ResultingFieldChange()
+        public void AssignedTo_ResultingFieldChange()
         {
             _golie!.AssignedTo(_robie);
             Assert.AreEqual(_robie,_golie.SimRobot);
         }
         
         [Test]
-        public void SimGoal_FinishTask_ResultingEventThrown()
+        public void FinishTask_ResultingEventThrown()
         {
             _golie!.GoalFinishedEvent += Handler;
             _golie.FinishTask();

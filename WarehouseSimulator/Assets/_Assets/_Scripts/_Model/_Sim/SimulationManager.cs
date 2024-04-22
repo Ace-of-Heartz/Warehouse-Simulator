@@ -69,9 +69,7 @@ namespace WarehouseSimulator.Model.Sim
             _simulationData.m_robotAmount = _simRobotManager.RobotCount;
             _simulationData.m_goalAmount = _simGoalManager.GoalCount;
             _simulationData.m_goalsRemaining = _simulationData.m_goalAmount;
-            
-            _centralController.Preprocess(map);
-            _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
+
 
             IPathPlanner pathPlanner;
             switch (simulationArgs.SearchAlgorithm)
@@ -90,6 +88,7 @@ namespace WarehouseSimulator.Model.Sim
             }
             _centralController.AddPathPlanner(pathPlanner);
             _centralController.Preprocess(map);
+            _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
             _centralController.PlanNextMovesForAllAsync(map);
         }
         
