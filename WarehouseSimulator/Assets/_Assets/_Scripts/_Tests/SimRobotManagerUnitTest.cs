@@ -47,7 +47,7 @@ namespace _Assets._Scripts._Tests
         public void AssignTasksToFreeRobots_ResultingEventInvoked()
         {
             _robieMan.GoalAssignedEvent += Handler;
-            _golieMan.AddNewGoal(Vector2Int.one);
+            _golieMan.AddNewGoal(Vector2Int.one,_33Map);
             _robieMan.AddRobot(0,Vector2Int.one);
             _robieMan.AddRobot(1,Vector2Int.left);
             _robieMan.AssignTasksToFreeRobots(_golieMan);
