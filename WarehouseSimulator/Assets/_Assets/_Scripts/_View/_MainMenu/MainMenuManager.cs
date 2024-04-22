@@ -105,16 +105,13 @@ public class MainMenuManager : MonoBehaviour
                 res == 2 ? SEARCH_ALGORITHM.COOP_A_STAR : SEARCH_ALGORITHM.BFS;
 
         }
-        catch (Exception e)
+        catch (Exception)
         {
             
-            UIMessageManager.GetInstance().MessageBox("Fatal error occured!", response =>
-                {
-                    
-                },
+            UIMessageManager.GetInstance().MessageBox("Fatal error occured!",
+                response => { },
                 new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK)
             );
-            throw e;
             //Debug.Log("Fatal error occured at input parsing for simulation.");
         }
     }
