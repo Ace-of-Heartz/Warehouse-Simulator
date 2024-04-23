@@ -26,7 +26,7 @@ namespace WarehouseSimulator.Model.Sim
         }
 
         private Stack<RobotDoing> GetInstructions(Vector2Int start, Vector2Int finish, Direction facing,
-            bool checkForRobots)
+            bool checkForRobots = false)
         {
             Dictionary<
                     (Vector2Int, Direction)
