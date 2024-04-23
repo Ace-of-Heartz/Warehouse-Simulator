@@ -1,6 +1,6 @@
 ﻿namespace WarehouseSimulator.Model.Enums
 {
-    public enum Errors
+    public enum Error
     {
         None,
         RunIntoWall,

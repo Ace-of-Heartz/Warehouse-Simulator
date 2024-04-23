@@ -97,10 +97,10 @@ namespace WarehouseSimulator.Model.Sim
                 }
             }
 
-            (Errors happened, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
+            (Error happened, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
             //TODO => Blaaa: If these commented logs are not needed anymore, let them fly freely into the afterlife
             //Debug.Log($"Checking step result: {results.happened}");
-            if (results.happened != Errors.None)
+            if (results.happened != Error.None)
             {
                 foreach (var e in _plannedActions)
                 {
@@ -112,7 +112,7 @@ namespace WarehouseSimulator.Model.Sim
 
                 switch (results.happened)
                 {
-                    case Errors.RunIntoWall:
+                    case Error.RunIntoWall:
                         if (_foolMeOnce.Keys.Contains(results.robieTheFirst))
                         {
                             _foolMeOnce[results.robieTheFirst!] = Vector2Int.one - 2 * Vector2Int.one;
@@ -122,8 +122,8 @@ namespace WarehouseSimulator.Model.Sim
                             _foolMeOnce.Add(results.robieTheFirst!,Vector2Int.one - 2 * Vector2Int.one);
                         }
                         break;
-                    case Errors.WantedToCrashIntoSomeoneNotMoving:
-                    case Errors.WantedToJumpOver:
+                    case Error.WantedToCrashIntoSomeoneNotMoving:
+                    case Error.WantedToJumpOver:
                         if (!PokeIntoFoolMeOnce((results.robieTheFirst!, results.robieTheSecond!),
                                 results.robieTheSecond!.GridPosition, 
                                 results.robieTheFirst!.GridPosition))
@@ -139,7 +139,7 @@ namespace WarehouseSimulator.Model.Sim
                         }
 
                         break;
-                    case Errors.WantedToGoToTheSameField:
+                    case Error.WantedToGoToTheSameField:
                         if (!PokeIntoFoolMeOnce((results.robieTheFirst!, results.robieTheSecond!),
                                 results.robieTheSecond!.NextPos, 
                                 results.robieTheFirst!.NextPos))

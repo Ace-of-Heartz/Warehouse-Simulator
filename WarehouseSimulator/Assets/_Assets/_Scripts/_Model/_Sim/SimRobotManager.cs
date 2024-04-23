@@ -115,7 +115,7 @@ namespace WarehouseSimulator.Model.Sim
         ///         }
         ///     </code>
         ///</example>
-        public async Task<(Errors,SimRobot?,SimRobot?)> CheckValidSteps(Dictionary<SimRobot, Stack<RobotDoing>> actions,Map mapie)
+        public async Task<(Error,SimRobot?,SimRobot?)> CheckValidSteps(Dictionary<SimRobot, Stack<RobotDoing>> actions,Map mapie)
         {
             if (actions.Count != _allRobots.Count)
             {
@@ -126,24 +126,24 @@ namespace WarehouseSimulator.Model.Sim
             var tasks = actions.Select(pair => Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value.Peek(),mapie)));
             (bool success, SimRobot? whoTripped)[]? results = await Task.WhenAll(tasks);
 
-            (Errors happened, SimRobot? hitter) error = (Errors.None, null);
+            (Error happened, SimRobot? hitter) error = (Error.None, null);
             try
             {
                 error.hitter = results.First(r => r.success == false).whoTripped;
             }
             catch (Exception) { /*ignored because this means there were no problems in the operations so far*/ }
 
-            if (error.hitter != null) return (Errors.RunIntoWall, error.hitter, null);
+            if (error.hitter != null) return (Error.RunIntoWall, error.hitter, null);
             
             foreach (SimRobot robie in _allRobots)
             {
                 //var positionCheckTasks = _allRobots.Select(async thisrob => await Task.FromResult(CheckingFuturePositions(thisrob,robie)));
                 var positionCheckTasks = _allRobots.Select(thisrob => Task.FromResult(CheckingFuturePositions(thisrob,robie)));
-                (Errors error, SimRobot? whoCrashed)[]? maybeMistakes = await Task.WhenAll(positionCheckTasks);
-                error = (Errors.None, null);
+                (Error error, SimRobot? whoCrashed)[]? maybeMistakes = await Task.WhenAll(positionCheckTasks);
+                error = (Error.None, null);
                 try
                 {
-                    error = maybeMistakes.First(r => r.error != Errors.None);
+                    error = maybeMistakes.First(r => r.error != Error.None);
                 }
                 catch (Exception) { /*ignored because this means there were no problems in the operations so far*/ }
 
@@ -159,29 +159,29 @@ namespace WarehouseSimulator.Model.Sim
                 dicc.Value.Pop();
             }
             
-            return (Errors.None,null,null);
+            return (Error.None,null,null);
         }
 
-        private (Errors,SimRobot?) CheckingFuturePositions(SimRobot thisOne, SimRobot notThisOne)
+        private (Error,SimRobot?) CheckingFuturePositions(SimRobot thisOne, SimRobot notThisOne)
         {
-            if (thisOne.RobotData.m_id == notThisOne.RobotData.m_id) return (Errors.None,null); 
+            if (thisOne.RobotData.m_id == notThisOne.RobotData.m_id) return (Error.None,null); 
             //if it's the same robot, we skip the step
 
             if (notThisOne.NextPos == thisOne.NextPos)
             {
                 if (notThisOne.NextPos == notThisOne.GridPosition || thisOne.NextPos == thisOne.GridPosition)
                 {
-                    return (Errors.WantedToCrashIntoSomeoneNotMoving, thisOne);
+                    return (Error.WantedToCrashIntoSomeoneNotMoving, thisOne);
                 }
-                return (Errors.WantedToGoToTheSameField, thisOne);
+                return (Error.WantedToGoToTheSameField, thisOne);
             }
             //we check whether there are matching future positions, because this would mean that the step is invalid
 
             if (notThisOne.NextPos == thisOne.RobotData.m_gridPosition
-                & thisOne.NextPos == notThisOne.RobotData.m_gridPosition) return (Errors.WantedToJumpOver,thisOne); 
+                & thisOne.NextPos == notThisOne.RobotData.m_gridPosition) return (Error.WantedToJumpOver,thisOne); 
             //we check whether they want to step in each other's places ("jump over each other") because this would mean the step is invalid
             
-            return (Errors.None,null);
+            return (Error.None,null);
         }
     }
 }
