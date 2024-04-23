@@ -12,7 +12,7 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class SimRobotManager
     {
-        private List<SimRobot> _allRobots;
+        protected List<SimRobot> _allRobots;
         
         public int RobotCount => _allRobots.Count;
 
@@ -34,11 +34,6 @@ namespace WarehouseSimulator.Model.Sim
     
         public void AssignTasksToFreeRobots(SimGoalManager from)
         {
-            if (from is null)
-            {
-                throw new ArgumentException("Error in robot managing! The GoalManager doesn't exist!");
-            }
-            
             foreach (var robie in _allRobots)
             {
                 if (robie.State == RobotBeing.Free)

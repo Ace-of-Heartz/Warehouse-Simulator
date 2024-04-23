@@ -6,14 +6,13 @@ using System.Text;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model.Structs;
 
-namespace WarehouseSimulator.Model.Sim
+namespace WarehouseSimulator.Model
 {
     public class CustomLog
     {
         private static CustomLog instance;
         public static CustomLog Instance => instance ??= new CustomLog();
         private CustomLog() { Init(); }
-        
         
         private string actionModel = null;
         private bool allValid = true;
@@ -28,6 +27,17 @@ namespace WarehouseSimulator.Model.Sim
         private List<LogError> errors = null;
         private Dictionary<int, List<EventInfo>> taskEvents = null;
         private List<TaskInfo> taskData = null;
+
+        #region Property
+
+        public int TeamSize => teamSize;
+        public List<RobotStartPos> StartPos => startPos;
+        public int StepsCompleted => stepsCompleted;
+        public Dictionary<int, String> RobotActions => robotActions;
+        public Dictionary<int, List<EventInfo>> TaskEvents => taskEvents;
+        public List<TaskInfo> TaskData => taskData;
+
+        #endregion
 
         public void Init()
         {
@@ -80,6 +90,10 @@ namespace WarehouseSimulator.Model.Sim
             taskData.Add(new TaskInfo(1, 15, 8));
         }
         
+        /// <summary>
+        /// Saves logged data to a file
+        /// </summary>
+        /// <param name="path"></param>
         public void SaveLog(string path)
         {
             StringBuilder sb = new StringBuilder();
@@ -127,7 +141,7 @@ namespace WarehouseSimulator.Model.Sim
             sb.Append("\"actualPaths\":[");
             for (int i = 0; i < teamSize; i++)
             {
-                sb.Append($"\"{robotActions[i]}\"");
+                sb.Append($"\"{ActionStringAddCommas(robotActions[i])}\"");
                 if (i != teamSize - 1)
                     sb.Append(",");
             }
@@ -136,7 +150,7 @@ namespace WarehouseSimulator.Model.Sim
             sb.Append("\"plannerPaths\":[");
             for (int i = 0; i < teamSize; i++)
             {
-                sb.Append($"\"{plannerActions[i]}\"");
+                sb.Append($"\"{ActionStringAddCommas(plannerActions[i])}\"");
                 if (i != teamSize - 1)
                     sb.Append(",");
             }
@@ -191,7 +205,11 @@ namespace WarehouseSimulator.Model.Sim
             using StreamWriter writer = new StreamWriter(path);
             writer.Write(json);
         }
-
+        
+        /// <summary>
+        /// Load log file. Throws Exception if the file is not in the correct format
+        /// </summary>
+        /// <param name="path"></param>
         public void LoadLog(string path)
         {
             using StreamReader reader = new StreamReader(path);
@@ -225,7 +243,7 @@ namespace WarehouseSimulator.Model.Sim
             //parse values
             Init();
             actionModel = keyValueDict["actionModel"].Trim('"');
-            allValid = keyValueDict["allValid"].Trim('"') == "true";
+            allValid = keyValueDict["allValid"].Trim('"') == "Yes";
             teamSize = int.Parse(keyValueDict["teamSize"]);
             string[] start = keyValueDict["start"].Trim('[').Trim(']').Split("],[");
             foreach (string s in start)
@@ -254,15 +272,15 @@ namespace WarehouseSimulator.Model.Sim
             taskCompletedCount = int.Parse(keyValueDict["numTasksFinished"]);
             sumOfCost = int.Parse(keyValueDict["sumOfCosts"]);
             stepsCompleted = int.Parse(keyValueDict["makespan"]);
-            string[] actualPaths = keyValueDict["actualPaths"].Trim('[').Trim(']').Replace("\"", "").Split(",");
+            string[] actualPaths = keyValueDict["actualPaths"].Trim('[').Trim(']').Split("\",");
             for (int i = 0; i < teamSize; i++)
             {
-                robotActions.Add(i, actualPaths[i]);
+                robotActions.Add(i, CommafiedActionStringToActionString(actualPaths[i].Trim('\"')));
             }
-            string[] plannerPaths = keyValueDict["plannerPaths"].Trim('[').Trim(']').Replace("\"", "").Split(",");
+            string[] plannerPaths = keyValueDict["plannerPaths"].Trim('[').Trim(']').Split("\",");
             for (int i = 0; i < teamSize; i++)
             {
-                plannerActions.Add(i, plannerPaths[i]);
+                plannerActions.Add(i, CommafiedActionStringToActionString(plannerPaths[i].Trim('\"')));
             }
             string[] plannerTimesStr = keyValueDict["plannerTimes"].Trim('[').Trim(']').Split(",");
             foreach (string s in plannerTimesStr)
@@ -385,6 +403,39 @@ namespace WarehouseSimulator.Model.Sim
             plannerTimes.Add(time);
         }
 
+        public List<RobotDoing> GetAllActions(int roboId)
+        { 
+            List<RobotDoing> res = new();
+            string all = robotActions[roboId];
+            char[] charactions = all.ToCharArray();
+            foreach (char action in charactions)
+            {
+                res.Add(CharToRobotAction(action));
+            }
+
+            return res;
+        }
+
+        private RobotDoing CharToRobotAction(char action)
+        {
+            switch (action)
+            {
+                case 'F':
+                    return RobotDoing.Forward;
+                case 'C':
+                    return RobotDoing.Rotate90;
+                case 'R':
+                    return RobotDoing.RotateNeg90;
+                case 'W':
+                    return RobotDoing.Wait;
+                case 'T':
+                    return RobotDoing.Timeout;
+                default:
+                    throw new InvalidFileException("The format of the log file was in an incorrect format: the robotactions must be one of the following letters:" +
+                                                   "\n\"F\",\"C\",\"R\",\"W\",\"T\"");
+            }
+        }
+
         private string RobotActionToString(RobotDoing action)
         {
             switch (action)
@@ -402,6 +453,23 @@ namespace WarehouseSimulator.Model.Sim
                 default:
                     return "";
             }
+        }
+
+        private string ActionStringAddCommas(string s)
+        {
+            StringBuilder sb = new();
+            for(int i = 0; i < s.Length; i++)
+            {
+                sb.Append(s[i]);
+                if (i != s.Length - 1)
+                    sb.Append(",");
+            }
+            return sb.ToString();
+        }
+
+        private string CommafiedActionStringToActionString(string s)
+        {
+            return s.Replace(",", "");
         }
     }
 }
