@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
+using WarehouseSimulator.Model.Structs;
 
 namespace WarehouseSimulator.Model.PB
 {
@@ -19,34 +20,39 @@ namespace WarehouseSimulator.Model.PB
             _allRobots = new();
         }
 
-        public void SetUpAllRobots(int stepNumber,List<(Vector2Int,Direction)> whoWhere,List<List<RobotDoing>> robiesDoing)
+        /// <summary>
+        /// Sets up all the robots and calculates their future states, positions, headings
+        /// </summary>
+        /// <param name="stepNumber">The number of steps completed in the simulation</param>
+        /// <param name="whoWhere">The starting positions of the robots</param>
+        /// <exception cref="InvalidFileException">The exception thrown when we can't calculate the timeline</exception>
+        public void SetUpAllRobots(int stepNumber,List<RobotStartPos> whoWhere)
         {
-            if (stepNumber < robiesDoing.Count)
+            int i = 0;
+            foreach (RobotStartPos startPos in whoWhere)
             {
-                throw new ArgumentException($"Argument {nameof(stepNumber)} with value {stepNumber} too low");
-            }
-
-            if (stepNumber > robiesDoing.Count)
-            {
-                throw new ArgumentException($"Argument {nameof(stepNumber)} with value {stepNumber} too high");
-            }
-            
-            int i = 1;
-            foreach ((var coordin, var dirr) in whoWhere)
-            {
-                var robie = new PbRobot(i, coordin, stepNumber, dirr);
-                robie.CalcTimeLine(robiesDoing[i-1]);
+                // TODO: x and y are flipped in the log file for some reason
+                var robie = new PbRobot(i, new Vector2Int(startPos.y,startPos.x), stepNumber, startPos.heading);
+                try
+                {
+                    robie.CalcTimeLine(CustomLog.Instance.GetAllActions(i));
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidFileException("Couldn't match the robot id with the number of lists in the log file, the exact error:" +
+                                                   $"\n{ex.Message}");
+                }
                 i++;
                 _allRobots.Add(robie);
                 RobotAddedEvent?.Invoke(this, new RobotCreatedEventArgs(robie));
             }
         }
 
-        public void SetTimeTo(int step)
+        public void SetTimeTo(int stateIndex)
         {
             foreach (PbRobot robie in _allRobots)
             {
-                robie.SetTimeTo(step); //TODO => Blaaa: async?
+                robie.SetTimeTo(stateIndex);
             }
         }
     }

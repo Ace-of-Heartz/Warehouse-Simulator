@@ -39,7 +39,7 @@ namespace WarehouseSimulator.View.Sim
                 else
                     simulationManager.Setup(MainMenuManager.simInputArgs);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 UIMessageManager.GetInstance().MessageBox("Error during setup", response =>
                 {

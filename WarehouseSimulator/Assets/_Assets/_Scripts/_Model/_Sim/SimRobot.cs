@@ -74,7 +74,7 @@ namespace WarehouseSimulator.Model.Sim
                 case (RobotDoing.Wait):
                     break;
                 case (RobotDoing.Forward):
-                    _nexties.nextPos = WhereToMove(RobotData.m_gridPosition);
+                    _nexties.nextPos = WhereToMove(RobotData.m_gridPosition, RobotData.m_heading);
                     if (mapie.GetTileAt(_nexties.nextPos) == TileType.Wall)
                     {
                         CustomLog.Instance.AddError(Id,-1);
