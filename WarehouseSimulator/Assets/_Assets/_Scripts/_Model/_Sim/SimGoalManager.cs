@@ -22,7 +22,7 @@ namespace WarehouseSimulator.Model.Sim
 
         public void AddNewGoal(Vector2Int here, Map mapie)
         {
-            if (mapie.GetTileAt(here) != TileType.Empty)
+            if (mapie.GetTileAt(here) == TileType.Wall)
             {
                 throw new ArgumentException($"Invalid position given: map tile at {here} is not empty.");
             }
