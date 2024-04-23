@@ -39,7 +39,7 @@ namespace WarehouseSimulator.View
         
         public bool IsSimRobot 
         {
-            get => m_robotData is SimRobot;
+            get => _roboModel is SimRobot;
         }
         #endregion
 
