@@ -114,6 +114,7 @@ namespace WarehouseSimulator.View
         public void SetupPlaybackBinding()
         {
             var doc = SceneHandler.GetDocOfID(2);
+            
         }
 
         public void SetupMainMenuBinding()

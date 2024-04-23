@@ -29,8 +29,7 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         public bool IsPathPlanningDone
         {
-            get => _isPathPlanningDone;
-            private set => _isPathPlanningDone = value;
+            get =>  _taskBeforeNextStep == null ? true : _taskBeforeNextStep.IsCompleted;
         }
         public bool IsPreprocessDone => _isPreprocessDone;
         
@@ -172,7 +171,7 @@ namespace WarehouseSimulator.Model.Sim
         /// Async method.
         /// </summary>
         /// <param name="map">Map loaded from config file</param>
-        public async void PlanNextMovesForAllAsync(Map map)
+        public async void PlanNextMovesForAllAsync()
         {
             if ((_taskBeforeNextStep == null ? TaskStatus.WaitingToRun : _taskBeforeNextStep.Status) == TaskStatus.Running)
             {
@@ -197,7 +196,6 @@ namespace WarehouseSimulator.Model.Sim
             _taskBeforeNextStep = Task.WhenAll(tasks);
             await _taskBeforeNextStep;
             
-            IsPathPlanningDone = true;
 
         }
         /// <summary>
@@ -208,6 +206,7 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="y">The y coordinate of the DO NOT STEP HERE position</param>
         private async Task PlanNextMoves(SimRobot robot, int x = -1, int y = -1)
         {
+            
             if (_plannedActions[robot] == null)
             {
                 _plannedActions[robot] = new Stack<RobotDoing>();
