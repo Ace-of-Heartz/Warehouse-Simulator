@@ -35,10 +35,10 @@ public class UnityPlaybackManager : MonoBehaviour
         try
         {
         }
-        catch (Exception)
+        catch (Exception e)
         {
             Debug.Log("Some ex");
-            UIMessageManager.GetInstance().MessageBox("Error during setup", response =>
+            UIMessageManager.GetInstance().MessageBox("Error during setup:\n" + e.Message, response =>
             {
                 SceneHandler.GetInstance().SetCurrentScene(0);
                 SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
@@ -66,7 +66,7 @@ public class UnityPlaybackManager : MonoBehaviour
         {
             GameObject rob  = Instantiate(robie);
             UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
-            robieManager.MyThingies(pbRobie, unityMap, playbackManager.PlaybackData.m_currentPlayBackSpeed);
+            robieManager.MyThingies(pbRobie, unityMap, playbackManager.PlaybackData.PlaybackSpeed);
         }
         else
         {

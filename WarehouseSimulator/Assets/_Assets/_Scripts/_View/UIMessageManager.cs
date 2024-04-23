@@ -178,7 +178,6 @@ namespace WarehouseSimulator.View
 
         public void SetUIDocument(UIDocument doc)
         {
-            Debug.Log("Doc set");
             m_UIDocument = doc;
         }
         
