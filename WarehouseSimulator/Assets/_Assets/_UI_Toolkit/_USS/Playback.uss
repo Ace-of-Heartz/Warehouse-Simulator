@@ -1,4 +1,6 @@
 .playback-robot-panel #GoalDisplay {
-    display: none;
+    display: flex;
     visibility: visible;
+    opacity: 0;
+    position: absolute;
 }
