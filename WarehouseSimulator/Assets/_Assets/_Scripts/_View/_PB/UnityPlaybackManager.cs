@@ -61,7 +61,18 @@ public class UnityPlaybackManager : MonoBehaviour
     
     private void AddUnityPbRobot(object sender, RobotCreatedEventArgs e)
     {
-        Debug.Log("Adding robot");
+        if (e.Robot is PbRobot pbRobie)
+        {
+            GameObject rob  = Instantiate(robie);
+            UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
+            robieManager.MyThingies(pbRobie, unityMap, playbackManager.PlaybackData.m_currentPlayBackSpeed);
+        }
+        else
+        {
+#if DEBUG
+            throw new ArgumentException("Nagyon rossz robotot adtunk át a UnitySimulationManager-nek");
+#endif
+        }
     }
     
     private void AddUnityGoal(object sender, GoalAssignedEventArgs e)
