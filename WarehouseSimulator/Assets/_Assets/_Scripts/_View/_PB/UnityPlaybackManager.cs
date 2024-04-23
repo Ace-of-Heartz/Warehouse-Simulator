@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.PB;
 using WarehouseSimulator.View;
@@ -15,12 +17,55 @@ public class UnityPlaybackManager : MonoBehaviour
     private PlaybackManager playbackManager;
     
     public bool DebugMode = false;
-    public PbInputArgs debugSimInputArgs = new PbInputArgs();
+    public PbInputArgs debugPbInputArgs = new PbInputArgs();
 
     private void Start()
     {
-        Debug.Log("playback started");
-        Debug.Log("ALMA: " + MainMenuManager.pbInputArgs.MapFilePath);
-        Debug.Log("KÖRTE: " + MainMenuManager.pbInputArgs.EventLogPath);
+        playbackManager = new PlaybackManager();
+        playbackManager.PbRobotManager.RobotAddedEvent += AddUnityPbRobot;//TODO
+        playbackManager.PbGoalManager.GoalAssignedEvent += AddUnityGoal;//TODO
+        
+            if (DebugMode)
+            {
+                DebugSetup();
+                playbackManager.Setup(debugPbInputArgs);
+            }
+            else
+                playbackManager.Setup(MainMenuManager.pbInputArgs);
+        try
+        {
+        }
+        catch (Exception)
+        {
+            Debug.Log("Some ex");
+            UIMessageManager.GetInstance().MessageBox("Error during setup", response =>
+            {
+                SceneHandler.GetInstance().SetCurrentScene(0);
+                SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
+            }, new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK));
+            return;
+        }
+        
+        unityMap.AssignMap(playbackManager.Map);
+        unityMap.GenerateMap();
+        
+        //TODO: binding magic
+    }
+
+    void DebugSetup()
+    {
+        debugPbInputArgs.MapFilePath = "/Users/gergogalig/Library/CloudStorage/OneDrive-EotvosLorandTudomanyegyetem/FourthSemester/Szofttech/sample_files/maps/warehouse.map";
+        debugPbInputArgs.EventLogPath = "/Users/gergogalig/Library/CloudStorage/OneDrive-EotvosLorandTudomanyegyetem/FourthSemester/Szofttech/sample_files/warehouse_100_log.json";
+    }
+    
+    
+    private void AddUnityPbRobot(object sender, RobotCreatedEventArgs e)
+    {
+        Debug.Log("Adding robot");
+    }
+    
+    private void AddUnityGoal(object sender, GoalAssignedEventArgs e)
+    {
+        Debug.Log("Adding goal");
     }
 }

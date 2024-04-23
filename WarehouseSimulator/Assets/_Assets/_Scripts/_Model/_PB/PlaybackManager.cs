@@ -12,6 +12,9 @@ namespace WarehouseSimulator.Model.PB
         private PlaybackData _playbackData;
 
         public PlaybackData PlaybackData => _playbackData;
+        public PbRobotManager PbRobotManager => _pbRobotManager;
+        public PbGoalManager PbGoalManager => _pbGoalManager;
+        public Map Map => _map;
 
         public PlaybackManager()
         {
