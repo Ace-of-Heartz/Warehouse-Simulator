@@ -79,7 +79,7 @@ namespace WarehouseSimulator.View.MainMenu
                     FileBrowser.PickMode.Files,
                     false,
                     "G:\\Uni\\4th_semester\\soft_tech\\sample_files", //TODO: Change this to "~\\User"
-                    "NewConfigFile",
+                    inputExtension.defaultName,
                     "Save Log File",
                     "Select"
                 ))

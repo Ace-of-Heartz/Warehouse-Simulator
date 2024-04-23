@@ -28,8 +28,11 @@ namespace WarehouseSimulator.Model.PB
         {   
             _map.LoadMap(pbInputArgs.MapFilePath);
             CustomLog.Instance.LoadLog(pbInputArgs.EventLogPath);
-            _playbackData.m_currentStep = 0;
-            _playbackData.m_currentPlayBackSpeed = 1;
+            
+            _playbackData.CurrentStep = 0;
+            _playbackData.PlaybackSpeed = 1;
+            _playbackData.MaxStepAmount = 69; //Arbitrary value
+            
             _pbGoalManager.SetUpAllGoals(CustomLog.Instance.TaskData,CustomLog.Instance.TaskEvents);
             _pbRobotManager.SetUpAllRobots(CustomLog.Instance.StepsCompleted,CustomLog.Instance.StartPos);
             
@@ -38,7 +41,7 @@ namespace WarehouseSimulator.Model.PB
 
         public void SetTimeTo(int stateIndex)
         {
-            _playbackData.m_currentStep = stateIndex;
+            _playbackData.CurrentStep = stateIndex;
             _pbGoalManager.SetTimeTo(stateIndex);
             _pbRobotManager.SetTimeTo(stateIndex);
         }

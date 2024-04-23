@@ -76,7 +76,7 @@ namespace WarehouseSimulator.View.MainMenu
                         m_pathToFile = path[0];  //Debug.Log(path[0]); 
                         inputExtension.inputField.text = m_pathToFile;
                     }),
-                    (() => { m_pathToFile = ""; Debug.Log("Cancel"); }),
+                    (() => { m_pathToFile = "";  }),
                     FileBrowser.PickMode.Files,
                     false,
                     "G:\\Uni\\4th_semester\\soft_tech\\sample_files", //TODO: Change this to "~\\User"
