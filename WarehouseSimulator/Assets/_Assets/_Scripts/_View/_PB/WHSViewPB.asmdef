@@ -5,6 +5,7 @@
     "WHSModelPB",
     "WHSModelEnum",
     "WarehouseSimulatorView",
-    "WHSModelSim"
+    "WHSModelSim",
+    "WHSViewMainMenu"
   ]
 }
