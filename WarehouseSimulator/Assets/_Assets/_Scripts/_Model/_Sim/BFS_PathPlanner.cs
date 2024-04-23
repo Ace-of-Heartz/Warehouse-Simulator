@@ -30,9 +30,9 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="dir"></param>
         /// <param name="checkForRobots"></param>
         /// <returns></returns>
-        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction dir, bool checkForRobots = false)
+        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction dir, int x, int y)
         {
-            return GetInstructions(start, finish, dir, checkForRobots);
+            return GetInstructions(start, finish, dir, x, y);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="facing"></param>
         /// <param name="checkForRobots"></param>
         /// <returns></returns>
-        private Stack<RobotDoing> GetInstructions(Vector2Int start, Vector2Int finish, Direction facing,bool checkForRobots)
+        private Stack<RobotDoing> GetInstructions(Vector2Int start, Vector2Int finish, Direction facing,int x, int y)
         {
             Dictionary<
                 (Vector2Int,Direction)
@@ -82,9 +82,9 @@ namespace WarehouseSimulator.Model.Sim
                             if (!pathDict.Keys.ToList().Exists(p => p.Item1 == node )) //Never move forward to an already trod path
                             {
 
-                                if (_map.GetTileAt(node) == TileType.Wall ||  (checkForRobots && _map.GetTileAt(node) == TileType.RoboOccupied)  )
+                                if (_map.GetTileAt(node) == TileType.Wall ||  (x != -1 && y != -1 && node == new Vector2Int(x,y))  )
                                 {
-                                    break; // Don't move into a wall
+                                    break; // Don't move into a wall or into another robot
                                 }
                                 else
                                 {
