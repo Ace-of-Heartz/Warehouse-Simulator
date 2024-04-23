@@ -57,7 +57,7 @@ namespace WarehouseSimulator.Model.PB
                         _states[i] = _states[i - 1];
                         break;
                     case RobotDoing.Forward:
-                        _gridPositionHistory[i] = WhereToMove(_gridPositionHistory[i - 1]);
+                        _gridPositionHistory[i] = WhereToMove(_gridPositionHistory[i - 1], _headings[i - 1]);
                         _headings[i] = _headings[i - 1];
                         _states[i] = _states[i - 1];
                         break;

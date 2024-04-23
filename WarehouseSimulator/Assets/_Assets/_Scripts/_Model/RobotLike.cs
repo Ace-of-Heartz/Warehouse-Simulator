@@ -52,9 +52,9 @@ namespace WarehouseSimulator.Model
             m_robotData.m_goal = goal;
         }
         
-        protected Vector2Int WhereToMove(Vector2Int pos)
+        protected Vector2Int WhereToMove(Vector2Int pos, Direction heading)
         {
-            switch (m_robotData.m_heading)
+            switch (heading)
             {
                 case(Direction.North):
                     return pos + Vector2Int.down; 
