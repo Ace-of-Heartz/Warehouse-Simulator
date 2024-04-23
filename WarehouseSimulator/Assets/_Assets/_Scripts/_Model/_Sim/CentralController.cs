@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,11 @@ namespace WarehouseSimulator.Model.Sim
         
         #region Fields
         private Dictionary<SimRobot, Stack<RobotDoing>> _plannedActions;
+        private HashSet<SimRobot> _failedRobot;
 
         private IPathPlanner _pathPlanner;
 
-        [CanBeNull] private Task _taskBeforeNextStep;
+        private Task? _taskBeforeNextStep;
         
         
         private bool _isPreprocessDone;
@@ -43,6 +45,7 @@ namespace WarehouseSimulator.Model.Sim
             _pathPlanner = new AStar_PathPlanner(map);
             _plannedActions = new();
             _isPreprocessDone = false;
+            _failedRobot = new();
         }
         
         public void AddPathPlanner(IPathPlanner pathPlanner)
@@ -81,33 +84,39 @@ namespace WarehouseSimulator.Model.Sim
             if (!(IsPathPlanningDone || IsPreprocessDone))
             {
                 Debug.Log("Processes not finished until next step. Timeout sent.");
-                //_taskBeforeNextStep.Dispose();
-                //TODO: Send Timeout
+                
+                foreach (var (_,actions) in _plannedActions)
+                {
+                    actions.Push(RobotDoing.Timeout);
+                }
             }
-            foreach (var (robot, actions) in _plannedActions)
+            else
             {
-                if(actions.Count == 0) continue;
-                var a = actions.Pop();
-                robot.TryPerformActionRequested(a, map);
-                robot.MakeStep(map);
+                foreach (var (_, actions) in _plannedActions)
+                {
+                    if (actions.Count == 0) actions.Push(RobotDoing.Wait);
+                }
             }
 
-            // (bool success, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
-            // if (!results.success)
-            // {
-            //     foreach (var e in _plannedActions)
-            //     {
-            //         CustomLog.Instance.AddRobotAction(e.Key.Id,RobotDoing.Wait);
-            //     }
-            //     //replan with the robies
-            // }
-            // else
-            // {
-            //      foreach (SimRobot robie in _plannedActions.Keys)
-            //      {
-            //          robie.MakeStep(map);
-            //      }
-            // }
+            (bool success, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
+            if (!results.success)
+            {
+                foreach (var e in _plannedActions)
+                {
+                    CustomLog.Instance.AddRobotAction(e.Key.Id,RobotDoing.Wait);
+                }
+                
+                _failedRobot.Add(results.robieTheFirst!);
+                if (results.robieTheSecond is not null) _failedRobot.Add(results.robieTheSecond);
+
+            }
+            else
+            {
+                 foreach (SimRobot robie in _plannedActions.Keys)
+                 {
+                     robie.MakeStep(map);
+                 }
+            }
         }
         
         /// <summary>
@@ -119,9 +128,8 @@ namespace WarehouseSimulator.Model.Sim
         {
             if ((_taskBeforeNextStep == null ? TaskStatus.WaitingToRun :  _taskBeforeNextStep.Status) == TaskStatus.Running)
             {
-                _taskBeforeNextStep.Wait();
+                _taskBeforeNextStep!.Wait();
             }
-            
             
             IsPathPlanningDone = false;
             
@@ -132,6 +140,10 @@ namespace WarehouseSimulator.Model.Sim
             {
                 if(_plannedActions[robot].Count == 0)
                     tasks.Add(PlanNextMoves(robot));
+                else if (_failedRobot.Contains(robot))
+                {
+                    tasks.Add(PlanNextMoves(robot,true));
+                }
             }
 
             _taskBeforeNextStep = Task.WhenAll(tasks);

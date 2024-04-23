@@ -121,13 +121,9 @@ namespace WarehouseSimulator.Model.Sim
             {
                 throw new ArgumentException($"Error in checking valid steps, the number of robots ({actions.Count}) given actions does not equal the number of all robots {_allRobots.Count}");
             }
-
-            foreach (var pair in actions)
-            {
-                pair.Key.TryPerformActionRequested(pair.Value.Pop(),mapie);
-            }
             
-            var tasks = actions.Select(async pair => await Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value.Pop(),mapie)));
+            //var tasks = actions.Select(async pair => await Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value.Pop(),mapie)));
+            var tasks = actions.Select(pair => Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value.Pop(),mapie)));
             (bool success, SimRobot? whoTripped)[]? results = await Task.WhenAll(tasks);
 
             SimRobot? hitter = null;
@@ -141,7 +137,8 @@ namespace WarehouseSimulator.Model.Sim
             
             foreach (SimRobot robie in _allRobots)
             {
-                var positionCheckTasks = _allRobots.Select(async thisrob => await Task.FromResult(CheckingFuturePositions(thisrob,robie)));
+                //var positionCheckTasks = _allRobots.Select(async thisrob => await Task.FromResult(CheckingFuturePositions(thisrob,robie)));
+                var positionCheckTasks = _allRobots.Select(thisrob => Task.FromResult(CheckingFuturePositions(thisrob,robie)));
                 (bool good, SimRobot? whoCrashed)[]? maybeMistakes = await Task.WhenAll(positionCheckTasks);
                 hitter = null;
                 try
