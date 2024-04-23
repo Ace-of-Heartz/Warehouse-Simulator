@@ -101,10 +101,10 @@ public class MainMenuManager : MonoBehaviour
                 res == 2 ? SEARCH_ALGORITHM.COOP_A_STAR : SEARCH_ALGORITHM.BFS;
 
         }
-        catch (Exception)
+        catch (Exception e)
         {
             
-            UIMessageManager.GetInstance().MessageBox("Fatal error occured!",
+            UIMessageManager.GetInstance().MessageBox("Fatal error occured!\n" + e.Message,
                 response => { },
                 new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK)
             );
@@ -138,10 +138,10 @@ public class MainMenuManager : MonoBehaviour
             pbInputArgs.MapFilePath = GameObject.Find("InputField_PbMapFileLocation").GetComponent<TMP_InputField>().text;
             pbInputArgs.EventLogPath = GameObject.Find("InputField_PbPathToEventLog").GetComponent<TMP_InputField>().text;
         }
-        catch (Exception)
+        catch (Exception e)
         {
             
-            UIMessageManager.GetInstance().MessageBox("Fatal error occured!", response =>
+            UIMessageManager.GetInstance().MessageBox("Fatal error occured!\n" + e.Message, response =>
                 {
                     
                 },

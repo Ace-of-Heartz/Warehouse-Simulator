@@ -15,7 +15,7 @@ namespace WarehouseSimulator.Model.Sim
         }
         
         
-        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction dir, bool checkForRobots)
+        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction dir, int x, int y)
         {
             throw new System.NotImplementedException();
         }   
