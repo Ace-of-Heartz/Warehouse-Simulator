@@ -102,7 +102,7 @@ namespace WarehouseSimulator.Model
             //actionModel
             sb.Append($"\"actionModel\":\"{actionModel}\",");
             //allValid
-            string valid = allValid ? "true" : "false";
+            string valid = allValid ? "Yes" : "No";
             sb.Append($"\"AllValid\":{valid},");
             //teamSize
             sb.Append($"\"teamSize\":{teamSize},");
