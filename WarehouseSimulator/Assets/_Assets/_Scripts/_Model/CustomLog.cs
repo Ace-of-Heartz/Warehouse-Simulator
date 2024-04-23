@@ -103,7 +103,7 @@ namespace WarehouseSimulator.Model
             sb.Append($"\"actionModel\":\"{actionModel}\",");
             //allValid
             string valid = allValid ? "true" : "false";
-            sb.Append($"\"allValid\":{valid},");
+            sb.Append($"\"AllValid\":{valid},");
             //teamSize
             sb.Append($"\"teamSize\":{teamSize},");
             //start(robot start positions)
@@ -131,10 +131,10 @@ namespace WarehouseSimulator.Model
                     sb.Append(",");
             }
             sb.Append("],");
-            //numTasksFinished
-            sb.Append($"\"numTasksFinished\":{taskCompletedCount},");
-            //sumOfCosts
-            sb.Append($"\"sumOfCosts\":{sumOfCost},");
+            //numTaskFinished
+            sb.Append($"\"numTaskFinished\":{taskCompletedCount},");
+            //sumOfCost
+            sb.Append($"\"sumOfCost\":{sumOfCost},");
             //makespan
             sb.Append($"\"makespan\":{stepsCompleted},");
             //actualPaths
@@ -216,7 +216,7 @@ namespace WarehouseSimulator.Model
             string jsonString = reader.ReadToEnd();
             
             //preprocess json
-            jsonString = jsonString.Replace(" ", "");
+            jsonString = jsonString.Replace(" ", "").Replace("\n", "").Replace("\r", "");
             jsonString = jsonString.TrimStart('{').TrimEnd('}');
             
             string[] keyValCandidates = jsonString.Split(',');
@@ -243,7 +243,7 @@ namespace WarehouseSimulator.Model
             //parse values
             Init();
             actionModel = keyValueDict["actionModel"].Trim('"');
-            allValid = keyValueDict["allValid"].Trim('"') == "Yes";
+            allValid = keyValueDict["AllValid"].Trim('"') == "Yes";
             teamSize = int.Parse(keyValueDict["teamSize"]);
             string[] start = keyValueDict["start"].Trim('[').Trim(']').Split("],[");
             foreach (string s in start)
@@ -269,8 +269,8 @@ namespace WarehouseSimulator.Model
                 }
                 startPos.Add(new RobotStartPos(x, y, heading));
             }
-            taskCompletedCount = int.Parse(keyValueDict["numTasksFinished"]);
-            sumOfCost = int.Parse(keyValueDict["sumOfCosts"]);
+            taskCompletedCount = int.Parse(keyValueDict["numTaskFinished"]);
+            sumOfCost = int.Parse(keyValueDict["sumOfCost"]);
             stepsCompleted = int.Parse(keyValueDict["makespan"]);
             string[] actualPaths = keyValueDict["actualPaths"].Trim('[').Trim(']').Split("\",");
             for (int i = 0; i < teamSize; i++)
