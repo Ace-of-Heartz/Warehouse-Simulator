@@ -14,25 +14,25 @@ namespace WarehouseSimulator.Model.PB
         public PbRobot(int i, Vector2Int position, int stepNumber,Direction heading = Direction.North, RobotBeing state = RobotBeing.Free) 
             : base (i,position,heading,state)
         {
-            _gridPositionHistory = new Vector2Int[stepNumber];
-            _headings = new Direction[stepNumber];
-            _states = new RobotBeing[stepNumber];
+            _gridPositionHistory = new Vector2Int[stepNumber + 1];
+            _headings = new Direction[stepNumber + 1];
+            _states = new RobotBeing[stepNumber + 1];
         }
 
-        public void SetTimeTo(int step)
+        public void SetTimeTo(int stateIndex)
         {
-            if (step > _gridPositionHistory.Length)
+            if (stateIndex > _gridPositionHistory.Length)
             {
-                throw new ArgumentException($"Argument {nameof(step)}: stepnumber too high");
+                throw new ArgumentException($"Argument {nameof(stateIndex)}: stepnumber too high");
             }
             
-            if (step < 0)
+            if (stateIndex < 0)
             {
-                throw new ArgumentException($"Argument {nameof(step)}: stepnumber too low");
+                throw new ArgumentException($"Argument {nameof(stateIndex)}: stepnumber too low");
             }
-            RobotData.m_gridPosition = _gridPositionHistory[step];
-            RobotData.m_heading = _headings[step];
-            RobotData.m_state = _states[step];
+            RobotData.m_gridPosition = _gridPositionHistory[stateIndex];
+            RobotData.m_heading = _headings[stateIndex];
+            RobotData.m_state = _states[stateIndex];
         }
 
         public void CalcTimeLine(List<RobotDoing> actions)
