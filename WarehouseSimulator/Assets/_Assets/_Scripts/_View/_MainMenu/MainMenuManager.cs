@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using _Assets._Scripts._View._MainMenu;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
 using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
 
@@ -139,7 +135,7 @@ public class MainMenuManager : MonoBehaviour
     {
         try
         { 
-            pbInputArgs.ConfigFilePath = GameObject.Find("InputField_PbConfigFileLocation").GetComponent<TMP_InputField>().text;
+            pbInputArgs.MapFilePath = GameObject.Find("InputField_PbMapFileLocation").GetComponent<TMP_InputField>().text;
             pbInputArgs.EventLogPath = GameObject.Find("InputField_PbPathToEventLog").GetComponent<TMP_InputField>().text;
         }
         catch (Exception)
