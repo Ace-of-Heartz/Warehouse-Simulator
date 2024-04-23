@@ -39,9 +39,9 @@ namespace WarehouseSimulator.View.Sim
                 else
                     simulationManager.Setup(MainMenuManager.simInputArgs);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                UIMessageManager.GetInstance().MessageBox("Error during setup", response =>
+                UIMessageManager.GetInstance().MessageBox("Error during setup:\n" + e.Message, response =>
                 {
                     SceneHandler.GetInstance().SetCurrentScene(0);
                     SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
