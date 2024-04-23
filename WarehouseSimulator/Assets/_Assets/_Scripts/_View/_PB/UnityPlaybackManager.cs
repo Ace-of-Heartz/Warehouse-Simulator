@@ -77,6 +77,11 @@ public class UnityPlaybackManager : MonoBehaviour
     
     private void AddUnityGoal(object sender, GoalAssignedEventArgs e)
     {
-        Debug.Log("Adding goal");
+        if (e.Goal is PbGoal pbGolie)
+        {
+            GameObject gooo = Instantiate(golie);
+            UnityGoal golieMan = gooo.GetComponent<UnityGoal>();
+            golieMan.GiveGoalModel(pbGolie,unityMap);
+        }
     }
 }
