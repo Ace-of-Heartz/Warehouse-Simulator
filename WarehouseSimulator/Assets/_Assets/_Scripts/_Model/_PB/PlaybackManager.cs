@@ -12,6 +12,9 @@ namespace WarehouseSimulator.Model.PB
         private PlaybackData _playbackData;
 
         public PlaybackData PlaybackData => _playbackData;
+        public PbRobotManager PbRobotManager => _pbRobotManager;
+        public PbGoalManager PbGoalManager => _pbGoalManager;
+        public Map Map => _map;
 
         public PlaybackManager()
         {
@@ -21,21 +24,21 @@ namespace WarehouseSimulator.Model.PB
             _playbackData = ScriptableObject.CreateInstance<PlaybackData>();
         }
 
-        public void Setup(string LogFilePath, string MapFilePath)
+        public void Setup(PbInputArgs pbInputArgs)
         {   
-            _map.LoadMap(MapFilePath);
-            CustomLog.Instance.LoadLog(LogFilePath);
-            _playbackData.m_currentStep = 1;
+            _map.LoadMap(pbInputArgs.MapFilePath);
+            CustomLog.Instance.LoadLog(pbInputArgs.EventLogPath);
+            _playbackData.m_currentStep = 0;
             _playbackData.m_currentPlayBackSpeed = 1;
             _pbGoalManager.SetUpAllGoals(CustomLog.Instance.TaskData,CustomLog.Instance.TaskEvents);
-            _pbRobotManager.SetUpAllRobots(CustomLog.Instance.StepsCompleted,CustomLog.Instance.StartPos,CustomLog.Instance.RobotActions);
+            _pbRobotManager.SetUpAllRobots(CustomLog.Instance.StepsCompleted,CustomLog.Instance.StartPos);
         }
 
-        public void SetTimeTo(int step)
+        public void SetTimeTo(int stateIndex)
         {
-            _playbackData.m_currentStep = step;
-            _pbGoalManager.SetTimeTo(step);
-            _pbRobotManager.SetTimeTo(step);
+            _playbackData.m_currentStep = stateIndex;
+            _pbGoalManager.SetTimeTo(stateIndex);
+            _pbRobotManager.SetTimeTo(stateIndex);
         }
     }
 }
