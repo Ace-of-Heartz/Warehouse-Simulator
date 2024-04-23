@@ -49,7 +49,8 @@ public class UnityPlaybackManager : MonoBehaviour
         unityMap.AssignMap(playbackManager.Map);
         unityMap.GenerateMap();
         
-        //TODO: binding magic
+        GameObject.Find("UIGlobalManager").GetComponent<BindingSetupManager>().SetupPlaybackBinding(playbackManager);
+
     }
 
     void DebugSetup()

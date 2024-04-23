@@ -7,5 +7,6 @@ namespace WarehouseSimulator.Model.PB
     {
         public int m_currentStep;
         public float m_currentPlayBackSpeed;
+        public int _maxStepAmount;
     }
 }

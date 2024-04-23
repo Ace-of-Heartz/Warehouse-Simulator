@@ -4,6 +4,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using WarehouseSimulator.Model.PB;
 using WarehouseSimulator.Model.Sim;
 
 namespace WarehouseSimulator.View
@@ -111,9 +112,29 @@ namespace WarehouseSimulator.View
 
         }
 
-        public void SetupPlaybackBinding()
+        public void SetupPlaybackBinding(PlaybackManager man)
         {
             var doc = SceneHandler.GetDocOfID(2);
+            var progressBar = doc.rootVisualElement
+                .Q("SimulationCanvas")
+                .Q("BottomBar")
+                .Q("BottomCenter")
+                .Q<ProgressBar>("StepsProgressBar");
+            var progressLabel = doc.rootVisualElement
+                .Q("SimulationCanvas")
+                .Q("BottomBar")
+                .Q("BottomCenter")
+                .Q<Label>("StepProgressLabel");
+            var maxProgressLabel = doc.rootVisualElement
+                .Q("SimulationCanvas")
+                .Q("BottomBar")
+                .Q("BottomCenter")
+                .Q<Label>("MaxStepProgressLabel");
+            var currStepsProperty = new SerializedObject(man.PlaybackData).FindProperty("m_currentStep");
+            var maxStepsProperty = new SerializedObject(man.PlaybackData).FindProperty("m_maxStepAmount");
+            SetupStepsProgressBar(maxProgressLabel,progressLabel,progressBar,currStepsProperty,maxStepsProperty);
+        
+            
             
         }
 
