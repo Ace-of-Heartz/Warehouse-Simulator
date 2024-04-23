@@ -42,5 +42,10 @@ namespace WarehouseSimulator.Model.PB
             _pbGoalManager.SetTimeTo(stateIndex);
             _pbRobotManager.SetTimeTo(stateIndex);
         }
+        
+        public void AdvanceTime()
+        {
+            SetTimeTo(_playbackData.m_currentStep + 1);
+        }
     }
 }
