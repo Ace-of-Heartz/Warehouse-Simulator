@@ -90,7 +90,7 @@ namespace WarehouseSimulator.Model.Sim
             _centralController.AddPathPlanner(pathPlanner);
             _centralController.Preprocess(_map);
             _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
-            _centralController.PlanNextMovesForAllAsync(_map);
+            _centralController.PlanNextMovesForAllAsync();
         }
         
         public void Tick()
@@ -99,7 +99,7 @@ namespace WarehouseSimulator.Model.Sim
             {
                 _centralController.TimeToMove(_map,_simRobotManager);
                 _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
-                _centralController.PlanNextMovesForAllAsync(_map);
+                _centralController.PlanNextMovesForAllAsync();
                 
                 _simulationData.m_currentStep++;
                 _simulationData.m_goalsRemaining = _simGoalManager.GoalCount;
