@@ -32,6 +32,8 @@ namespace WarehouseSimulator.Model.PB
             _playbackData.m_currentPlayBackSpeed = 1;
             _pbGoalManager.SetUpAllGoals(CustomLog.Instance.TaskData,CustomLog.Instance.TaskEvents);
             _pbRobotManager.SetUpAllRobots(CustomLog.Instance.StepsCompleted,CustomLog.Instance.StartPos);
+            
+            SetTimeTo(0);
         }
 
         public void SetTimeTo(int stateIndex)

@@ -31,7 +31,8 @@ namespace WarehouseSimulator.Model.PB
             int i = 0;
             foreach (RobotStartPos startPos in whoWhere)
             {
-                var robie = new PbRobot(i, new Vector2Int(startPos.x,startPos.y), stepNumber, startPos.heading);
+                // TODO: x and y are flipped in the log file for some reason
+                var robie = new PbRobot(i, new Vector2Int(startPos.y,startPos.x), stepNumber, startPos.heading);
                 try
                 {
                     robie.CalcTimeLine(CustomLog.Instance.GetAllActions(i));

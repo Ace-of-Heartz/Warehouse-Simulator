@@ -95,7 +95,7 @@ namespace WarehouseSimulator.Model.Sim
         
         public void Tick()
         {
-            if (_simulationData.m_currentStep <= _simulationData.m_maxStepAmount)
+            if (_simulationData.m_currentStep < _simulationData.m_maxStepAmount)//other branch
             {
                 _centralController.TimeToMove(_map,_simRobotManager);
                 _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
