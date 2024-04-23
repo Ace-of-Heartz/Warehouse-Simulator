@@ -29,7 +29,8 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         public bool IsPathPlanningDone
         {
-            get =>  _taskBeforeNextStep == null ? true : _taskBeforeNextStep.IsCompleted;
+            get => _isPathPlanningDone;
+            private set => _isPathPlanningDone = value;
         }
         public bool IsPreprocessDone => _isPreprocessDone;
         
@@ -170,7 +171,6 @@ namespace WarehouseSimulator.Model.Sim
         /// Plan the move instructions for all robots present in the simulation.
         /// Async method.
         /// </summary>
-        /// <param name="map">Map loaded from config file</param>
         public async void PlanNextMovesForAllAsync()
         {
             if ((_taskBeforeNextStep == null ? TaskStatus.WaitingToRun : _taskBeforeNextStep.Status) == TaskStatus.Running)
