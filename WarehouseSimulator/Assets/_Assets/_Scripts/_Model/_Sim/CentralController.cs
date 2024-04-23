@@ -108,7 +108,7 @@ namespace WarehouseSimulator.Model.Sim
                 
                 _failedRobot.Add(results.robieTheFirst!);
                 if (results.robieTheSecond is not null) _failedRobot.Add(results.robieTheSecond);
-
+                //TODO: Add Wait to one of the robots
             }
             else
             {
@@ -135,14 +135,17 @@ namespace WarehouseSimulator.Model.Sim
             
             var robots = _plannedActions.Keys.ToList();
             var tasks = new List<Task>();
-            
+
             foreach (var robot in robots)
             {
                 if(_plannedActions[robot].Count == 0)
                     tasks.Add(PlanNextMoves(robot));
                 else if (_failedRobot.Contains(robot))
                 {
+                    ++i;
                     tasks.Add(PlanNextMoves(robot,true));
+                    _failedRobot.Remove(robot);
+                    
                 }
             }
 

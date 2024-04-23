@@ -50,17 +50,17 @@ namespace WarehouseSimulator.Model.Sim
             using StreamReader rid = new(from);
             if (!int.TryParse(rid.ReadLine(), out int robn))
             {
-                throw new InvalidFileException("Invalid file format: First line not a number");
+                throw new InvalidFileException("Invalid .agents file format:\n First line not a number");
             }
 
             if (robn != robotN)
             {
-                throw new InvalidFileException($"Invalid file format: The number of robots given in the Configuration File ({robotN}) does not equal the number of robots given in the Agents File ({robn})");
+                throw new InvalidFileException($"Invalid .agents file format:\n The number of robots given in the Configuration File ({robotN}) does not equal the number of robots given in the Agents File ({robn})");
             }
 
             if (robn < 0)
             {
-                throw new InvalidFileException($"Invalid file format: The number of agents (currently: {robn}) cannot be less than zero!");
+                throw new InvalidFileException($"Invalid .agents file format:\n The number of agents (currently: {robn}) cannot be less than zero!");
             }
             
             int nextid = 0;
@@ -69,15 +69,15 @@ namespace WarehouseSimulator.Model.Sim
                 string? line = rid.ReadLine();
                 if (line == null)
                 {
-                    throw new InvalidFileException("Invalid file format: there weren't enough lines");
+                    throw new InvalidFileException("Invalid .agents file format:\n there weren't enough lines");
                 } 
                 if (!int.TryParse(line, out int linPos))
                 {
-                    throw new InvalidFileException($"Invalid file format: {nextid + 2}. line not a number");
+                    throw new InvalidFileException($"Invalid .agents file format:\n {nextid + 2}. line not a number");
                 }
                 if (mapie.GetTileAt(linPos) != TileType.Empty)
                 {
-                    throw new InvalidFileException($"Invalid file format: {nextid + 2}. line does not provide a valid position");
+                    throw new InvalidFileException($"Invalid .agents file format:\n {nextid + 2}. line does not provide a valid position");
                 }
 
                 Vector2Int nextRobPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
