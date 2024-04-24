@@ -1,6 +1,4 @@
-﻿using UnityEditor;
-using UnityEngine;
-using WarehouseSimulator.Model;
+﻿using UnityEngine;
 
 namespace WarehouseSimulator.Model.PB
 {

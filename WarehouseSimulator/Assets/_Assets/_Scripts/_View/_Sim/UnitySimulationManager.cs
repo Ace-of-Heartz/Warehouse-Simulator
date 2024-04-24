@@ -52,6 +52,8 @@ namespace WarehouseSimulator.View.Sim
             unityMap.AssignMap(simulationManager.Map);
             unityMap.GenerateMap();
             
+            timeToNextTickCountdown = simulationManager.SimulationData.m_stepTime / 1000.0f;
+            
             GameObject.Find("UIGlobalManager").GetComponent<BindingSetupManager>().SetupSimBinding(simulationManager);
         }
 
@@ -103,11 +105,6 @@ namespace WarehouseSimulator.View.Sim
                 UnityGoal golieMan = gooo.GetComponent<UnityGoal>();
                 golieMan.GiveGoalModel(simGolie,unityMap);
             }
-        }
-
-        public void AddNewGoal(Vector2Int position)
-        {
-            simulationManager.SimGoalManager.AddNewGoal(position, simulationManager.Map);
         }
     }   
 }
