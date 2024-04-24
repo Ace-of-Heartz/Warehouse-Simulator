@@ -5,8 +5,6 @@ using UnityEngine;
 using WarehouseSimulator.Model.Sim;
 using TMPro;
 using Unity.Properties;
-using UnityEditor.UIElements;
-using UnityEngine.UIElements;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model;
 
