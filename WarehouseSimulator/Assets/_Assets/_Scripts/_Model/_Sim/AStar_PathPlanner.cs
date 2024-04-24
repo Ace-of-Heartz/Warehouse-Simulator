@@ -17,16 +17,7 @@ namespace WarehouseSimulator.Model.Sim
             m_map = map;
         }
 
-        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction direction, int x, int y)
-        {
-            Stack<RobotDoing> instructions = GetInstructions(start,finish,direction,x,y);
-        
-            return instructions;
-
-        }
-
-        private Stack<RobotDoing> GetInstructions(Vector2Int start, Vector2Int finish, Direction facing,
-            int x, int y)
+        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction facing, Vector2Int? disallowedPosition = null)
         {
             Dictionary<
                     (Vector2Int, Direction)
@@ -70,7 +61,7 @@ namespace WarehouseSimulator.Model.Sim
                             if (b) //Never move forward to an already trod path
                             {
 
-                                if (m_map.GetTileAt(node) == TileType.Wall || (x != -1 && y != -1 && node == new Vector2Int(x,y)))
+                                if (m_map.GetTileAt(node) == TileType.Wall || node == disallowedPosition)
                                 {
                                     break; // Don't move into a wall
                                 }
@@ -114,7 +105,9 @@ namespace WarehouseSimulator.Model.Sim
             }
             
             return instructions;
+
         }
+        
 
         /// <summary>
         /// Calculates the weight of a ndoe depending on the cost of the path already and a heuristic estimation of the upcoming path. 

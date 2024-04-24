@@ -9,7 +9,7 @@ namespace WarehouseSimulator.Model.Sim
     public interface IPathPlanner
     {
         // ReSharper restore Unity.ExpensiveCode
-        Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish,Direction dir, int x, int y);
+        Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish,Direction dir, Vector2Int? disallowedPosition = null);
         /// <summary>
         /// 
         /// </summary>
