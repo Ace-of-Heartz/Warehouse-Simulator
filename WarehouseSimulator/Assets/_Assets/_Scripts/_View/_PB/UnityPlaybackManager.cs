@@ -92,20 +92,24 @@ public class UnityPlaybackManager : MonoBehaviour
     
     private void Update()
     {
-        //TODO: isPaused and time scale
-        //timeToNextTickCountdown -= Time.deltaTime;
-        if (timeToNextTickCountdown <= 0)
-        {
-            playbackManager.NextState();
-            timeToNextTickCountdown = PlaybackData.DEFAULT_PLAYBACK_TIME_MS;
-        }
-        
+        //keyboard override
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             playbackManager.SetTimeTo(playbackManager.PlaybackData.CurrentStep - 1);
         } else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             playbackManager.NextState();
+        }
+        
+        //automatic playback
+        if(playbackManager.PlaybackData.IsPaused)
+            return;
+        
+        timeToNextTickCountdown -= Time.deltaTime * playbackManager.PlaybackData.PlaybackSpeed;
+        if (timeToNextTickCountdown <= 0)
+        {
+            playbackManager.NextState();
+            timeToNextTickCountdown = PlaybackData.DEFAULT_PLAYBACK_TIME_MS / 1000.0f;
         }
     }
 }

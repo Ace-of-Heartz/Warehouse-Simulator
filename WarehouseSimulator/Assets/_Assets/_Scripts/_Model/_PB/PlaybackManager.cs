@@ -40,7 +40,12 @@ namespace WarehouseSimulator.Model.PB
         public void SetTimeTo(int stateIndex)
         {
             if (stateIndex < 0 || stateIndex > _playbackData.MaxStepAmount)
+            {
+                if (!PlaybackData.IsPaused)
+                    PlaybackData.ChangePauseState();//pause if out of bounds
+                
                 return;
+            }
             _playbackData.CurrentStep = stateIndex;
             _pbGoalManager.SetTimeTo(stateIndex);
             _pbRobotManager.SetTimeTo(stateIndex);
