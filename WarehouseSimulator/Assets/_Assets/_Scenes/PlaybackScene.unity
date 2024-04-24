@@ -123,6 +123,50 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &237979918
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 237979920}
+  - component: {fileID: 237979919}
+  m_Layer: 0
+  m_Name: RobotDisplayManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &237979919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 237979918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d4731ae7b204bb7beb2c104d48f6869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &237979920
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 237979918}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 864.8246, y: 483.1009, z: -33.54573}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &427587473
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,6 +460,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2044409171}
   - component: {fileID: 2044409172}
+  - component: {fileID: 2044409173}
   m_Layer: 0
   m_Name: PlaybackManager
   m_TagString: Untagged
@@ -454,6 +499,18 @@ MonoBehaviour:
   golie: {fileID: 3784796534712091687, guid: 199d7d99c4258d9469c2e64440d029b9, type: 3}
   unityMap: {fileID: 481690534}
   DebugMode: 0
+--- !u!114 &2044409173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2044409169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61faa8f762674554a97087c556e6ab2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -462,3 +519,4 @@ SceneRoots:
   - {fileID: 2044409171}
   - {fileID: 481690536}
   - {fileID: 1563583551}
+  - {fileID: 237979920}

@@ -18,7 +18,7 @@ public class UnityPlaybackManager : MonoBehaviour
     
     public bool DebugMode = false;
     public PbInputArgs debugPbInputArgs = new PbInputArgs();
-    
+    public PlaybackData playbackData;
     
     private float timeToNextTickCountdown = 0;
 
@@ -27,6 +27,7 @@ public class UnityPlaybackManager : MonoBehaviour
         playbackManager = new PlaybackManager();
         playbackManager.PbRobotManager.RobotAddedEvent += AddUnityPbRobot;//TODO
         playbackManager.PbGoalManager.GoalAssignedEvent += AddUnityGoal;//TODO
+        playbackData = playbackManager.PlaybackData;
         
         try
         {
