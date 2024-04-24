@@ -18,7 +18,7 @@ namespace WarehouseSimulator.View.Sim
         private UnityMap unityMap;
     
         private SimulationManager simulationManager;
-
+        public SimulationData SimulationData => simulationManager.SimulationData; //TODO: To this safer
         public bool DebugMode = false;
         public SimInputArgs debugSimInputArgs = new SimInputArgs();
 

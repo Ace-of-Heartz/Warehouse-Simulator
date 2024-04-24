@@ -1,6 +1,4 @@
 using System;
-using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -41,9 +39,8 @@ namespace WarehouseSimulator.View
                 .Q("BottomBar")
                 .Q("BottomCenter")
                 .Q<Label>("MaxStepProgressLabel");
-            var currStepsProperty = new SerializedObject(man.SimulationData).FindProperty("m_currentStep");
-            var maxStepsProperty = new SerializedObject(man.SimulationData).FindProperty("m_maxStepAmount");
-            SetupStepsProgressBar(maxProgressLabel,progressLabel,progressBar,currStepsProperty,maxStepsProperty);
+           
+            SetupStepsProgressBar(maxProgressLabel,progressLabel,progressBar,man.SimulationData.m_maxStepAmount);
         
             var goalAddButton = doc.rootVisualElement
                 .Q("SimulationCanvas")
@@ -91,12 +88,14 @@ namespace WarehouseSimulator.View
             throw new NotImplementedException();
         }
         
-        private void SetupStepsProgressBar(Label maxProgressLabel,Label progressLabel,ProgressBar progressBar, SerializedProperty currStepsProperty, SerializedProperty maxStepsProperty)
+        private void SetupStepsProgressBar(Label maxProgressLabel,Label progressLabel,ProgressBar progressBar, float maxSteps)
         {
-            progressBar.highValue = maxStepsProperty.intValue; 
-            progressBar.BindProperty(currStepsProperty);
-            progressLabel.BindProperty(currStepsProperty);
-            maxProgressLabel.BindProperty(maxStepsProperty);
+            progressBar.lowValue = 0;
+            progressBar.highValue = maxSteps;
+            progressBar.value = 0;
+            
+            progressLabel.text = "0";
+            maxProgressLabel.text = maxSteps.ToString();
         }
 
         private void SetupDynamicGoalAddition(Button button,Vector2IntField coordinatesField, SimulationManager man)
@@ -124,16 +123,7 @@ namespace WarehouseSimulator.View
         {
             
             var doc = SceneHandler.GetDocOfID(2);
-            
-            var data = new SerializedObject(man.PlaybackData);
-            
-            
-            
-            var currStepsProperty = data.FindProperty("_currentStep");
-            var maxStepsProperty = data.FindProperty("_maxStepAmount");
-            var playbackSpeedProperty = data.FindProperty("_playbackSpeed");
 
-            //ProgressBar Setup
             var progressBar = doc.rootVisualElement
                 .Q("PlaybackCanvas")
                 .Q("BottomBar")
@@ -149,9 +139,8 @@ namespace WarehouseSimulator.View
                 .Q("BottomBar")
                 .Q("BottomCenter")
                 .Q<Label>("MaxStepProgressLabel");
-
-
-            SetupStepsProgressBar(maxProgressLabel,progressLabel,progressBar,currStepsProperty,maxStepsProperty);
+            
+            SetupStepsProgressBar(maxProgressLabel,progressLabel,progressBar,man.PlaybackData.MaxStepAmount);
  
             //FrameInputField Setup
             var frameInputField = doc.rootVisualElement
@@ -159,7 +148,10 @@ namespace WarehouseSimulator.View
                 .Q("LeftSideBar")
                 .Q("SettingsPanel")
                 .Q<UnsignedIntegerField>("FrameInputField");
-            frameInputField.BindProperty(currStepsProperty);//TODO: this only modifies the property, not the pbManager
+            frameInputField.RegisterValueChangedCallback((_) =>
+            {
+                man.PlaybackData.CurrentStep = (int) frameInputField.value;
+            });
             
             //PlaybackSpeedSlider Setup
             var playbackSpeed = doc.rootVisualElement

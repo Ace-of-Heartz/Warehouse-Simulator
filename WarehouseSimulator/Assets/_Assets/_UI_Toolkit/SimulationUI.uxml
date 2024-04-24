@@ -13,7 +13,7 @@
         </ui:VisualElement>
         <ui:VisualElement name="LeftSideBar" picking-mode="Ignore" style="flex-grow: 1; align-self: flex-start; max-width: 400px; min-height: 90%; max-height: 90px; min-width: 400px;">
             <ui:Instance template="RobotPanel" name="RobotPanel" picking-mode="Ignore" style="min-width: 500px; min-height: 60%;" />
-            <ui:Instance template="SimulationInfo" name="SimulationInfo" picking-mode="Ignore" style="min-height: 37%;" />
+            <ui:Instance template="SimulationInfo" name="SimulationInfo" picking-mode="Ignore" style="min-height: 37%; display: none;" />
             <ui:VisualElement name="YouShallNotPass" style="flex-grow: 1; position: absolute; max-width: 100%; max-height: 100%; min-width: 100%; min-height: 100%; top: 0; left: 0;" />
         </ui:VisualElement>
         <ui:VisualElement name="BottomBar" picking-mode="Ignore" style="flex-grow: 1; -unity-text-align: middle-center; background-color: rgb(87, 87, 87); align-items: center; justify-content: space-around; flex-direction: row; align-self: flex-end; max-height: 10%; min-height: 10%; border-left-color: rgb(26, 26, 26); border-right-color: rgb(26, 26, 26); border-top-color: rgb(26, 26, 26); border-bottom-color: rgb(26, 26, 26); border-top-width: 10px; border-right-width: 10px; border-bottom-width: 10px; border-left-width: 10px; flex-wrap: nowrap; margin-top: 0;">
