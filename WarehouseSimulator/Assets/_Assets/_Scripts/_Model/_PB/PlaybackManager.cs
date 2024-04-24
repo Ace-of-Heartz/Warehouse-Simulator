@@ -36,6 +36,8 @@ namespace WarehouseSimulator.Model.PB
 
         public void SetTimeTo(int stateIndex)
         {
+            if (stateIndex < 0 || stateIndex > CustomLog.Instance.StepsCompleted)
+                return;
             _playbackData.m_currentStep = stateIndex;
             _pbGoalManager.SetTimeTo(stateIndex);
             _pbRobotManager.SetTimeTo(stateIndex);
