@@ -6,6 +6,7 @@ using UnityEngine;
 using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Sim;
 using TMPro;
+using WarehouseSimulator.Model.PB;
 
 namespace WarehouseSimulator.View
 {
@@ -17,22 +18,23 @@ namespace WarehouseSimulator.View
 
         private UnityMap _mapie;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            //Do we even need this blaaa?
-        }
-
         /// <summary>
-        /// 
+        /// Initializes the fields
         /// </summary>
-        /// <param name="g"></param>
-        /// <param name="dis"></param>
-        public void GiveGoalModel(SimGoal g, UnityMap dis) //TODO: Are we sure that SimGoal is what we need?
+        /// <param name="g">A Goal, either SimGoal or PbGoal</param>
+        /// <param name="dis">Map from the view</param>
+        public void GiveGoalModel(GoalLike g, UnityMap dis) 
         {
             _goalModel = g;
             _mapie = dis;
-            g.GoalFinishedEvent += (_,_) => Destroy(gameObject);
+            if (g is SimGoal simG)
+            {
+                simG.GoalFinishedEvent += (_,_) => Destroy(gameObject);
+            }
+            else if (g is PbGoal pbG)
+            {
+                pbG.jesusEvent += (_,_) => gameObject.SetActive(pbG.CurrentlyAlive);
+            }
             transform.position = _mapie.GetWorldPosition(_goalModel.GridPosition);
             goalIdText.text = _goalModel.RoboId;
         }

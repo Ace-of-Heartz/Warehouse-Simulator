@@ -4,12 +4,17 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using WarehouseSimulator.Model.PB;
 using WarehouseSimulator.Model.Sim;
 
 namespace WarehouseSimulator.View
 {
     public class BindingSetupManager : MonoBehaviour
     {
+        /// <summary>
+        /// Setup for all bindings for the Simulation's UI
+        /// </summary>
+        /// <param name="man"></param>
         public void SetupSimBinding(SimulationManager man)
         {
             var doc = SceneHandler.GetDocOfID(1);
@@ -19,7 +24,7 @@ namespace WarehouseSimulator.View
                 .Q("BottomRight")
                 .Q("ButtonBox")
                 .Q<Button>("Button_Abort");
-            SetupAbortFor(button);
+            SetupButtonWithMessageBox(button,"Abort simulation?");
             
             var progressBar = doc.rootVisualElement
                 .Q("SimulationCanvas")
@@ -56,9 +61,13 @@ namespace WarehouseSimulator.View
             
         }
 
-        private void SetupAbortFor(Button button)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="button"></param>
+        private void SetupButtonWithMessageBox(Button button, string message = "")
         {
-            button.clickable.clicked += () => UIMessageManager.GetInstance().MessageBox("Abort simulation?",
+            button.clickable.clicked += () => UIMessageManager.GetInstance().MessageBox(message,
                 response =>
                 {
                     switch (response)
@@ -111,9 +120,115 @@ namespace WarehouseSimulator.View
 
         }
 
-        public void SetupPlaybackBinding()
+        public void SetupPlaybackBinding(PlaybackManager man)
         {
+            
             var doc = SceneHandler.GetDocOfID(2);
+            
+            var data = new SerializedObject(man.PlaybackData);
+            
+            
+            
+            var currStepsProperty = data.FindProperty("_currentStep");
+            var maxStepsProperty = data.FindProperty("_maxStepAmount");
+            var playbackSpeedProperty = data.FindProperty("_playbackSpeed");
+
+            //ProgressBar Setup
+            var progressBar = doc.rootVisualElement
+                .Q("PlaybackCanvas")
+                .Q("BottomBar")
+                .Q("BottomCenter")
+                .Q<ProgressBar>("StepsProgressBar");
+            var progressLabel = doc.rootVisualElement
+                .Q("PlaybackCanvas")
+                .Q("BottomBar")
+                .Q("BottomCenter")
+                .Q<Label>("StepProgressLabel");
+            var maxProgressLabel = doc.rootVisualElement
+                .Q("PlaybackCanvas")
+                .Q("BottomBar")
+                .Q("BottomCenter")
+                .Q<Label>("MaxStepProgressLabel");
+
+
+            SetupStepsProgressBar(maxProgressLabel,progressLabel,progressBar,currStepsProperty,maxStepsProperty);
+ 
+            //FrameInputField Setup
+            var frameInputField = doc.rootVisualElement
+                .Q("PlaybackCanvas")
+                .Q("LeftSideBar")
+                .Q("SettingsPanel")
+                .Q<UnsignedIntegerField>("FrameInputField");
+            frameInputField.BindProperty(currStepsProperty);
+            
+            //PlaybackSpeedSlider Setup
+            var playbackSpeed = doc.rootVisualElement
+                .Q("PlaybackCanvas")
+                .Q("LeftSideBar")
+                .Q("SettingsPanel")
+                .Q<Slider>("PbSpeedSlider");
+            playbackSpeed.RegisterCallback<ChangeEvent<float>>((evt) =>
+            {
+                man.PlaybackData.PlaybackSpeed = evt.newValue;
+            });
+
+            //PauseButton and ResumeButton Setup
+            var pauseButton = doc.rootVisualElement
+                .Q("PlaybackCanvas")
+                .Q("BottomBar")
+                .Q("BottomCenter")
+                .Q<Button>("Button_Pause");
+            var resumeButton = doc.rootVisualElement
+                .Q("PlaybackCanvas")
+                .Q("BottomBar")
+                .Q("BottomCenter")
+                .Q<Button>("Button_Resume");
+
+            pauseButton.clickable.clicked += () =>
+            {
+                man.PlaybackData.ChangePauseState();
+                resumeButton.style.display = DisplayStyle.Flex;
+                pauseButton.style.display = DisplayStyle.None;
+            };
+            resumeButton.clickable.clicked += () =>
+            {
+                man.PlaybackData.ChangePauseState();
+                resumeButton.style.display = DisplayStyle.None;
+                pauseButton.style.display = DisplayStyle.Flex;
+            };
+            
+            
+            //StepBackButton Setup
+            var stepBackButton = doc.rootVisualElement
+                .Q("PlaybackCanvas")
+                .Q("BottomBar")
+                .Q("BottomCenter")
+                .Q<Button>("Button_StepBack");
+            stepBackButton.clickable.clicked += () =>
+            {
+                man.PlaybackData.DecrementStep();
+            };
+            
+            
+            //StepForwardButton Setup
+            var stepForwardButton = doc.rootVisualElement
+                .Q("PlaybackCanvas")
+                .Q("BottomBar")
+                .Q("BottomCenter")
+                .Q<Button>("Button_StepForward");
+            stepForwardButton.clickable.clicked += () =>
+            {
+                man.PlaybackData.IncrementStep();
+            };
+
+            //ExitButton Setup
+            var exitButton = doc.rootVisualElement
+                .Q("PlaybackCanvas")
+                .Q("BottomBar")
+                .Q("BottomRight")
+                .Q<Button>("Button_Exit");
+            
+            SetupButtonWithMessageBox(exitButton,"Abort playback?");
         }
 
         public void SetupMainMenuBinding()

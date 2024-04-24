@@ -17,7 +17,7 @@ namespace WarehouseSimulator.Model.PB
             _allGoals = new();
         }
         
-        public void SetUpAllGoals(List<TaskInfo> tasks,List<List<EventInfo>> events) 
+        public void SetUpAllGoals(List<TaskInfo> tasks,Dictionary<int, List<EventInfo>> events) 
         {
             int nextid = 0;
             foreach (TaskInfo task in tasks)
@@ -28,8 +28,7 @@ namespace WarehouseSimulator.Model.PB
                 nextid++;
             }
             
-            int robo = 0;
-            foreach (List<EventInfo> roboEvent in events)
+            foreach ((int roboId, List<EventInfo> roboEvent) in events)
             {
                 foreach (EventInfo oneEvent in roboEvent)
                 {
@@ -37,15 +36,15 @@ namespace WarehouseSimulator.Model.PB
                     {
                         if (oneEvent.WhatHappened == "assigned")
                         {
-                            thisOne.SetAliveFrom(oneEvent.Step,robo);
+                            thisOne.SetAliveFrom(oneEvent.Step,roboId);
                         } 
                         else if (oneEvent.WhatHappened == "finished")
                         {
-                            if (thisOne.RoboNumber != robo)
+                            if (thisOne.RoboNumber != roboId)
                             {
                                 throw new InvalidFileException("The log file was in an incorrect format:\n" +
                                                                $"The task {thisOne.SelfId} was assigned to robot {thisOne.RoboNumber}" +
-                                                               $"but was finished by robot {robo}");
+                                                               $"but was finished by robot {roboId}");
                             }
                             thisOne.AliveTo = oneEvent.Step;
                         }
@@ -57,7 +56,6 @@ namespace WarehouseSimulator.Model.PB
                         }
                     }
                 }
-                robo++;
             }
         }
 

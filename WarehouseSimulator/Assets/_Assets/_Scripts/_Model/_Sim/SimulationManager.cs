@@ -7,19 +7,19 @@ namespace WarehouseSimulator.Model.Sim
     public class SimulationManager
     {
         #region Config Fields
-        private SimulationConfig config;
+        private SimulationConfig _config;
         private SimulationData _simulationData;
-        private string logFilePath;
+        private string _logFilePath;
         #endregion
         
-        private Map map;
-        private SimGoalManager _simGoalManager;
-        private SimRobotManager _simRobotManager;
-        private CentralController _centralController;
+        private Map _map;
+        private readonly SimGoalManager _simGoalManager;
+        private readonly SimRobotManager _simRobotManager;
+        private readonly CentralController _centralController;
 
         
         #region Properties
-        public Map Map => map;
+        public Map Map => _map;
         public SimGoalManager SimGoalManager => _simGoalManager;
         public SimRobotManager SimRobotManager => _simRobotManager;
         public SimulationData SimulationData => _simulationData;
@@ -28,11 +28,12 @@ namespace WarehouseSimulator.Model.Sim
         
         public SimulationManager()
         {
-            map = new Map();
+            _map = new Map();
             _simGoalManager = new SimGoalManager();
             _simRobotManager = new SimRobotManager();
-            _centralController = new CentralController(map);
+            _centralController = new CentralController(_map);
             _simulationData = ScriptableObject.CreateInstance<SimulationData>();
+            CustomLog.Instance.Init();
             
             //event for adding robot to path planning
             _simRobotManager.RobotAddedEvent += (sender, args) =>
@@ -57,14 +58,14 @@ namespace WarehouseSimulator.Model.Sim
             _simulationData.m_preprocessTime = simulationArgs.PreparationTime;
             _simulationData.m_isFinished = false;
             
-            logFilePath = simulationArgs.EventLogPath;
+            _logFilePath = simulationArgs.EventLogPath;
             
-            config = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(simulationArgs.ConfigFilePath));//todo: error handling
-            config.basePath = Path.GetDirectoryName(simulationArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
+            _config = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(simulationArgs.ConfigFilePath));//todo: error handling
+            _config.basePath = Path.GetDirectoryName(simulationArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
             
-            map.LoadMap(config.basePath + config.mapFile);
-            _simGoalManager.ReadGoals(config.basePath + config.taskFile, map);
-            _simRobotManager.RoboRead(config.basePath + config.agentFile, map,config.teamSize);
+            _map.LoadMap(_config.basePath + _config.mapFile);
+            _simGoalManager.ReadGoals(_config.basePath + _config.taskFile, _map);
+            _simRobotManager.RoboRead(_config.basePath + _config.agentFile, _map,_config.teamSize);
             
             _simulationData.m_robotAmount = _simRobotManager.RobotCount;
             _simulationData.m_goalAmount = _simGoalManager.GoalCount;
@@ -75,31 +76,30 @@ namespace WarehouseSimulator.Model.Sim
             switch (simulationArgs.SearchAlgorithm)
             {
                 case SEARCH_ALGORITHM.BFS:
-                    pathPlanner = new BFS_PathPlanner(map);
+                    pathPlanner = new BFS_PathPlanner(_map);
                     break;
                 case SEARCH_ALGORITHM.A_STAR:
-                    pathPlanner = new AStar_PathPlanner(map);
+                    pathPlanner = new AStar_PathPlanner(_map);
                     break;
                 case SEARCH_ALGORITHM.COOP_A_STAR:
-                    pathPlanner = new CoopAStar_PathPlanner(map);
+                    pathPlanner = new CoopAStar_PathPlanner(_map);
                     break;
                 default:
                     throw new System.ArgumentException("Invalid search algorithm");
             }
             _centralController.AddPathPlanner(pathPlanner);
-            _centralController.Preprocess(map);
+            _centralController.Preprocess(_map);
             _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
-            _centralController.PlanNextMovesForAllAsync(map);
+            _centralController.PlanNextMovesForAllAsync();
         }
         
         public void Tick()
         {
-            if (_simulationData.m_currentStep <= _simulationData.m_maxStepAmount)
+            if (_simulationData.m_currentStep < _simulationData.m_maxStepAmount)//other branch
             {
-                Debug.Log("stepping");
-                _centralController.TimeToMove(map,_simRobotManager);
+                _centralController.TimeToMove(_map,_simRobotManager);
                 _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
-                _centralController.PlanNextMovesForAllAsync(map);
+                _centralController.PlanNextMovesForAllAsync();
                 
                 _simulationData.m_currentStep++;
                 _simulationData.m_goalsRemaining = _simGoalManager.GoalCount;
@@ -115,13 +115,7 @@ namespace WarehouseSimulator.Model.Sim
         private void Finished()
         {
             _simulationData.m_isFinished = true;
-            CustomLog.Instance.SaveLog(logFilePath);
-        }
-
-        // info: exit simultaion before completion
-        public void Abort()
-        {
-            //TODO => Blaaa
+            CustomLog.Instance.SaveLog(_logFilePath);
         }
     }
 }

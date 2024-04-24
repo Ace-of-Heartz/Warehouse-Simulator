@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,16 +17,16 @@ namespace WarehouseSimulator.Model.Sim
             m_map = map;
         }
 
-        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction direction, bool checkForRobots)
+        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction direction, int x, int y)
         {
-            Stack<RobotDoing> instructions = GetInstructions(start,finish,direction,checkForRobots);
+            Stack<RobotDoing> instructions = GetInstructions(start,finish,direction,x,y);
         
             return instructions;
 
         }
 
         private Stack<RobotDoing> GetInstructions(Vector2Int start, Vector2Int finish, Direction facing,
-            bool checkForRobots)
+            int x, int y)
         {
             Dictionary<
                     (Vector2Int, Direction)
@@ -49,7 +48,6 @@ namespace WarehouseSimulator.Model.Sim
             {
                 (k, (currentNode, currentDir)) = aStarQueue.ExtractDominating();
                 
-                Debug.Log($"K:= {k}\tCurrentNode:= {currentNode}\tCurrentDir:= {currentDir}");
 
                 
                 if (currentNode == finish)
@@ -62,7 +60,6 @@ namespace WarehouseSimulator.Model.Sim
                              currentDir))
                 {
                     var w = GetWeightFactor(t + 1, dir, node, finish);
-                    Debug.Log($"\tWeight:= {w}\tTime:= {t}\tNode:= {node}\tDir:= {dir}\tInst:= {inst}");
                     bool b; //Logical value to check if the path is already trodden or has a lower weight than the ones already trodden
                     b = !pathDict.ContainsKey((node, dir));
                     b = b ? true : (pathDict[(node, dir)].Item4 > w && !b);
@@ -73,7 +70,7 @@ namespace WarehouseSimulator.Model.Sim
                             if (b) //Never move forward to an already trod path
                             {
 
-                                if (m_map.GetTileAt(node) == TileType.Wall || (checkForRobots && m_map.GetTileAt(node) == TileType.RoboOccupied))
+                                if (m_map.GetTileAt(node) == TileType.Wall || (x != -1 && y != -1 && node == new Vector2Int(x,y)))
                                 {
                                     break; // Don't move into a wall
                                 }
@@ -102,7 +99,7 @@ namespace WarehouseSimulator.Model.Sim
             
             if (!is_finish_found)
             {
-                Debug.Log("Couldn't find finish for robot.");
+                //Debug.Log("Couldn't find finish for robot.");
                 return instructions; //Could not find finish -> don't do anything
             }
 

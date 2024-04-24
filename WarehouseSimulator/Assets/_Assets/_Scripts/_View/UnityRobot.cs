@@ -36,6 +36,11 @@ namespace WarehouseSimulator.View
         {
             get => m_robotData;
         }
+        
+        public bool IsSimRobot 
+        {
+            get => _roboModel is SimRobot;
+        }
         #endregion
 
         // Update is called once per frame
@@ -63,13 +68,11 @@ namespace WarehouseSimulator.View
                     break;
                 case Direction.West:
                     _texture.transform.rotation = Quaternion.Euler(0, 0, 90);
-
-
                     break;
             }
         }
 
-        public void MyThingies(SimRobot dis, UnityMap dat, float speedMultiplier)
+        public void MyThingies(RobotLike dis, UnityMap dat, float speedMultiplier)
         {
             _roboModel = dis;
             _mapie = dat;

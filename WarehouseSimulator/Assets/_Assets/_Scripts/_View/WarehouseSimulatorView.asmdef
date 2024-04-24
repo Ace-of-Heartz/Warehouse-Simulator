@@ -4,6 +4,7 @@
 		"Unity.TextMeshPro",
 		"WarehouseSimulatorModel",
 		"WHSModelEnum",
-		"WHSModelSim"
+		"WHSModelSim",
+		"WHSModelPB"
 	]
 }
