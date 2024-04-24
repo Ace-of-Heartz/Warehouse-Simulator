@@ -28,6 +28,8 @@ public class UnityPlaybackManager : MonoBehaviour
         playbackManager.PbRobotManager.RobotAddedEvent += AddUnityPbRobot;//TODO
         playbackManager.PbGoalManager.GoalAssignedEvent += AddUnityGoal;//TODO
         
+        try
+        {
             if (DebugMode)
             {
                 DebugSetup();
@@ -35,8 +37,6 @@ public class UnityPlaybackManager : MonoBehaviour
             }
             else
                 playbackManager.Setup(MainMenuManager.pbInputArgs);
-        try
-        {
         }
         catch (Exception e)
         {
