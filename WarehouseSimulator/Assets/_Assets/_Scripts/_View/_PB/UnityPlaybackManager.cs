@@ -102,7 +102,7 @@ public class UnityPlaybackManager : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            playbackManager.SetTimeTo(playbackManager.PlaybackData.m_currentStep - 1);
+            playbackManager.SetTimeTo(playbackManager.PlaybackData.CurrentStep - 1);
         } else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             playbackManager.AdvanceTime();

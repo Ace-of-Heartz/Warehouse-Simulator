@@ -48,7 +48,7 @@ namespace WarehouseSimulator.Model.PB
         
         public void AdvanceTime()
         {
-            SetTimeTo(_playbackData.m_currentStep + 1);
+            SetTimeTo(_playbackData.CurrentStep + 1);
         }
     }
 }
