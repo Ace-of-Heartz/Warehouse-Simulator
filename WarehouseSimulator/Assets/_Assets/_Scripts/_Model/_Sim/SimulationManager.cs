@@ -87,6 +87,7 @@ namespace WarehouseSimulator.Model.Sim
                 default:
                     throw new System.ArgumentException("Invalid search algorithm");
             }
+            _centralController.SolveDeadlocks = simulationArgs.EnableDeadlockSolving;
             _centralController.AddPathPlanner(pathPlanner);
             _centralController.Preprocess(_map);
             _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);

@@ -24,6 +24,13 @@ namespace WarehouseSimulator.Model.Sim
 
         private int _criticalWaitingFor = 3;
         private int _robotsWaitingFor = 0;
+
+        private bool _solveDeadlocks = false;
+        public bool SolveDeadlocks
+        {
+            get => _solveDeadlocks;
+            set => _solveDeadlocks = value;
+        }
         #endregion
 
         /// <summary>
@@ -36,7 +43,7 @@ namespace WarehouseSimulator.Model.Sim
             private set => _isPathPlanningDone = value;
         }
         public bool IsPreprocessDone => _isPreprocessDone;
-        
+
         /// <summary>
         /// Constructor of CentralController 
         /// </summary>
@@ -156,7 +163,8 @@ namespace WarehouseSimulator.Model.Sim
                         break;
                 }
 
-                //++_robotsWaitingFor;
+                if(SolveDeadlocks)
+                    ++_robotsWaitingFor;
             }
             else
             {
