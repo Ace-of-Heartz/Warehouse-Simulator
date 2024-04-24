@@ -38,10 +38,10 @@ public class UnityPlaybackManager : MonoBehaviour
         try
         {
         }
-        catch (Exception)
+        catch (Exception e)
         {
             Debug.Log("Some ex");
-            UIMessageManager.GetInstance().MessageBox("Error during setup", response =>
+            UIMessageManager.GetInstance().MessageBox("Error during setup:\n" + e.Message, response =>
             {
                 SceneHandler.GetInstance().SetCurrentScene(0);
                 SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
@@ -54,7 +54,7 @@ public class UnityPlaybackManager : MonoBehaviour
         
         timeToNextTickCountdown = PlaybackData.DEFAULT_PLAYBACK_TIME_MS / 1000.0f;
         
-        //TODO: binding magic
+        GameObject.Find("UIGlobalManager").GetComponent<BindingSetupManager>().SetupPlaybackBinding(playbackManager);
     }
 
     void DebugSetup()
@@ -70,7 +70,7 @@ public class UnityPlaybackManager : MonoBehaviour
         {
             GameObject rob  = Instantiate(robie);
             UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
-            robieManager.MyThingies(pbRobie, unityMap, playbackManager.PlaybackData.m_currentPlayBackSpeed);//this is probably bad
+            robieManager.MyThingies(pbRobie, unityMap, playbackManager.PlaybackData.PlaybackSpeed);
         }
         else
         {

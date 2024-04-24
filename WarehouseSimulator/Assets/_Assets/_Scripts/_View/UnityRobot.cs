@@ -36,6 +36,11 @@ namespace WarehouseSimulator.View
         {
             get => m_robotData;
         }
+        
+        public bool IsSimRobot 
+        {
+            get => _roboModel is SimRobot;
+        }
         #endregion
 
         // Update is called once per frame

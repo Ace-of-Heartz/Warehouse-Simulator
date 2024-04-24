@@ -43,7 +43,7 @@ namespace WarehouseSimulator.Model
             {
                 if (input.Length < 3)
                 {
-                    throw new InvalidFileException("Invalid file format: There weren't enough lines in the file!");
+                    throw new InvalidFileException("Invalid map file format: There weren't enough lines in the file!");
                 }
                 
                 try
@@ -52,7 +52,7 @@ namespace WarehouseSimulator.Model
                     mapSize.x = int.Parse(input[1].Split(' ')[1] ?? throw new InvalidOperationException(""));
                     if (mapSize.y <= 0 || mapSize.x <= 0)
                     {
-                        throw new InvalidFileException("Invalid file format: The size of the map cannot be zero or less.");
+                        throw new InvalidFileException("Invalid map file format: The size of the map cannot be zero or less.");
                     }
                 }
                 catch (Exception ex)
@@ -67,12 +67,12 @@ namespace WarehouseSimulator.Model
                 {
                     if (i + 3 >= input.Length)
                     {
-                        throw new InvalidFileException("The content of the file wasn't in the right format.\nExpected more lines.");
+                        throw new InvalidFileException("The content of the map file wasn't in the right format.\nExpected more lines.");
                     }
                     string line = input[i+3];
                     if (line.Length != mapSize.x)
 
-                        throw new InvalidFileException($"The content of the file wasn't in the right format.\nExpected {mapSize.x} characters, got {line.Length} with content:\n{line}");
+                        throw new InvalidFileException($"The content of the map file wasn't in the right format.\nExpected {mapSize.x} characters, got {line.Length} with content:\n{line}");
                 
                     for (int j = 0; j < mapSize.x; j++)
                     {
