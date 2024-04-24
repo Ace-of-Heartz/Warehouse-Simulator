@@ -1,0 +1,12 @@
+﻿{
+  "name": "WHSViewPB",
+  "references": [
+    "WarehouseSimulatorModel",
+    "WHSModelPB",
+    "WHSModelEnum",
+    "WarehouseSimulatorView",
+    "WHSModelSim",
+    "WHSViewMainMenu",
+    "SimpleFileBrowser.Runtime"
+  ]
+}
