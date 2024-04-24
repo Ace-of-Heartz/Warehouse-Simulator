@@ -27,6 +27,8 @@ namespace WarehouseSimulator.View
         {
             _goalModel = g;
             _mapie = dis;
+            transform.position = _mapie.GetWorldPosition(_goalModel.GridPosition);
+            goalIdText.text = _goalModel.RoboId;
             if (g is SimGoal simG)
             {
                 simG.GoalFinishedEvent += (_,_) => Destroy(gameObject);
@@ -35,8 +37,6 @@ namespace WarehouseSimulator.View
             {
                 pbG.jesusEvent += (_,_) => gameObject.SetActive(pbG.CurrentlyAlive);
             }
-            transform.position = _mapie.GetWorldPosition(_goalModel.GridPosition);
-            goalIdText.text = _goalModel.RoboId;
         }
     }
 }    

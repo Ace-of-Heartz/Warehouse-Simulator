@@ -12,6 +12,8 @@ namespace WarehouseSimulator.Model.PB
         private int _aliveTo;
         private int _roboId;
         private bool _currentlyAlive;
+        
+        public new string RoboId => (_roboId + 1).ToString();//todo: ugly
 
         #region Properties
 
@@ -50,21 +52,15 @@ namespace WarehouseSimulator.Model.PB
 
         public void SetTimeTo(int step)
         {
-            if (step > _aliveTo || step < _aliveFrom)
+            if (step >= _aliveTo || step < _aliveFrom)
             {
-                if (_currentlyAlive)
-                {
-                    _currentlyAlive = false;
-                    jesusEvent?.Invoke(this,EventArgs.Empty);
-                }
+                _currentlyAlive = false;
+                jesusEvent?.Invoke(this,EventArgs.Empty);
             }
             else
             {
-                if (!_currentlyAlive)
-                {
-                    _currentlyAlive = true;
-                    jesusEvent?.Invoke(this, EventArgs.Empty);
-                }
+                _currentlyAlive = true;
+                jesusEvent?.Invoke(this, EventArgs.Empty);
             }
             
         }
