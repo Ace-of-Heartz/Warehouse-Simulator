@@ -10,6 +10,8 @@ namespace WarehouseSimulator.Model
         public int PreparationTime;
         public string EventLogPath;
         public SEARCH_ALGORITHM SearchAlgorithm;
+
+        public bool EnableDeadlockSolving;
         
         public bool IsComplete()
         {

@@ -6,6 +6,7 @@
     "WarehouseSimulatorView",
     "SimpleFileBrowser.Runtime",
     "Unity.TextMeshPro",
-    "WHSModelSim"
+    "WHSModelSim",
+    "WHSModelPB"
   ]
 }

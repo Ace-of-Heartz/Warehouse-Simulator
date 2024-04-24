@@ -133,7 +133,7 @@ namespace WarehouseSimulator.Model.Sim
             }
             catch (Exception) { /*ignored because this means there were no problems in the operations so far*/ }
 
-            if (error.hitter != null) return (Error.RunIntoWall, error.hitter, null);
+            if (error.hitter != null) return (Error.RAN_INTO_WALL, error.hitter, null);
             
             foreach (SimRobot robie in _allRobots)
             {
@@ -162,23 +162,26 @@ namespace WarehouseSimulator.Model.Sim
             return (Error.None,null,null);
         }
 
-        private (Error,SimRobot?) CheckingFuturePositions(SimRobot thisOne, SimRobot notThisOne)
+        private (Error,SimRobot?) CheckingFuturePositions(SimRobot firstRobot, SimRobot secondRobot)
         {
-            if (thisOne.RobotData.m_id == notThisOne.RobotData.m_id) return (Error.None,null); 
+            if (firstRobot.RobotData.m_id == secondRobot.RobotData.m_id) return (Error.None,null); 
             //if it's the same robot, we skip the step
 
-            if (notThisOne.NextPos == thisOne.NextPos)
+            if (secondRobot.NextPos == firstRobot.NextPos)
             {
-                if (notThisOne.NextPos == notThisOne.GridPosition || thisOne.NextPos == thisOne.GridPosition)
+                if (secondRobot.NextPos == secondRobot.GridPosition || firstRobot.NextPos == firstRobot.GridPosition)
                 {
-                    return (Error.WantedToCrashIntoSomeoneNotMoving, thisOne);
+                    if(secondRobot.State == RobotBeing.Free || firstRobot.State == RobotBeing.Free)
+                        return (Error.RAN_INTO_PASSIVE_ROBOT, firstRobot);
+                    
+                    return (Error.RAN_INTO_ACTIVE_ROBOT, firstRobot);
                 }
-                return (Error.WantedToGoToTheSameField, thisOne);
+                return (Error.RAN_INTO_FIELD_OCCUPATION_CONFLICT, firstRobot);
             }
             //we check whether there are matching future positions, because this would mean that the step is invalid
 
-            if (notThisOne.NextPos == thisOne.RobotData.m_gridPosition
-                & thisOne.NextPos == notThisOne.RobotData.m_gridPosition) return (Error.WantedToJumpOver,thisOne); 
+            if (secondRobot.NextPos == firstRobot.RobotData.m_gridPosition
+                & firstRobot.NextPos == secondRobot.RobotData.m_gridPosition) return (Error.TRIED_SWAPPING_PLACES,firstRobot); 
             //we check whether they want to step in each other's places ("jump over each other") because this would mean the step is invalid
             
             return (Error.None,null);

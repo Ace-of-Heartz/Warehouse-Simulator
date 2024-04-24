@@ -12,7 +12,7 @@ namespace WarehouseSimulator.Model.Sim
         
         #region Fields
         private Dictionary<SimRobot, Stack<RobotDoing>> _plannedActions;
-        private Dictionary<SimRobot,Vector2Int> _foolMeOnce;
+        private Dictionary<SimRobot,Vector2Int?> _criticalRobots;
 
         private IPathPlanner _pathPlanner;
 
@@ -21,6 +21,16 @@ namespace WarehouseSimulator.Model.Sim
         
         private bool _isPreprocessDone;
         private bool _isPathPlanningDone;
+
+        private int _criticalWaitingFor = 3;
+        private int _robotsWaitingFor = 0;
+
+        private bool _solveDeadlocks = false;
+        public bool SolveDeadlocks
+        {
+            get => _solveDeadlocks;
+            set => _solveDeadlocks = value;
+        }
         #endregion
 
         /// <summary>
@@ -33,7 +43,7 @@ namespace WarehouseSimulator.Model.Sim
             private set => _isPathPlanningDone = value;
         }
         public bool IsPreprocessDone => _isPreprocessDone;
-        
+
         /// <summary>
         /// Constructor of CentralController 
         /// </summary>
@@ -43,7 +53,7 @@ namespace WarehouseSimulator.Model.Sim
             _pathPlanner = new AStar_PathPlanner(map);
             _plannedActions = new();
             _isPreprocessDone = false;
-            _foolMeOnce = new();
+            _criticalRobots = new();
         }
         
         public void AddPathPlanner(IPathPlanner pathPlanner)
@@ -81,8 +91,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             if (!(IsPathPlanningDone || IsPreprocessDone))
             {
-                //TODO => Blaaa: If these commented logs are not needed anymore, let them fly freely into the afterlife
-                //Debug.Log("Processes not finished until next step. Timeout sent.");
+
                 
                 foreach (var (_,actions) in _plannedActions)
                 {
@@ -97,64 +106,65 @@ namespace WarehouseSimulator.Model.Sim
                 }
             }
 
-            (Error happened, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
-            //TODO => Blaaa: If these commented logs are not needed anymore, let them fly freely into the afterlife
-            //Debug.Log($"Checking step result: {results.happened}");
+            (Error happened, SimRobot firstRobot, SimRobot secondRobot) results = await robieMan.CheckValidSteps(_plannedActions,map);
+
             if (results.happened != Error.None)
             {
                 foreach (var e in _plannedActions)
                 {
                     CustomLog.Instance.AddRobotAction(e.Key.Id,RobotDoing.Wait);
                 }
-                //TODO => Blaaa: If these commented logs are not needed anymore, let them fly freely into the afterlife
-                //Debug.Log($"RobFirst: {results.robieTheFirst.Id}, planner action: {_plannedActions[results.robieTheFirst].Peek()}");
-                //Debug.Log($"RobSecond: {results.robieTheSecond.Id}, planner action: {_plannedActions[results.robieTheSecond].Peek()}");
-
+                
                 switch (results.happened)
                 {
-                    case Error.RunIntoWall:
-                        if (_foolMeOnce.Keys.Contains(results.robieTheFirst))
+                    case Error.RAN_INTO_WALL:
+                        if (_criticalRobots.Keys.Contains(results.firstRobot))
                         {
-                            _foolMeOnce[results.robieTheFirst!] = Vector2Int.one - 2 * Vector2Int.one;
+                            _criticalRobots[results.firstRobot!] = null;
                         }
                         else
                         {
-                            _foolMeOnce.Add(results.robieTheFirst!,Vector2Int.one - 2 * Vector2Int.one);
+                            _criticalRobots.Add(results.firstRobot!,null);
                         }
                         break;
-                    case Error.WantedToCrashIntoSomeoneNotMoving:
-                    case Error.WantedToJumpOver:
-                        if (!PokeIntoFoolMeOnce((results.robieTheFirst!, results.robieTheSecond!),
-                                results.robieTheSecond!.GridPosition, 
-                                results.robieTheFirst!.GridPosition))
+                    case Error.RAN_INTO_PASSIVE_ROBOT:
+                        break;
+                    case Error.RAN_INTO_ACTIVE_ROBOT:
+                    case Error.TRIED_SWAPPING_PLACES:
+                        if (!ShiftCriticalRobots((results.firstRobot!, results.secondRobot!),
+                                results.secondRobot!.GridPosition, 
+                                results.firstRobot!.GridPosition))
                         {
-                            if (!PokeIntoFoolMeOnce((results.robieTheSecond, results.robieTheFirst),
-                                    results.robieTheFirst.GridPosition,
-                                    results.robieTheSecond.GridPosition))
+                            if (!ShiftCriticalRobots((results.secondRobot, results.firstRobot),
+                                    results.firstRobot.GridPosition,
+                                    results.secondRobot.GridPosition))
                             {
-                                _foolMeOnce.Add(results.robieTheFirst,results.robieTheSecond.GridPosition);
-                                _plannedActions[results.robieTheSecond] = new Stack<RobotDoing>
+                                _criticalRobots.Add(results.firstRobot,results.secondRobot.GridPosition);
+                                _plannedActions[results.secondRobot] = new Stack<RobotDoing>
                                     (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
                             }
                         }
 
                         break;
-                    case Error.WantedToGoToTheSameField:
-                        if (!PokeIntoFoolMeOnce((results.robieTheFirst!, results.robieTheSecond!),
-                                results.robieTheSecond!.NextPos, 
-                                results.robieTheFirst!.NextPos))
+                    case Error.RAN_INTO_FIELD_OCCUPATION_CONFLICT:
+                        if (!ShiftCriticalRobots((results.firstRobot!, results.secondRobot!),
+                                results.secondRobot!.NextPos, 
+                                results.firstRobot!.NextPos))
                         {
-                            if (!PokeIntoFoolMeOnce((results.robieTheSecond, results.robieTheFirst),
-                                    results.robieTheFirst.NextPos,
-                                    results.robieTheSecond.NextPos))
+                            if (!ShiftCriticalRobots((results.secondRobot, results.firstRobot),
+                                    results.firstRobot.NextPos,
+                                    results.secondRobot.NextPos))
                             {
-                                _foolMeOnce.Add(results.robieTheFirst,results.robieTheSecond.NextPos);
-                                _plannedActions[results.robieTheSecond] = new Stack<RobotDoing>
+                                _criticalRobots.Add(results.firstRobot,results.secondRobot.NextPos);
+                                _plannedActions[results.secondRobot] = new Stack<RobotDoing>
                                     (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
                             }
                         }
                         break;
                 }
+
+                if(SolveDeadlocks)
+                    ++_robotsWaitingFor;
             }
             else
             {
@@ -163,7 +173,8 @@ namespace WarehouseSimulator.Model.Sim
                      robie.MakeStep(map);
                  }
 
-                 _foolMeOnce.Clear();
+                 _robotsWaitingFor = 0;
+                 _criticalRobots.Clear();
             }
         }
         
@@ -171,7 +182,7 @@ namespace WarehouseSimulator.Model.Sim
         /// Plan the move instructions for all robots present in the simulation.
         /// Async method.
         /// </summary>
-        public async void PlanNextMovesForAllAsync()
+        public async void PlanNextMovesForAllAsync(Map map)
         {
             if ((_taskBeforeNextStep == null ? TaskStatus.WaitingToRun : _taskBeforeNextStep.Status) == TaskStatus.Running)
             {
@@ -183,15 +194,24 @@ namespace WarehouseSimulator.Model.Sim
             var robots = _plannedActions.Keys.ToList();
             var tasks = new List<Task>();
 
-            foreach (var robot in robots)
+            
+            if( _robotsWaitingFor > _criticalWaitingFor)
             {
-                if(_plannedActions[robot].Count == 0)
-                    tasks.Add(PlanNextMoves(robot));
-                else if (_foolMeOnce.Keys.Contains(robot))
+                tasks.Add(AddNoiseToSteps(map));
+            }
+            else
+            {
+                foreach (var robot in robots)
                 {
-                    tasks.Add(PlanNextMoves(robot,_foolMeOnce[robot].x,_foolMeOnce[robot].y));
+                    if(_plannedActions[robot].Count == 0)
+                        tasks.Add(PlanNextMoves(robot,null,map));
+                    else if (_criticalRobots.Keys.Contains(robot))
+                    {
+                        tasks.Add(PlanNextMoves(robot,_criticalRobots[robot],map));
+                    }
                 }
             }
+
 
             _taskBeforeNextStep = Task.WhenAll(tasks);
             await _taskBeforeNextStep;
@@ -204,7 +224,7 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="robot">The robot we plan the route for</param>
         /// <param name="x">The x coordinate of the DO NOT STEP HERE position</param>
         /// <param name="y">The y coordinate of the DO NOT STEP HERE position</param>
-        private async Task PlanNextMoves(SimRobot robot, int x = -1, int y = -1)
+        private async Task PlanNextMoves(SimRobot robot, Vector2Int? disallowedPosition, Map map)
         {
             
             if (_plannedActions[robot] == null)
@@ -218,31 +238,31 @@ namespace WarehouseSimulator.Model.Sim
             }
             else
             {
-                _plannedActions[robot] = _pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading, x, y);
+                _plannedActions[robot] = _pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading,disallowedPosition);
             }
         }
 
-        private bool PokeIntoFoolMeOnce((SimRobot robieTheFirst, SimRobot robieTheSecond) robies,Vector2Int whereNoToStepFirst,Vector2Int whereNoToStepSecond)
+        private bool ShiftCriticalRobots((SimRobot robieTheFirst, SimRobot robieTheSecond) robies,Vector2Int whereNoToStepFirst,Vector2Int whereNoToStepSecond)
         {
             bool beenHere = false;
-            if (_foolMeOnce.Keys.Contains(robies.robieTheFirst) && _foolMeOnce[robies.robieTheFirst] == whereNoToStepFirst) //if these robots previously tried to step already, but couldn't
+            if (_criticalRobots.Keys.Contains(robies.robieTheFirst) && _criticalRobots[robies.robieTheFirst] == whereNoToStepFirst) //if these robots previously tried to step already, but couldn't
             {
-                _foolMeOnce.Remove(robies.robieTheFirst); //we shift who is waiting and who is trying to replan the route
-                if (_foolMeOnce.Keys.Contains(robies.robieTheSecond))
+                _criticalRobots.Remove(robies.robieTheFirst); //we shift who is waiting and who is trying to replan the route
+                if (_criticalRobots.Keys.Contains(robies.robieTheSecond))
                 {
-                    _foolMeOnce[robies.robieTheSecond] = whereNoToStepSecond;
+                    _criticalRobots[robies.robieTheSecond] = whereNoToStepSecond;
                 }
                 else
                 {
-                    _foolMeOnce.Add(robies.robieTheSecond, whereNoToStepSecond);
+                    _criticalRobots.Add(robies.robieTheSecond, whereNoToStepSecond);
                 }
                 _plannedActions[robies.robieTheFirst] = new Stack<RobotDoing>
                     (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
                 beenHere = true;
             } 
-            else if (_foolMeOnce.Keys.Contains(robies.robieTheFirst)) //if the dictionary already contains our key with but not our value, we overwrite it
+            else if (_criticalRobots.Keys.Contains(robies.robieTheFirst)) //if the dictionary already contains our key with but not our value, we overwrite it
             {
-                _foolMeOnce[robies.robieTheFirst] = whereNoToStepFirst;
+                _criticalRobots[robies.robieTheFirst] = whereNoToStepFirst;
                 _plannedActions[robies.robieTheSecond] = new Stack<RobotDoing>
                     (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
                 beenHere = true;
@@ -250,6 +270,35 @@ namespace WarehouseSimulator.Model.Sim
 
             return beenHere;
         }
+
+        private async Task AddNoiseToSteps(Map map)
+        {
+            int r = 10;
+            int n = 0;
+            foreach (var robot in _plannedActions.Keys.ToList())
+            {
+
+                Vector2Int noise;
+                do
+                {
+                    noise = new Vector2Int(Random.Range(-r, r+1), Random.Range(-r, r+1));
+                } while (map.GetTileAt(noise) == TileType.Wall);
+                
+                if (robot.RobotData.m_state == RobotBeing.Free)
+                {
+                    _plannedActions[robot].Push(RobotDoing.Wait);
+                }
+                else
+                {
+                    _plannedActions[robot] = _pathPlanner.GetPath(robot.GridPosition,robot.GridPosition + noise,robot.Heading);
+                }
+            }
+            _robotsWaitingFor = 0;
+        }
+        
+        
+        
+        
         
     }
 }
