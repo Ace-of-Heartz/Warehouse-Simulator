@@ -7,5 +7,6 @@ namespace WarehouseSimulator.Model.PB
     {
         public int m_currentStep;
         public float m_currentPlayBackSpeed;
+        public const int DEFAULT_PLAYBACK_TIME_MS = 1000;
     }
 }

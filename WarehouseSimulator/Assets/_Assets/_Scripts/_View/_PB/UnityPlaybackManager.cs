@@ -18,6 +18,9 @@ public class UnityPlaybackManager : MonoBehaviour
     
     public bool DebugMode = false;
     public PbInputArgs debugPbInputArgs = new PbInputArgs();
+    
+    
+    private float timeToNextTickCountdown = 0;
 
     private void Start()
     {
@@ -49,6 +52,8 @@ public class UnityPlaybackManager : MonoBehaviour
         unityMap.AssignMap(playbackManager.Map);
         unityMap.GenerateMap();
         
+        timeToNextTickCountdown = PlaybackData.DEFAULT_PLAYBACK_TIME_MS / 1000.0f;
+        
         //TODO: binding magic
     }
 
@@ -65,7 +70,7 @@ public class UnityPlaybackManager : MonoBehaviour
         {
             GameObject rob  = Instantiate(robie);
             UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
-            robieManager.MyThingies(pbRobie, unityMap, playbackManager.PlaybackData.m_currentPlayBackSpeed);
+            robieManager.MyThingies(pbRobie, unityMap, playbackManager.PlaybackData.m_currentPlayBackSpeed);//this is probably bad
         }
         else
         {
@@ -82,6 +87,25 @@ public class UnityPlaybackManager : MonoBehaviour
             GameObject gooo = Instantiate(golie);
             UnityGoal golieMan = gooo.GetComponent<UnityGoal>();
             golieMan.GiveGoalModel(pbGolie,unityMap);
+        }
+    }
+    
+    private void Update()
+    {
+        //TODO: isPaused and time scale
+        //timeToNextTickCountdown -= Time.deltaTime;
+        if (timeToNextTickCountdown <= 0)
+        {
+            playbackManager.AdvanceTime();
+            timeToNextTickCountdown = PlaybackData.DEFAULT_PLAYBACK_TIME_MS;
+        }
+        
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            playbackManager.SetTimeTo(playbackManager.PlaybackData.m_currentStep - 1);
+        } else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            playbackManager.AdvanceTime();
         }
     }
 }
