@@ -246,7 +246,7 @@ pages:
     paths:
       - public
   only:
-    - $CI_DEFAULT_BRANCH
+    - production
 
 workflow:
   rules:
