@@ -191,6 +191,8 @@ build-WebGL:
     - apt-get update && apt-get install ffmpeg -y
   variables:
     BUILD_TARGET: WebGL
+  tags:
+    - long-running
 
 #build-android:
 #  <<: *build
