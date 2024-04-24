@@ -159,7 +159,7 @@ namespace WarehouseSimulator.View
                 .Q("LeftSideBar")
                 .Q("SettingsPanel")
                 .Q<UnsignedIntegerField>("FrameInputField");
-            frameInputField.BindProperty(currStepsProperty);
+            frameInputField.BindProperty(currStepsProperty);//TODO: this only modifies the property, not the pbManager
             
             //PlaybackSpeedSlider Setup
             var playbackSpeed = doc.rootVisualElement
@@ -204,10 +204,7 @@ namespace WarehouseSimulator.View
                 .Q("BottomBar")
                 .Q("BottomCenter")
                 .Q<Button>("Button_StepBack");
-            stepBackButton.clickable.clicked += () =>
-            {
-                man.PlaybackData.DecrementStep();
-            };
+            stepBackButton.clickable.clicked += man.PreviousState;
             
             
             //StepForwardButton Setup
@@ -216,10 +213,7 @@ namespace WarehouseSimulator.View
                 .Q("BottomBar")
                 .Q("BottomCenter")
                 .Q<Button>("Button_StepForward");
-            stepForwardButton.clickable.clicked += () =>
-            {
-                man.PlaybackData.IncrementStep();
-            };
+            stepForwardButton.clickable.clicked += man.NextState;
 
             //ExitButton Setup
             var exitButton = doc.rootVisualElement

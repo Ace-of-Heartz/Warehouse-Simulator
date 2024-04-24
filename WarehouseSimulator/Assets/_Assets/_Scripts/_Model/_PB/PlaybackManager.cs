@@ -29,7 +29,7 @@ namespace WarehouseSimulator.Model.PB
             
             _playbackData.CurrentStep = 0;
             _playbackData.PlaybackSpeed = 1;
-            _playbackData.MaxStepAmount = 69; //Arbitrary value
+            _playbackData.MaxStepAmount = CustomLog.Instance.StepsCompleted;
             
             _pbGoalManager.SetUpAllGoals(CustomLog.Instance.TaskData,CustomLog.Instance.TaskEvents);
             _pbRobotManager.SetUpAllRobots(CustomLog.Instance.StepsCompleted,CustomLog.Instance.StartPos);
@@ -39,16 +39,21 @@ namespace WarehouseSimulator.Model.PB
 
         public void SetTimeTo(int stateIndex)
         {
-            if (stateIndex < 0 || stateIndex > CustomLog.Instance.StepsCompleted)
+            if (stateIndex < 0 || stateIndex > _playbackData.MaxStepAmount)
                 return;
             _playbackData.CurrentStep = stateIndex;
             _pbGoalManager.SetTimeTo(stateIndex);
             _pbRobotManager.SetTimeTo(stateIndex);
         }
         
-        public void AdvanceTime()
+        public void NextState()
         {
             SetTimeTo(_playbackData.CurrentStep + 1);
+        }
+        
+        public void PreviousState()
+        {
+            SetTimeTo(_playbackData.CurrentStep - 1);
         }
     }
 }

@@ -54,7 +54,7 @@ public class UnityPlaybackManager : MonoBehaviour
         
         timeToNextTickCountdown = PlaybackData.DEFAULT_PLAYBACK_TIME_MS / 1000.0f;
         
-        GameObject.Find("UIGlobalManager").GetComponent<BindingSetupManager>().SetupPlaybackBinding(playbackManager);
+        GameObject.Find("UIGlobalManager")?.GetComponent<BindingSetupManager>().SetupPlaybackBinding(playbackManager);
     }
 
     void DebugSetup()
@@ -96,7 +96,7 @@ public class UnityPlaybackManager : MonoBehaviour
         //timeToNextTickCountdown -= Time.deltaTime;
         if (timeToNextTickCountdown <= 0)
         {
-            playbackManager.AdvanceTime();
+            playbackManager.NextState();
             timeToNextTickCountdown = PlaybackData.DEFAULT_PLAYBACK_TIME_MS;
         }
         
@@ -105,7 +105,7 @@ public class UnityPlaybackManager : MonoBehaviour
             playbackManager.SetTimeTo(playbackManager.PlaybackData.CurrentStep - 1);
         } else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            playbackManager.AdvanceTime();
+            playbackManager.NextState();
         }
     }
 }

@@ -7,6 +7,8 @@ namespace WarehouseSimulator.Model.PB
     public class PlaybackData : ScriptableObject
     {
         public const int DEFAULT_PLAYBACK_TIME_MS = 1000;
+        
+        //TODO: these are state indecies, not steps
         [SerializeField]
         private int _currentStep;
         public int CurrentStep
