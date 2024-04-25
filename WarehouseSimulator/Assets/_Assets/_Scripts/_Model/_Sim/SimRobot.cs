@@ -59,10 +59,12 @@ namespace WarehouseSimulator.Model.Sim
         public (bool,SimRobot?) TryPerformActionRequested(RobotDoing watt, Map mapie)
         {
             CustomLog.Instance.AddPlannerAction(Id,watt);
+            if (watt == RobotDoing.Timeout)
+            {
+                watt = RobotDoing.Wait;
+            }
             
-            if (watt == RobotDoing.Timeout) watt = RobotDoing.Wait;
-            
-            _nexties= (RobotData.m_gridPosition,RobotData.m_heading,watt);
+            _nexties= (GridPosition,RobotData.m_heading,watt);
             if (mapie == null)
             {
                 throw new ArgumentNullException($"The argument: {nameof(mapie)} as the map does not exist");

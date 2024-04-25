@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
@@ -135,10 +134,10 @@ namespace WarehouseSimulator.Model.Sim
 
             if (error.hitter != null) return (Error.RAN_INTO_WALL, error.hitter, null);
             
-            foreach (SimRobot robie in _allRobots)
+            foreach (SimRobot robie in actions.Keys)
             {
                 //var positionCheckTasks = _allRobots.Select(async thisrob => await Task.FromResult(CheckingFuturePositions(thisrob,robie)));
-                var positionCheckTasks = _allRobots.Select(thisrob => Task.FromResult(CheckingFuturePositions(thisrob,robie)));
+                var positionCheckTasks = actions.Keys.Select(thisrob => Task.FromResult(CheckingFuturePositions(thisrob,robie)));
                 (Error error, SimRobot? whoCrashed)[]? maybeMistakes = await Task.WhenAll(positionCheckTasks);
                 error = (Error.None, null);
                 try

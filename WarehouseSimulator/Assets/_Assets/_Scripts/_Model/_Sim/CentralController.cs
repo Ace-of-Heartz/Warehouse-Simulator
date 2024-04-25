@@ -87,7 +87,7 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         /// <param name="map">Map loaded in from config file</param>
         /// <param name="robieMan">SimRobotManager</param>
-        public async void TimeToMove(Map map,SimRobotManager robieMan)
+        public async void TimeToMove(Map map, SimRobotManager robieMan)
         {
             if (!(IsPathPlanningDone || IsPreprocessDone))
             {
