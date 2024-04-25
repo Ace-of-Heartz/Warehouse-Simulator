@@ -126,7 +126,7 @@ namespace WarehouseSimulator.Model
                         heading = "W";
                         break;
                 }
-                sb.Append($"[{startPos[i].x},{startPos[i].y},\"{heading}\"]");
+                sb.Append($"[{startPos[i].y},{startPos[i].x},\"{heading}\"]");
                 if (i != startPos.Count - 1)
                     sb.Append(",");
             }
@@ -194,7 +194,7 @@ namespace WarehouseSimulator.Model
             sb.Append("\"tasks\":[");
             for (int i = 0; i < taskData.Count; i++)
             {
-                sb.Append($"[{taskData[i].Task},{taskData[i].X},{taskData[i].Y}]");
+                sb.Append($"[{taskData[i].Task},{taskData[i].Y},{taskData[i].X}]");
                 if (i != taskData.Count - 1)
                     sb.Append(",");
             }
@@ -249,8 +249,8 @@ namespace WarehouseSimulator.Model
             foreach (string s in start)
             {
                 string[] parts = s.Split(',');
-                int x = int.Parse(parts[0]);
-                int y = int.Parse(parts[1]);
+                int y = int.Parse(parts[0]);
+                int x = int.Parse(parts[1]);
                 Direction heading = Direction.North;
                 switch (parts[2].Trim('"'))
                 {
@@ -343,8 +343,8 @@ namespace WarehouseSimulator.Model
                 if (s == "") break;//empty list
                 string[] parts = s.Split(',');
                 int task = int.Parse(parts[0]);
-                int x = int.Parse(parts[1]);
-                int y = int.Parse(parts[2]);
+                int y = int.Parse(parts[1]);
+                int x = int.Parse(parts[2]);
                 taskData.Add(new TaskInfo(task, x, y));
             }
         }

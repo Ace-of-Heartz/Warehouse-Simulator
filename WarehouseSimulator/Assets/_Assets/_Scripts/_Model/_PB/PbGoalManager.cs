@@ -22,8 +22,7 @@ namespace WarehouseSimulator.Model.PB
             int nextid = 0;
             foreach (TaskInfo task in tasks)
             {
-                // TODO: x and y are flipped in the log file for some reason
-                var nextGoal = new PbGoal(nextid, new Vector2Int(task.Y, task.X));
+                var nextGoal = new PbGoal(nextid, new Vector2Int(task.X, task.Y));
                 _allGoals.Add(nextid,nextGoal);
                 nextid++;
             }
@@ -58,6 +57,7 @@ namespace WarehouseSimulator.Model.PB
                 }
             }
 
+            //Invoke the event only when all the goals are set up
             foreach (var (id, g) in _allGoals)
             {
                 GoalAssignedEvent?.Invoke(this, new GoalAssignedEventArgs(g));
