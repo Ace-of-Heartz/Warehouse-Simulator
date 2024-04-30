@@ -214,7 +214,7 @@ namespace WarehouseSimulator.View
                 .Q("BottomRight")
                 .Q<Button>("Button_Exit");
             
-            SetupButtonWithMessageBox(exitButton,"Abort playback?");
+            SetupButtonWithMessageBox(exitButton,"Exit playback?");
         }
 
         public void SetupMainMenuBinding()

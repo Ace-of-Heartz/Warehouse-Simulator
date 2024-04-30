@@ -1,5 +1,5 @@
 using System;
-
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
@@ -77,23 +77,23 @@ namespace WarehouseSimulator.View
         {
             CheckComponentAvailability();
             
-            if (!IsMessageBoxAllowed())
+            if (IsMessageBoxOpen)
             {
                 return;
             }
-
             
             IsMessageBoxOpen = true;
             
-            var mb = new MessageBox(msg,onDone,
+            var onDoneList = new List<Action<MessageBoxResponse>>(){(_) => { IsMessageBoxOpen = false; },onDone};
+            var mb = new MessageBox(msg,onDoneList,
                 type,
                 m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
                 m_complexMessageBox
                 );
-            mb.m_done += (_) =>
+            mb._doneList.Add( (_) =>
             {
                 IsMessageBoxOpen = false;
-            };
+            });
         }
         
         /// <summary>
@@ -121,23 +121,20 @@ namespace WarehouseSimulator.View
         {
             CheckComponentAvailability();
             
-            if (!IsMessageBoxAllowed())
+            if (IsMessageBoxOpen)
             {
                 return;
             }
             
             IsMessageBoxOpen = true;
 
-            
-            var mb = new MessageBox(msg,onDone,
+            var onDoneList = new List<Action<MessageBoxResponse>>(){(_) => { IsMessageBoxOpen = false; },onDone};
+            var mb = new MessageBox(msg,onDoneList,
                 type,
                 m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
                 m_simpleMessageBox
             ); 
-            mb.m_done += (_) =>
-            {
-                IsMessageBoxOpen = false;
-            };
+            
         }
         /// <summary>
         /// Used for calling a message box on screen with 1 button.
@@ -157,23 +154,23 @@ namespace WarehouseSimulator.View
         {
             CheckComponentAvailability();
             
-            if (!IsMessageBoxAllowed())
+            if (IsMessageBoxOpen)
             {
                 return;
             }
             
             IsMessageBoxOpen = true;
 
-            
-            var mb = new MessageBox(msg,onDone,
+            var onDoneList = new List<Action<MessageBoxResponse>>(){(_) => { IsMessageBoxOpen = false; },onDone};
+            var mb = new MessageBox(msg,onDoneList,
                 type,
                 m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
                 m_oneWayMessageBox
             );
-            mb.m_done += (_) =>
+            mb._doneList.Add((_) =>
             {
                 IsMessageBoxOpen = false;
-            };
+            });
         }
 
         public void SetUIDocument(UIDocument doc)
@@ -211,12 +208,7 @@ namespace WarehouseSimulator.View
             
         }
 
-        private bool IsMessageBoxAllowed()
-        {
-            bool l = !IsMessageBoxOpen;
-            Debug.Log(l);
-            return l;
-        }
+
 
 
     }
