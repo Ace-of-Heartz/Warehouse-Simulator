@@ -33,7 +33,7 @@ namespace WarehouseSimulator.View
             get => _isMessageBoxOpen;
             private set {
                 _isMessageBoxOpen = value;
-                Debug.Log(_isMessageBoxOpen);
+                //Debug.Log(_isMessageBoxOpen);
         }
         }
         

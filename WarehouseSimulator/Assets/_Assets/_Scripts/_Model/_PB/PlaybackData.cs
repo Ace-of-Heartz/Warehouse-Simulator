@@ -52,6 +52,7 @@ namespace WarehouseSimulator.Model.PB
         public bool IsPaused
         {
             get => _isPaused;
+            set => _isPaused = value;
         }
         
         public bool ChangePauseState()
@@ -59,6 +60,8 @@ namespace WarehouseSimulator.Model.PB
             _isPaused = !_isPaused;
             return _isPaused;
         }
+        
+        
         
         /// <summary>
         /// Increases the current step by 1

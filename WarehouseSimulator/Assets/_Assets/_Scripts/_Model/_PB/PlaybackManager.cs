@@ -29,6 +29,7 @@ namespace WarehouseSimulator.Model.PB
             
             _playbackData.CurrentStep = 0;
             _playbackData.PlaybackSpeed = 1;
+            _playbackData.IsPaused = false;
             _playbackData.MaxStepAmount = CustomLog.Instance.StepsCompleted;
             
             _pbGoalManager.SetUpAllGoals(CustomLog.Instance.TaskData,CustomLog.Instance.TaskEvents);

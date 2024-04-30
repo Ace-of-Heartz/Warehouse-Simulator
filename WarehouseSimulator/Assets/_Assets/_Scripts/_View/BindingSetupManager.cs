@@ -23,7 +23,19 @@ namespace WarehouseSimulator.View
                 .Q("BottomRight")
                 .Q("ButtonBox")
                 .Q<Button>("Button_Abort");
-            SetupSceneSwitchButton(button,"Abort simulation?");
+            
+            
+            Action<MessageBoxResponse> onDone = (response) =>
+            {
+                if (response == MessageBoxResponse.CONFIRMED)
+                {
+                    SceneHandler.GetInstance().SetCurrentScene(0);
+                    SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
+                    
+                }
+            };
+            
+            SetupSceneSwitchButton(button,onDone,"Abort simulation?");
             
             var progressBar = doc.rootVisualElement
                 .Q("SimulationCanvas")
@@ -158,7 +170,27 @@ namespace WarehouseSimulator.View
                 .Q("BottomRight")
                 .Q<Button>("Button_Exit");
             
-            SetupSceneSwitchButton(exitButton,"Exit playback?");
+            Action<MessageBoxResponse> onDone = (response) =>
+            {
+                if (response == MessageBoxResponse.CONFIRMED)
+                {
+                    SceneHandler.GetInstance().SetCurrentScene(0);
+                    SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
+                    
+                }
+                else if (response == MessageBoxResponse.CANCELED)
+                {
+                    man.PlaybackData.ChangePauseState();
+                    Debug.Log(man.PlaybackData.IsPaused);
+                }
+            };
+            SetupSceneSwitchButton(exitButton,onDone,"Exit playback?");
+            exitButton.clickable.clicked += () =>
+            {
+                man.PlaybackData.ChangePauseState();
+                Debug.Log(man.PlaybackData.IsPaused);
+
+            };
         }
 
         /// <summary>
@@ -176,27 +208,16 @@ namespace WarehouseSimulator.View
         /// Setup for buttons used to switch scenes
         /// </summary>
         /// <param name="button"></param>
-        private void SetupSceneSwitchButton(Button button, string message = "")
+        private void SetupSceneSwitchButton(Button button, Action<MessageBoxResponse> onDone, string message = "")
         {
             button.clickable.clicked += () => UIMessageManager.GetInstance().MessageBox(message,
-                response =>
-                {
-                    switch (response)
-                    {
-                        case MessageBoxResponse.CONFIRMED:
-                            //TODO: Deallocate resources from Simulation
-                            SceneHandler.GetInstance().SetCurrentScene(0);
-                            SceneManager.LoadSceneAsync(SceneHandler.GetInstance().CurrentScene);
-                            UIMessageManager.GetInstance().SetUIDocument(SceneHandler.GetInstance().CurrentDoc);
-                            break;
-                        default:
-                            break;
-                    }
-                }, 
+                onDone, 
                 new SimpleMessageBoxTypeSelector(SimpleMessageBoxTypeSelector.MessageBoxType.CONFIRM_CANCEL)
             );
         }
 
+
+        
         /// <summary>
         /// Setup for the progress bar used to display the current step
         /// </summary>
