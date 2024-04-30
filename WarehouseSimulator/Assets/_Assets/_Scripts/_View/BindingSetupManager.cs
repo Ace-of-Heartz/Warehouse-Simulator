@@ -9,6 +9,7 @@ namespace WarehouseSimulator.View
 {
     public class BindingSetupManager : MonoBehaviour
     {
+        #region Public methods 
         /// <summary>
         /// Setup for all bindings for the Simulation's UI
         /// </summary>
@@ -22,7 +23,7 @@ namespace WarehouseSimulator.View
                 .Q("BottomRight")
                 .Q("ButtonBox")
                 .Q<Button>("Button_Abort");
-            SetupButtonWithMessageBox(button,"Abort simulation?");
+            SetupSceneSwitchButton(button,"Abort simulation?");
             
             var progressBar = doc.rootVisualElement
                 .Q("SimulationCanvas")
@@ -58,67 +59,10 @@ namespace WarehouseSimulator.View
             
         }
 
-        /// <summary>
-        /// 
+                /// <summary>
+        /// Setup for all bindings for the Playback's UI
         /// </summary>
-        /// <param name="button"></param>
-        private void SetupButtonWithMessageBox(Button button, string message = "")
-        {
-            button.clickable.clicked += () => UIMessageManager.GetInstance().MessageBox(message,
-                response =>
-                {
-                    switch (response)
-                    {
-                        case MessageBoxResponse.CONFIRMED:
-                            //TODO: Deallocate resources from Simulation
-                            SceneHandler.GetInstance().SetCurrentScene(0);
-                            SceneManager.LoadSceneAsync(SceneHandler.GetInstance().CurrentScene);
-
-                            break;
-                        default:
-                            break;
-                    }
-                }, 
-                new SimpleMessageBoxTypeSelector(SimpleMessageBoxTypeSelector.MessageBoxType.CONFIRM_CANCEL)
-            );
-        }
-
-        private void SetupInfoPanel(VisualElement infoPanel)
-        {
-            throw new NotImplementedException();
-        }
-        
-        private void SetupStepsProgressBar(Label maxProgressLabel,Label progressLabel,ProgressBar progressBar, float maxSteps)
-        {
-            progressBar.lowValue = 0;
-            progressBar.highValue = maxSteps;
-            progressBar.value = 0;
-            
-            progressLabel.text = "0";
-            maxProgressLabel.text = maxSteps.ToString();
-        }
-
-        private void SetupDynamicGoalAddition(Button button,Vector2IntField coordinatesField, SimulationManager man)
-        {
-
-            button.clickable.clicked += () =>
-            {
-                try
-                {
-                    man.SimGoalManager.AddNewGoal(coordinatesField.value, man.Map);
-                }
-                catch (ArgumentException e)
-                {
-                    UIMessageManager.GetInstance().MessageBox(e.Message,
-                        response => { },
-                        new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK));
-                }
-                
-                 
-            };
-
-        }
-
+        /// <param name="man"></param>
         public void SetupPlaybackBinding(PlaybackManager man)
         {
             
@@ -214,12 +158,91 @@ namespace WarehouseSimulator.View
                 .Q("BottomRight")
                 .Q<Button>("Button_Exit");
             
-            SetupButtonWithMessageBox(exitButton,"Exit playback?");
+            SetupSceneSwitchButton(exitButton,"Exit playback?");
         }
 
+        /// <summary>
+        /// Setup for all bindings for the Main Menu's UI
+        /// </summary>
         public void SetupMainMenuBinding()
         {
             var doc = SceneHandler.GetDocOfID(0);
         }
+        
+        #endregion
+
+        #region Private methods
+        /// <summary>
+        /// Setup for buttons used to switch scenes
+        /// </summary>
+        /// <param name="button"></param>
+        private void SetupSceneSwitchButton(Button button, string message = "")
+        {
+            button.clickable.clicked += () => UIMessageManager.GetInstance().MessageBox(message,
+                response =>
+                {
+                    switch (response)
+                    {
+                        case MessageBoxResponse.CONFIRMED:
+                            //TODO: Deallocate resources from Simulation
+                            SceneHandler.GetInstance().SetCurrentScene(0);
+                            SceneManager.LoadSceneAsync(SceneHandler.GetInstance().CurrentScene);
+                            UIMessageManager.GetInstance().SetUIDocument(SceneHandler.GetInstance().CurrentDoc);
+                            break;
+                        default:
+                            break;
+                    }
+                }, 
+                new SimpleMessageBoxTypeSelector(SimpleMessageBoxTypeSelector.MessageBoxType.CONFIRM_CANCEL)
+            );
+        }
+
+        /// <summary>
+        /// Setup for the progress bar used to display the current step
+        /// </summary>
+        /// <param name="maxProgressLabel"></param>
+        /// <param name="progressLabel"></param>
+        /// <param name="progressBar"></param>
+        /// <param name="maxSteps"></param>
+        private void SetupStepsProgressBar(Label maxProgressLabel,Label progressLabel,ProgressBar progressBar, float maxSteps)
+        {
+            progressBar.lowValue = 0;
+            progressBar.highValue = maxSteps;
+            progressBar.value = 0;
+            
+            progressLabel.text = "0";
+            maxProgressLabel.text = maxSteps.ToString();
+        }
+        
+        /// <summary>
+        /// Setup for the button used to add a new goal dynamically
+        /// </summary>
+        /// <param name="button"></param>
+        /// <param name="coordinatesField"></param>
+        /// <param name="man"></param>
+        private void SetupDynamicGoalAddition(Button button,Vector2IntField coordinatesField, SimulationManager man)
+        {
+
+            button.clickable.clicked += () =>
+            {
+                try
+                {
+                    man.SimGoalManager.AddNewGoal(coordinatesField.value, man.Map);
+                }
+                catch (ArgumentException e)
+                {
+                    UIMessageManager.GetInstance().MessageBox(e.Message,
+                        response => { },
+                        new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK));
+                }
+                
+                 
+            };
+
+        }
+
+        
+        #endregion
+        
     }
 }
