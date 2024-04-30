@@ -63,15 +63,5 @@ namespace WarehouseSimulator.View
         
     }
 
-    [Serializable]
-    struct SceneNDoc
-    {
-        [FormerlySerializedAs("id")] [SerializeField] 
-        public uint m_id;
-        [SerializeField]
-        public string m_scene;
-        [SerializeField]
-        public UIDocument m_doc;
 
-    } 
 }
