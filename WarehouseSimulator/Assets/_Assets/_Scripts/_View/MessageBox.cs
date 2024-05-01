@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,32 +16,32 @@ namespace WarehouseSimulator.View
     
     public class MessageBox
     {
-        public Action<MessageBoxResponse> m_done;
+        public List<Action<MessageBoxResponse>> _doneList;
         public bool IsDone { get; private set; }
 
-        private VisualElement m_uiContainer;
-        private VisualElement m_ui;
+        private VisualElement _uiContainer;
+        private VisualElement _ui;
         /// <summary>
         /// Instantiates a messagebox.
         /// </summary>
         /// <param name="msg"></param>
-        /// <param name="onDone"></param>
+        /// <param name="onDoneList"></param>
         /// <param name="type"></param>
         /// <param name="uiContainer"></param>
         /// <param name="uiAsset"></param>
         public MessageBox(
             string msg,
-            Action<MessageBoxResponse> onDone,
+            List<Action<MessageBoxResponse>> onDoneList,
             MessageBoxTypeSelector type,
             VisualElement uiContainer,
             VisualTreeAsset uiAsset
             )
         {
             IsDone = false;
-            m_uiContainer = uiContainer;
-            m_ui = uiAsset.Instantiate();
+            _uiContainer = uiContainer;
+            _ui = uiAsset.Instantiate();
 
-            m_ui.Q<Label>("InfoLabel").text = msg;
+            _ui.Q<Label>("InfoLabel").text = msg;
 
             string[] texts = type.GetButtonText();
             
@@ -50,37 +52,37 @@ namespace WarehouseSimulator.View
             else if (type is OneWayMessageBoxTypeSelector)
                 SetupButtons((OneWayMessageBoxTypeSelector) type, texts);
 
-            uiContainer.Add(m_ui);
+            uiContainer.Add(_ui);
             
-            m_done = onDone;
+            _doneList = onDoneList;
         }
 
         private void SetupButtons(SimpleMessageBoxTypeSelector type,string[] texts)
         {
             
-            m_ui.Q<Button>("ConfirmButton").text = texts[0];
-            m_ui.Q<Button>("ConfirmButton").clicked += Confirm;
+            _ui.Q<Button>("ConfirmButton").text = texts[0];
+            _ui.Q<Button>("ConfirmButton").clicked += Confirm;
             
-            m_ui.Q<Button>("CancelButton").text = texts[1];
-            m_ui.Q<Button>("CancelButton").clicked  += Cancel;
+            _ui.Q<Button>("CancelButton").text = texts[1];
+            _ui.Q<Button>("CancelButton").clicked  += Cancel;
         }
 
         private void SetupButtons(ComplexMessageBoxTypeSelector type, string[] texts)
         {
-            m_ui.Q<Button>("ConfirmButton").text = texts[0];
-            m_ui.Q<Button>("ConfirmButton").clicked += Confirm;
+            _ui.Q<Button>("ConfirmButton").text = texts[0];
+            _ui.Q<Button>("ConfirmButton").clicked += Confirm;
             
-            m_ui.Q<Button>("DeclineButton").text = texts[1];
-            m_ui.Q<Button>("DeclineButton").clicked += Decline;
+            _ui.Q<Button>("DeclineButton").text = texts[1];
+            _ui.Q<Button>("DeclineButton").clicked += Decline;
             
-            m_ui.Q<Button>("CancelButton").text = texts[2];
-            m_ui.Q<Button>("CancelButton").clicked  += Cancel;
+            _ui.Q<Button>("CancelButton").text = texts[2];
+            _ui.Q<Button>("CancelButton").clicked  += Cancel;
         }
 
         private void SetupButtons(OneWayMessageBoxTypeSelector type, string[] texts)
         {
-            m_ui.Q<Button>("ConfirmButton").text = texts[0];
-            m_ui.Q<Button>("ConfirmButton").clicked += Confirm;
+            _ui.Q<Button>("ConfirmButton").text = texts[0];
+            _ui.Q<Button>("ConfirmButton").clicked += Confirm;
         }
 
 
@@ -105,9 +107,9 @@ namespace WarehouseSimulator.View
 
             IsDone = true;
             
-
-            m_done?.Invoke(response);
-            m_uiContainer.Remove(m_ui);
+            
+            _doneList?.ForEach(onDone => onDone?.Invoke(response)); 
+            _uiContainer.Remove(_ui);
            
         }
     }

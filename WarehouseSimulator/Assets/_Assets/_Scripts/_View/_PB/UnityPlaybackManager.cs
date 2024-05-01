@@ -41,7 +41,6 @@ public class UnityPlaybackManager : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log("Some ex");
             UIMessageManager.GetInstance().MessageBox("Error during setup:\n" + e.Message, response =>
             {
                 SceneHandler.GetInstance().SetCurrentScene(0);

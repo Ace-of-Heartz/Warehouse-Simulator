@@ -1,5 +1,5 @@
 using System;
-
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
@@ -13,45 +13,62 @@ namespace WarehouseSimulator.View
     public class UIMessageManager
     {
         #region Fields
-        private static UIMessageManager m_uiUIMessageManagerInstance;
+        private static UIMessageManager _uiUIMessageManagerInstance;
 
-        private bool m_isMessageBoxOpen; 
+        private UIDocument _UIDocument;
+        private VisualTreeAsset _complexMessageBox;
+        private VisualTreeAsset _simpleMessageBox;
+        private VisualTreeAsset _oneWayMessageBox;
+
+        private bool _isMessageBoxOpen; 
         #endregion
         
         #region Properties
 
+        /// <summary>
+        /// Returns true if a message box is currently open, otherwise false.
+        /// </summary>
         public bool IsMessageBoxOpen
         {
-            get => m_isMessageBoxOpen;
-            private set => m_isMessageBoxOpen = value;
+            get => _isMessageBoxOpen;
+            private set {
+                _isMessageBoxOpen = value;
+                //Debug.Log(_isMessageBoxOpen);
+        }
         }
         
         #endregion 
         
+        /// <summary>
+        /// Private constructor for singleton instance.
+        /// </summary>
         private UIMessageManager()
         {
             IsMessageBoxOpen = false;
         }
-
+    
+        /// <summary>
+        /// Singleton instance getter.
+        /// </summary>
+        /// <returns>Singleton instance</returns>
         public static UIMessageManager GetInstance()
         {
-            if (m_uiUIMessageManagerInstance == null)
-                m_uiUIMessageManagerInstance = new();
-            return m_uiUIMessageManagerInstance;
+            if (_uiUIMessageManagerInstance == null)
+                _uiUIMessageManagerInstance = new();
+            return _uiUIMessageManagerInstance;
         }
         
-        private UIDocument m_UIDocument;
-        private VisualTreeAsset m_complexMessageBox;
-        private VisualTreeAsset m_simpleMessageBox;
-        private VisualTreeAsset m_oneWayMessageBox;
 
-        public bool IsComplete()
-        {
-            return m_UIDocument is not null &&
-                   m_complexMessageBox is not null &&
-                   m_simpleMessageBox is not null &&
-                   m_oneWayMessageBox is not null;
-        }
+
+        /// <summary>
+        /// Returns true if all necessary components are present for message boxes to be displayed, otherwise false.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsComplete => _UIDocument is not null &&
+                   _complexMessageBox is not null &&
+                   _simpleMessageBox is not null &&
+                   _oneWayMessageBox is not null;
+        
         
         /// <summary>
         /// Used for calling a message box on screen with 1 button.
@@ -77,23 +94,20 @@ namespace WarehouseSimulator.View
         {
             CheckComponentAvailability();
             
-            if (!IsMessageBoxAllowed())
+            if (IsMessageBoxOpen)
             {
                 return;
             }
-
             
             IsMessageBoxOpen = true;
             
-            var mb = new MessageBox(msg,onDone,
+            var onDoneList = new List<Action<MessageBoxResponse>>(){(_) => { IsMessageBoxOpen = false; },onDone};
+            var mb = new MessageBox(msg,onDoneList,
                 type,
-                m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
-                m_complexMessageBox
+                _UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
+                _complexMessageBox
                 );
-            mb.m_done += (_) =>
-            {
-                IsMessageBoxOpen = false;
-            };
+
         }
         
         /// <summary>
@@ -121,23 +135,20 @@ namespace WarehouseSimulator.View
         {
             CheckComponentAvailability();
             
-            if (!IsMessageBoxAllowed())
+            if (IsMessageBoxOpen)
             {
                 return;
             }
             
             IsMessageBoxOpen = true;
 
-            
-            var mb = new MessageBox(msg,onDone,
+            var onDoneList = new List<Action<MessageBoxResponse>>(){(_) => { IsMessageBoxOpen = false; },onDone};
+            var mb = new MessageBox(msg,onDoneList,
                 type,
-                m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
-                m_simpleMessageBox
+                _UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
+                _simpleMessageBox
             ); 
-            mb.m_done += (_) =>
-            {
-                IsMessageBoxOpen = false;
-            };
+            
         }
         /// <summary>
         /// Used for calling a message box on screen with 1 button.
@@ -157,28 +168,30 @@ namespace WarehouseSimulator.View
         {
             CheckComponentAvailability();
             
-            if (!IsMessageBoxAllowed())
+            if (IsMessageBoxOpen)
             {
                 return;
             }
             
             IsMessageBoxOpen = true;
 
-            
-            var mb = new MessageBox(msg,onDone,
+            var onDoneList = new List<Action<MessageBoxResponse>>(){(_) => { IsMessageBoxOpen = false; },onDone};
+            var mb = new MessageBox(msg,onDoneList,
                 type,
-                m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
-                m_oneWayMessageBox
+                _UIDocument.rootVisualElement.Q<VisualElement>("PopupArea"),
+                _oneWayMessageBox
             );
-            mb.m_done += (_) =>
-            {
-                IsMessageBoxOpen = false;
-            };
+
         }
 
+        
+        /// <summary>
+        /// Set UIDocument to be used for message boxes.
+        /// </summary>
+        /// <param name="doc"></param>
         public void SetUIDocument(UIDocument doc)
         {
-            m_UIDocument = doc;
+            _UIDocument = doc;
         }
         
         /// <summary>
@@ -192,31 +205,31 @@ namespace WarehouseSimulator.View
             VisualTreeAsset simpleMessageBox,
             VisualTreeAsset oneWayMessageBox)
         {
-            m_complexMessageBox = complexMessageBox;
-            m_simpleMessageBox = simpleMessageBox;
-            m_oneWayMessageBox = oneWayMessageBox;
+            _complexMessageBox = complexMessageBox;
+            _simpleMessageBox = simpleMessageBox;
+            _oneWayMessageBox = oneWayMessageBox;
         }
 
+        /// <summary>
+        /// Checks if all necessary components are present for message boxes to be displayed.
+        /// </summary>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <exception cref="MissingVisualElementException">Exception occurs when a necessary component is not present in the UI Document used.</exception>
         private void CheckComponentAvailability()
         {
-            if (!IsComplete())
+            if (!IsComplete)
             {
                 throw new NullReferenceException("Not all necessary components are present for popup windows");
             }
 
-            if (m_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea") is null)
+            if (_UIDocument.rootVisualElement.Q<VisualElement>("PopupArea") is null)
             {
-                throw new MissingVisualElementException();
+                throw new MissingVisualElementException("PopupArea not found in UIDocument");
             }
             
         }
 
-        private bool IsMessageBoxAllowed()
-        {
-            bool l = !IsMessageBoxOpen;
-            Debug.Log(l);
-            return l;
-        }
+
 
 
     }

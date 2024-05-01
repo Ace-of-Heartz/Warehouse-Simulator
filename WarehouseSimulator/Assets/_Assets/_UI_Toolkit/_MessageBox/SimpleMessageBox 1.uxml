@@ -1,7 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/_Assets/_UI_Toolkit/_USS/MessageBoxUSS.uss?fileID=7433441132597879392&amp;guid=28b87ca906c021a4da47b12a80fe6b48&amp;type=3#MessageBoxUSS" />
     <ui:VisualElement name="UIMessageBox" class="uimessagebox">
-        <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="InfoLabel" style="position: absolute; justify-content: center; white-space: nowrap; align-self: center; align-items: center; top: 44px; left: auto; font-size: 60px;" />
+        <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="InfoLabel" style="position: absolute; justify-content: center; white-space: normal; align-self: center; align-items: center; top: 17px; left: 19px; font-size: 40px; text-overflow: ellipsis; height: 240px; width: 734px;" />
         <ui:Button text="Confirm" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ConfirmButton" class="uimessageboxbutton" />
         <ui:Button text="Cancel" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CancelButton" class="uimessageboxbutton" style="font-size: 50px;" />
     </ui:VisualElement>

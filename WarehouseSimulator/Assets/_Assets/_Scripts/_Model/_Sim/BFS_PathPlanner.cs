@@ -21,6 +21,7 @@ namespace WarehouseSimulator.Model.Sim
             _map = map;
         } 
             
+        #region Methods
         /// <summary>
         /// Gets the shortest path from a starting position to a finish position, with the initial direction in mind.
         /// Can check additionally check for occupied tiles instead of only walls.
@@ -113,13 +114,6 @@ namespace WarehouseSimulator.Model.Sim
 
             return instructions;
         }
-        
-
-
-        
-
-
-
-
+        #endregion
     }
 }

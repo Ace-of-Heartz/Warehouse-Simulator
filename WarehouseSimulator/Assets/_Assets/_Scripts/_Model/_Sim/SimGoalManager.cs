@@ -20,13 +20,22 @@ namespace WarehouseSimulator.Model.Sim
             _nextid = 0;
         }
 
-        public void AddNewGoal(Vector2Int here, Map mapie)
+        /// <summary>
+        ///     Adds a new goal to the queue while incrementing the goal ID.
+        /// </summary>
+        /// <remarks>
+        ///     Logs the goal to the CustomLog.
+        /// </remarks>>
+        /// <param name="inputPosition"></param>
+        /// <param name="mapie">Best pie is the mapie</param>
+        /// <exception cref="ArgumentException">Throws this if argument position is not empty.</exception>
+        public void AddNewGoal(Vector2Int inputPosition, Map mapie)
         {
-            if (mapie.GetTileAt(here) == TileType.Wall)
+            if (mapie.GetTileAt(inputPosition) == TileType.Wall)
             {
-                throw new ArgumentException($"Invalid position given: map tile at {here} is not empty.");
+                throw new ArgumentException($"Invalid position given: map tile at {inputPosition} is not empty.");
             }
-            SimGoal newGoal = new(here,_nextid);
+            SimGoal newGoal = new(inputPosition,_nextid);
             _nextid++;
             _goalsRemaining.Enqueue(newGoal);
             CustomLog.Instance.AddTaskData(newGoal.GoalID, newGoal.GridPosition.x, newGoal.GridPosition.y);

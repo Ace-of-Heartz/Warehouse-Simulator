@@ -11,12 +11,17 @@ namespace WarehouseSimulator.View.MainMenu {
 public class MainMenuManager : MonoBehaviour
 {
 
+    #region Static Fields
     public static SimInputArgs simInputArgs;
     public static PbInputArgs pbInputArgs;
+    #endregion
 
+    #region Fields
     public List<TMP_InputField> inputFieldsForSim;
     public List<TMP_InputField> inputFieldsForPb;
-
+    #endregion
+    
+    #region Unity Methods
     private void Start()
     {
         
@@ -40,7 +45,9 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
-
+    #endregion
+    
+    #region Methods
 
     private void UpdatePbInputStatus()
     {
@@ -175,6 +182,7 @@ public class MainMenuManager : MonoBehaviour
         
     }
     
+    #endregion
 
 }
 
