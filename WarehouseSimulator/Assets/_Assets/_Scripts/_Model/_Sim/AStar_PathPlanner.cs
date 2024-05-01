@@ -10,13 +10,30 @@ namespace WarehouseSimulator.Model.Sim
 {
     public class AStar_PathPlanner : IPathPlanner
     {
+        #region Fields
         private Map m_map;
-
+        #endregion
+        
+        /// <summary>
+        /// Constructor for the AStar_PathPlanner
+        /// </summary>
+        /// <param name="map"></param>
         public AStar_PathPlanner(Map map)
         {
             m_map = map;
         }
 
+        #region  Methods
+        /// <summary>
+        /// Calculates the path for a robot to take from start to finish.
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="finish"></param>
+        /// <param name="facing"></param>
+        /// <param name="disallowedPosition"></param>
+        /// <returns>
+        ///     A stack of instructions for the robot to take. Top of the stack is the first instruction.
+        /// </returns>
         public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction facing, Vector2Int? disallowedPosition = null)
         {
             Dictionary<
@@ -199,10 +216,6 @@ namespace WarehouseSimulator.Model.Sim
 
             return cost;
         }
-
+        #endregion
     }
-    
-
-    
-    
 }
