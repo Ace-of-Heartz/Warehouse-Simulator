@@ -285,6 +285,7 @@ namespace WarehouseSimulator.Model
             string[] plannerTimesStr = keyValueDict["plannerTimes"].Trim('[').Trim(']').Split(",");
             foreach (string s in plannerTimesStr)
             {
+                if (s == "") break;
                 plannerTimes.Add(double.Parse(s, CultureInfo.InvariantCulture));
             }
             string[] errorsStr = keyValueDict["errors"].Trim('[').Trim(']').Split("],[");
