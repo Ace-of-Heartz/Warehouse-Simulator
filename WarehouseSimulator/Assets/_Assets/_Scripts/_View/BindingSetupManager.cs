@@ -249,6 +249,9 @@ namespace WarehouseSimulator.View
                 try
                 {
                     man.SimGoalManager.AddNewGoal(coordinatesField.value, man.Map);
+                    UIMessageManager.GetInstance().MessageBox("Goal added successfully at " + coordinatesField.value,
+                        response => { },
+                        new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK));
                 }
                 catch (ArgumentException e)
                 {
