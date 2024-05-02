@@ -106,7 +106,7 @@ namespace WarehouseSimulator.View
                 .Q<UnsignedIntegerField>("FrameInputField");
             frameInputField.RegisterValueChangedCallback((_) =>
             {
-                man.PlaybackData.CurrentStep = (int) frameInputField.value;
+                man.SetTimeTo((int) frameInputField.value);
             });
             
             //PlaybackSpeedSlider Setup
