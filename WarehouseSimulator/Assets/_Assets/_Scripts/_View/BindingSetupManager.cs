@@ -192,14 +192,6 @@ namespace WarehouseSimulator.View
 
             };
         }
-
-        /// <summary>
-        /// Setup for all bindings for the Main Menu's UI
-        /// </summary>
-        public void SetupMainMenuBinding()
-        {
-            var doc = SceneHandler.GetDocOfID(0);
-        }
         
         #endregion
 
