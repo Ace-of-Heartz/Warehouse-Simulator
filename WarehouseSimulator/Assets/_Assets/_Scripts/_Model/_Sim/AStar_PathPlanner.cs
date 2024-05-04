@@ -11,19 +11,41 @@ namespace WarehouseSimulator.Model.Sim
     public class AStar_PathPlanner : IPathPlanner
     {
         #region Fields
-        private Map m_map;
+        private Map _map;
+        private Dictionary<int, Stack<RobotDoing>> _cache;
         #endregion
         
         /// <summary>
         /// Constructor for the AStar_PathPlanner
         /// </summary>
         /// <param name="map"></param>
-        public AStar_PathPlanner(Map map)
+        public AStar_PathPlanner()
         {
-            m_map = map;
+            _cache = new();
         }
 
         #region  Methods
+        
+        public void SetMap(Map map)
+        {
+            _map = map;
+        }
+        
+        public Dictionary<SimRobot,RobotDoing> GetNextSteps(List<(SimRobot,bool)> robotsNDirt)
+        {
+            Dictionary<SimRobot,RobotDoing> instructions = new();
+            foreach(var (robot,isDirty) in robotsNDirt)
+            {
+                if (isDirty)
+                {
+                    _cache[robot.Id] =  GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading);
+                }
+                instructions.Add(robot,_cache[robot.Id].Pop());
+            }
+
+            return instructions;
+        }
+        
         /// <summary>
         /// Calculates the path for a robot to take from start to finish.
         /// </summary>
@@ -78,7 +100,7 @@ namespace WarehouseSimulator.Model.Sim
                             if (b) //Never move forward to an already trod path
                             {
 
-                                if (m_map.GetTileAt(node) == TileType.Wall || node == disallowedPosition)
+                                if (_map.GetTileAt(node) == TileType.Wall || node == disallowedPosition)
                                 {
                                     break; // Don't move into a wall
                                 }

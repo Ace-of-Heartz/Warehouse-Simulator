@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
@@ -9,14 +10,37 @@ namespace WarehouseSimulator.Model.Sim
     public interface IPathPlanner
     {
         // ReSharper restore Unity.ExpensiveCode
-        Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish,Direction dir, Vector2Int? disallowedPosition = null);
+        /// <summary>
+        /// Gets the shortest path from a starting position to a finish position, with the initial direction in mind.
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="finish"></param>
+        /// <param name="dir"></param>
+        /// <param name="disallowedPosition"></param>
+        /// <returns></returns>
+        Dictionary<SimRobot,RobotDoing> GetNextSteps(List<(SimRobot,bool)> robotsNDirt);
+
+        Dictionary<SimRobot,RobotDoing> GetNextSteps(List<SimRobot> robots)
+        {
+            return GetNextSteps(robots.Select(p => (p, false)).ToList());
+        }
+
+        
+        
+        
+        /// <summary>
+        /// Set map for path planner
+        /// </summary>
+        /// <param name="map"></param>
+        void SetMap(Map map);
+        
         /// <summary>
         /// 
         /// </summary>
         /// <param name="currentNode"></param>
         /// <param name="facing"></param>
         /// <returns></returns>
-        IEnumerable<(Vector2Int, Direction,RobotDoing)> GetNeighbouringNodes(Vector2Int currentNode, Direction facing)
+        public virtual IEnumerable<(Vector2Int, Direction,RobotDoing)> GetNeighbouringNodes(Vector2Int currentNode, Direction facing)
         {   
             (Vector2Int forwardNode,Direction leftNode,Direction rightNode)  = GetNextNodes(currentNode, facing);
             yield return (forwardNode, facing,RobotDoing.Forward);
@@ -30,7 +54,7 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="currentNode"></param>
         /// <param name="facing"></param>
         /// <returns></returns>
-        (Vector2Int,Direction, Direction) GetNextNodes(Vector2Int currentNode, Direction facing)
+        public (Vector2Int,Direction, Direction) GetNextNodes(Vector2Int currentNode, Direction facing)
         {
             Vector2Int forwardNode;
             Direction leftNode, rightNode;

@@ -16,7 +16,6 @@ namespace WarehouseSimulator.Model.Sim
         private readonly SimGoalManager _simGoalManager;
         private readonly SimRobotManager _simRobotManager;
         private readonly CentralController _centralController;
-
         
         #region Properties
         public Map Map => _map;
@@ -31,7 +30,7 @@ namespace WarehouseSimulator.Model.Sim
             _map = new Map();
             _simGoalManager = new SimGoalManager();
             _simRobotManager = new SimRobotManager();
-            _centralController = new CentralController(_map);
+            _centralController = new CentralController();
             _simulationData = ScriptableObject.CreateInstance<SimulationData>();
             CustomLog.Instance.Init();
             
@@ -76,17 +75,18 @@ namespace WarehouseSimulator.Model.Sim
             switch (simulationArgs.SearchAlgorithm)
             {
                 case SEARCH_ALGORITHM.BFS:
-                    pathPlanner = new BFS_PathPlanner(_map);
+                    pathPlanner = new BFS_PathPlanner();
                     break;
                 case SEARCH_ALGORITHM.A_STAR:
-                    pathPlanner = new AStar_PathPlanner(_map);
+                    pathPlanner = new AStar_PathPlanner();
                     break;
                 case SEARCH_ALGORITHM.COOP_A_STAR:
-                    pathPlanner = new CoopAStar_PathPlanner(_map);
+                    pathPlanner = new CoopAStar_PathPlanner();
                     break;
                 default:
                     throw new System.ArgumentException("Invalid search algorithm");
             }
+            pathPlanner.SetMap(_map);
             _centralController.SolveDeadlocks = simulationArgs.EnableDeadlockSolving;
             _centralController.AddPathPlanner(pathPlanner);
             _centralController.Preprocess(_map);

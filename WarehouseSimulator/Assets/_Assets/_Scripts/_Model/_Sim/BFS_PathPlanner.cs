@@ -8,7 +8,8 @@ namespace WarehouseSimulator.Model.Sim
     public class BFS_PathPlanner : IPathPlanner
     {
         #region Fields
-        private readonly Map _map;
+        private Map _map;
+        private Dictionary<int, Stack<RobotDoing>> _cache;
         #endregion
         
         
@@ -16,12 +17,43 @@ namespace WarehouseSimulator.Model.Sim
         /// Constructor of BFS_PathPlanner class
         /// </summary>
         /// <param name="map">Map loaded in from config file</param>
-        public BFS_PathPlanner(Map map)
+        public BFS_PathPlanner()
+        {
+            _cache = new();
+        }
+
+        #region Methods
+        
+        /// <summary>
+        /// Set map for path planner
+        /// </summary>
+        /// <param name="map"></param>
+        public void SetMap(Map map)
         {
             _map = map;
-        } 
-            
-        #region Methods
+        }
+        
+        /// <summary>
+        /// Gets the next steps for the list of robots to take.
+        /// </summary>
+        /// <param name="robots"></param>
+        /// <returns></returns>
+        public Dictionary<SimRobot,RobotDoing> GetNextSteps(List<(SimRobot,bool)> robotsNDirt)
+        {
+            Dictionary<SimRobot,RobotDoing> instructions = new();
+            foreach(var (robot,isDirty) in robotsNDirt)
+            {
+                if (isDirty)
+                {
+                    _cache[robot.Id] =  GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading);
+                }
+                instructions.Add(robot,_cache[robot.Id].Pop());
+            }
+
+            return instructions;
+        }
+        
+
         /// <summary>
         /// Gets the shortest path from a starting position to a finish position, with the initial direction in mind.
         /// Can check additionally check for occupied tiles instead of only walls.
