@@ -106,7 +106,7 @@ namespace WarehouseSimulator.View
                 .Q<UnsignedIntegerField>("FrameInputField");
             frameInputField.RegisterValueChangedCallback((_) =>
             {
-                man.PlaybackData.CurrentStep = (int) frameInputField.value;
+                man.SetTimeTo((int) frameInputField.value);
             });
             
             //PlaybackSpeedSlider Setup
@@ -192,14 +192,6 @@ namespace WarehouseSimulator.View
 
             };
         }
-
-        /// <summary>
-        /// Setup for all bindings for the Main Menu's UI
-        /// </summary>
-        public void SetupMainMenuBinding()
-        {
-            var doc = SceneHandler.GetDocOfID(0);
-        }
         
         #endregion
 
@@ -249,6 +241,9 @@ namespace WarehouseSimulator.View
                 try
                 {
                     man.SimGoalManager.AddNewGoal(coordinatesField.value, man.Map);
+                    UIMessageManager.GetInstance().MessageBox("Goal added successfully at " + coordinatesField.value,
+                        response => { },
+                        new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK));
                 }
                 catch (ArgumentException e)
                 {
