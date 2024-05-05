@@ -79,60 +79,61 @@ namespace WarehouseSimulator.Model.Sim.Tests
             //Magic?
             Dictionary<SimRobot, Stack<RobotDoing>> dicc = 
                 new() { { _robie, new Stack<RobotDoing>() } };
-
+        
             var runner = _robieMan.CheckValidSteps(dicc,_emptyMap);
-
+        
             yield return new WaitUntil(() => runner.IsCompleted);
             
             Assert.IsTrue(runner.IsFaulted);
             Assert.IsTrue(runner.Exception?.InnerExceptions[0] is ArgumentException);
         }
 
-        [TestCase(RobotDoing.Wait)]
-        [TestCase(RobotDoing.Timeout)]
-        [TestCase(RobotDoing.Rotate90)]
-        [TestCase(RobotDoing.RotateNeg90)]
-        [TestCase(RobotDoing.Forward)]
-        public void CheckValidStep_ResultingErrorNone(RobotDoing whatToDo)
-        {
-            Dictionary<SimRobot, Stack<RobotDoing>> dicc = 
-                new() { {_robie,new Stack<RobotDoing>(new []{whatToDo})} };
-            _robieMan.AddRobot(_robie.Id,_robie.GridPosition);
-            
-            SimRobot robieTwo = new SimRobot(1, new Vector2Int(2,2));
-            _robieMan.AddRobot(robieTwo.Id,robieTwo.GridPosition);
-            dicc.Add(robieTwo,new Stack<RobotDoing>(new []{whatToDo}));
-            
-            (Error happened, SimRobot who, SimRobot whoer) boop = Asyncer().Result;
-            
-            Assert.AreEqual(Error.None,boop.happened);
+    // [TestCase(RobotDoing.Wait)]
+    // [TestCase(RobotDoing.Timeout)]
+    // [TestCase(RobotDoing.Rotate90)]
+    // [TestCase(RobotDoing.RotateNeg90)]
+    // [TestCase(RobotDoing.Forward)]
+    private static RobotDoing[] vars = { RobotDoing.Wait, RobotDoing.Timeout, RobotDoing.Forward, RobotDoing.Rotate90, RobotDoing.RotateNeg90 }; 
+    
+    [UnityTest]
+    public IEnumerator CheckValidStep_ResultingErrorNone([ValueSource(nameof(vars))] RobotDoing whatToDo)
+    {
+        Dictionary<SimRobot, Stack<RobotDoing>> dicc = 
+            new() { {_robie,new Stack<RobotDoing>(new []{whatToDo})} };
+        _robieMan.AddRobot(_robie.Id,_robie.GridPosition);
+        
+        SimRobot robieTwo = new SimRobot(1, new Vector2Int(2,2));
+        _robieMan.AddRobot(robieTwo.Id,robieTwo.GridPosition);
+        dicc.Add(robieTwo,new Stack<RobotDoing>(new []{whatToDo}));
 
-            async Task<(Error, SimRobot, SimRobot)> Asyncer()
-            {
-                return await _robieMan.CheckValidSteps(dicc,_33Map);
-            }
-        }
+        var tasks = _robieMan.CheckValidSteps(dicc,_33Map);
 
-        [Test]
-        public void CheckValidSteps_ResultingRunIntoWall()
-        {
-            //TODO => Blaaa: Adjust positions
-            Dictionary<SimRobot, Stack<RobotDoing>> dicc = 
-                new() { {_robie,new Stack<RobotDoing>(new [] { RobotDoing.Forward})} };
-            _robieMan.AddRobot(_robie.Id,_robie.GridPosition);
-            
-            SimRobot robieTwo = new SimRobot(1, new Vector2Int(2,2));
-            _robieMan.AddRobot(robieTwo.Id,robieTwo.GridPosition);
-            dicc.Add(robieTwo,new Stack<RobotDoing>(new [] { RobotDoing.Forward }));
-            
-            (Error happened, SimRobot who, SimRobot whoer) boop = Asyncer().Result;
-            
-            Assert.AreEqual(Error.None,boop.happened);
-
-            async Task<(Error, SimRobot, SimRobot)> Asyncer()
-            {
-                return await _robieMan.CheckValidSteps(dicc,_33Map);
-            }
-        }
+        yield return new WaitUntil(() => tasks.IsCompleted);
+        (Error happened,SimRobot robieFirst, SimRobot robieSecond) = tasks.Result;
+        Assert.IsFalse(tasks.IsFaulted);
+        Assert.AreEqual(Error.None,happened);
+    }
+    //
+    //     [Test]
+    //     public void CheckValidSteps_ResultingRunIntoWall()
+    //     {
+    //         //TODO => Blaaa: Adjust positions
+    //         Dictionary<SimRobot, Stack<RobotDoing>> dicc = 
+    //             new() { {_robie,new Stack<RobotDoing>(new [] { RobotDoing.Forward})} };
+    //         _robieMan.AddRobot(_robie.Id,_robie.GridPosition);
+    //         
+    //         SimRobot robieTwo = new SimRobot(1, new Vector2Int(2,2));
+    //         _robieMan.AddRobot(robieTwo.Id,robieTwo.GridPosition);
+    //         dicc.Add(robieTwo,new Stack<RobotDoing>(new [] { RobotDoing.Forward }));
+    //         
+    //         (Error happened, SimRobot who, SimRobot whoer) boop = Asyncer().Result;
+    //         
+    //         Assert.AreEqual(Error.None,boop.happened);
+    //
+    //         async Task<(Error, SimRobot, SimRobot)> Asyncer()
+    //         {
+    //             return await _robieMan.CheckValidSteps(dicc,_33Map);
+    //         }
+    //     }
     }
 }

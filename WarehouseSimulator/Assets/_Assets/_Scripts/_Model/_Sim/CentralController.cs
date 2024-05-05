@@ -23,9 +23,9 @@ namespace WarehouseSimulator.Model.Sim
         private bool _isPathPlanningDone;
 
         private int _criticalWaitingFor = 3;
-        private int _robotsWaitingFor = 0;
+        private int _robotsWaitingFor;
 
-        private bool _solveDeadlocks = false;
+        private bool _solveDeadlocks;
         public bool SolveDeadlocks
         {
             get => _solveDeadlocks;
@@ -91,8 +91,6 @@ namespace WarehouseSimulator.Model.Sim
         {
             if (!(IsPathPlanningDone || IsPreprocessDone))
             {
-
-                
                 foreach (var (_,actions) in _plannedActions)
                 {
                     actions.Push(RobotDoing.Timeout);
@@ -106,7 +104,7 @@ namespace WarehouseSimulator.Model.Sim
                 }
             }
 
-            (Error happened, SimRobot firstRobot, SimRobot secondRobot) results = await robieMan.CheckValidSteps(_plannedActions,map);
+            (Error happened, SimRobot? firstRobot, SimRobot? secondRobot) results = await robieMan.CheckValidSteps(_plannedActions,map);
 
             if (results.happened != Error.None)
             {
@@ -197,21 +195,20 @@ namespace WarehouseSimulator.Model.Sim
             
             if( _robotsWaitingFor > _criticalWaitingFor)
             {
-                tasks.Add(AddNoiseToSteps(map));
+                tasks.Add(Task.Run(() => AddNoiseToSteps(map)));
             }
             else
             {
                 foreach (var robot in robots)
                 {
                     if(_plannedActions[robot].Count == 0)
-                        tasks.Add(PlanNextMoves(robot,null,map));
+                        tasks.Add(Task.Run(() => PlanNextMoves(robot,null)));
                     else if (_criticalRobots.Keys.Contains(robot))
                     {
-                        tasks.Add(PlanNextMoves(robot,_criticalRobots[robot],map));
+                        tasks.Add(Task.Run(() => PlanNextMoves(robot,_criticalRobots[robot])));
                     }
                 }
             }
-
 
             _taskBeforeNextStep = Task.WhenAll(tasks);
             await _taskBeforeNextStep;
@@ -222,9 +219,8 @@ namespace WarehouseSimulator.Model.Sim
         /// Plans a list of instructions for an individual robot with(out) taking the position of other robots into consideration. How rebellious.
         /// </summary>
         /// <param name="robot">The robot we plan the route for</param>
-        /// <param name="x">The x coordinate of the DO NOT STEP HERE position</param>
-        /// <param name="y">The y coordinate of the DO NOT STEP HERE position</param>
-        private async Task PlanNextMoves(SimRobot robot, Vector2Int? disallowedPosition, Map map)
+        /// <param name="disallowedPosition"></param>
+        private void PlanNextMoves(SimRobot robot, Vector2Int? disallowedPosition)
         {
             
             if (_plannedActions[robot] == null)
@@ -241,6 +237,26 @@ namespace WarehouseSimulator.Model.Sim
                 _plannedActions[robot] = _pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading,disallowedPosition);
             }
         }
+        
+        // private Stack<RobotDoing> PlanNextMoves(SimRobot robot, Vector2Int? disallowedPosition)
+        // {
+        //     
+        //     if (_plannedActions[robot] == null)
+        //     {
+        //         return new Stack<RobotDoing>();
+        //     }
+        //     
+        //     if (robot.RobotData.m_state == RobotBeing.Free)
+        //     {
+        //         var temp = _plannedActions[robot];
+        //         temp.Push(RobotDoing.Wait);
+        //         return temp;
+        //     }
+        //     else
+        //     {
+        //         return _pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading,disallowedPosition);
+        //     }
+        // }
 
         private bool ShiftCriticalRobots((SimRobot robieTheFirst, SimRobot robieTheSecond) robies,Vector2Int whereNoToStepFirst,Vector2Int whereNoToStepSecond)
         {
@@ -271,10 +287,9 @@ namespace WarehouseSimulator.Model.Sim
             return beenHere;
         }
 
-        private async Task AddNoiseToSteps(Map map)
+        private void AddNoiseToSteps(Map map)
         {
             int r = 10;
-            int n = 0;
             foreach (var robot in _plannedActions.Keys.ToList())
             {
 

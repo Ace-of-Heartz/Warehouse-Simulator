@@ -122,7 +122,10 @@ namespace WarehouseSimulator.Model.Sim
             }
             
             //var tasks = actions.Select(async pair => await Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value.Pop(),mapie)));
-            var tasks = actions.Select(pair => Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value.Peek(),mapie)));
+            var tasks = actions.Select(pair =>
+            {
+                return Task.Run( () => pair.Key.TryPerformActionRequested(pair.Value.Peek(), mapie));
+            });
             (bool success, SimRobot? whoTripped)[]? results = await Task.WhenAll(tasks);
 
             (Error happened, SimRobot? hitter) error = (Error.None, null);
@@ -134,10 +137,11 @@ namespace WarehouseSimulator.Model.Sim
 
             if (error.hitter != null) return (Error.RAN_INTO_WALL, error.hitter, null);
             
-            foreach (SimRobot robie in actions.Keys)
+            foreach (SimRobot robie in _allRobots)
             {
                 //var positionCheckTasks = _allRobots.Select(async thisrob => await Task.FromResult(CheckingFuturePositions(thisrob,robie)));
-                var positionCheckTasks = actions.Keys.Select(thisrob => Task.FromResult(CheckingFuturePositions(thisrob,robie)));
+                var positionCheckTasks = 
+                    _allRobots.Select(thisrob => Task.Run( () => CheckingFuturePositions(thisrob,robie)));
                 (Error error, SimRobot? whoCrashed)[]? maybeMistakes = await Task.WhenAll(positionCheckTasks);
                 error = (Error.None, null);
                 try
