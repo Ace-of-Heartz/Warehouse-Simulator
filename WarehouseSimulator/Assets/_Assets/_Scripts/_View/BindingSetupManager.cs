@@ -9,6 +9,12 @@ namespace WarehouseSimulator.View
 {
     public class BindingSetupManager : MonoBehaviour
     {
+        #region Fields
+        private Action _pauseAction;
+        private Action _resumeAction;
+        private Action _toggleButtonFocusableAction;
+        #endregion
+        
         #region Public methods 
         /// <summary>
         /// Setup for all bindings for the Simulation's UI
@@ -132,18 +138,26 @@ namespace WarehouseSimulator.View
                 .Q("BottomCenter")
                 .Q<Button>("Button_Resume");
 
-            pauseButton.clickable.clicked += () =>
+            _pauseAction = () =>
             {
                 man.PlaybackData.ChangePauseState();
                 resumeButton.style.display = DisplayStyle.Flex;
                 pauseButton.style.display = DisplayStyle.None;
             };
-            resumeButton.clickable.clicked += () =>
+            _resumeAction = () =>
             {
                 man.PlaybackData.ChangePauseState();
                 resumeButton.style.display = DisplayStyle.None;
                 pauseButton.style.display = DisplayStyle.Flex;
             };
+            _toggleButtonFocusableAction = () =>
+            {
+                pauseButton.SetEnabled(!resumeButton.enabledSelf);
+                resumeButton.SetEnabled(!resumeButton.enabledSelf);
+            };
+
+            pauseButton.clickable.clicked += _pauseAction;
+            resumeButton.clickable.clicked += _resumeAction;
             
             
             //StepBackButton Setup
@@ -172,25 +186,34 @@ namespace WarehouseSimulator.View
             
             Action<MessageBoxResponse> onDone = (response) =>
             {
-                if (response == MessageBoxResponse.CONFIRMED)
+                switch (response)
                 {
-                    SceneHandler.GetInstance().SetCurrentScene(0);
-                    SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
-                    
-                }
-                else if (response == MessageBoxResponse.CANCELED)
-                {
-                    man.PlaybackData.ChangePauseState();
-                    Debug.Log(man.PlaybackData.IsPaused);
+                    case MessageBoxResponse.CONFIRMED:
+                        _resumeAction();
+                        _toggleButtonFocusableAction();
+                        
+                        pauseButton.clickable.clicked -= _pauseAction;
+                        resumeButton.clickable.clicked -= _resumeAction;
+                        exitButton.clickable.clicked -= _pauseAction;
+                        exitButton.clickable.clicked -= _toggleButtonFocusableAction;
+                        
+                        // Debug.Log(man.PlaybackData.IsPaused);
+                        SceneHandler.GetInstance().SetCurrentScene(0);
+                        SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
+                        break;
+                    case MessageBoxResponse.CANCELED:
+                        _resumeAction();
+                        _toggleButtonFocusableAction();
+                        
+                        // Debug.Log(man.PlaybackData.IsPaused);
+                        break;
+                    default: 
+                        throw new ArgumentOutOfRangeException();
                 }
             };
             SetupSceneSwitchButton(exitButton,onDone,"Exit playback?");
-            exitButton.clickable.clicked += () =>
-            {
-                man.PlaybackData.ChangePauseState();
-                Debug.Log(man.PlaybackData.IsPaused);
-
-            };
+            exitButton.clickable.clicked += _pauseAction;
+            exitButton.clickable.clicked += _toggleButtonFocusableAction;
         }
         
         #endregion
@@ -251,13 +274,8 @@ namespace WarehouseSimulator.View
                         response => { },
                         new OneWayMessageBoxTypeSelector(OneWayMessageBoxTypeSelector.MessageBoxType.OK));
                 }
-                
-                 
             };
-
         }
-
-        
         #endregion
         
     }
