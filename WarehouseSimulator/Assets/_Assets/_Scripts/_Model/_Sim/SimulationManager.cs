@@ -50,7 +50,7 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         public SimRobotManager SimRobotManager => _simRobotManager;
         /// <summary>
-        /// See <see cref="_centralController"/> for docs
+        /// See <see cref="_simulationData"/> for docs
         /// </summary>
         public SimulationData SimulationData => _simulationData;
         /// <summary>

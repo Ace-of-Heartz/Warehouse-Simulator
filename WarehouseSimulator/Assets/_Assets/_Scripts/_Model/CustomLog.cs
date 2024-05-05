@@ -23,27 +23,76 @@ namespace WarehouseSimulator.Model
         /// </summary>
         private CustomLog() { Init(); }
         
+        /// <summary>
+        /// The name of the rules used for moving the robots. Or whatever. This is not used anyway 
+        /// </summary>
         private string actionModel = null;
+        /// <summary>
+        /// Whether no errors occurred
+        /// </summary>
         private bool allValid = true;
+        /// <summary>
+        /// The number of robots
+        /// </summary>
         private int teamSize = 0;
+        /// <summary>
+        /// The starting position and heading of the robots
+        /// </summary>
         private List<RobotStartPos> startPos = null;
+        /// <summary>
+        /// The number of tasks finished during
+        /// </summary>
         private int taskCompletedCount = 0;
+        /// <summary>
+        /// The number of actions taken by all the robots collectively
+        /// </summary>
         private int sumOfCost = 0;
+        /// <summary>
+        /// The number of steps completed
+        /// </summary>
         private int stepsCompleted = 0;
+        /// <summary>
+        /// The actions taken by each robot. The key is the robot's id
+        /// </summary>
         private Dictionary<int, String> robotActions = null;
+        /// <summary>
+        /// The actions proposed by the planner to each robot. The key is the robot's id
+        /// </summary>
         private Dictionary<int, String> plannerActions = null;
+        /// <summary>
+        /// The times the planner took to respond with the next steps for each robot
+        /// </summary>
         private List<double> plannerTimes = null;
+        /// <summary>
+        /// A list of errors that occurred
+        /// </summary>
         private List<LogError> errors = null;
+        /// <summary>
+        /// The task events that occurred during the simulation (assigned or finished). The key is the robot's id that the event corresponds to
+        /// </summary>
         private Dictionary<int, List<EventInfo>> taskEvents = null;
+        /// <summary>
+        /// The positions of the goals
+        /// </summary>
         private List<TaskInfo> taskData = null;
 
         #region Property
 
-        public int TeamSize => teamSize;
+        /// <summary>
+        /// See <see cref="startPos"/> for more information
+        /// </summary>
         public List<RobotStartPos> StartPos => startPos;
+        /// <summary>
+        /// See <see cref="stepsCompleted"/> for more information
+        /// </summary>
         public int StepsCompleted => stepsCompleted;
-        public Dictionary<int, String> RobotActions => robotActions;
+        /// <summary>
+        /// See <see cref="taskEvents"/> for more information
+        /// </summary>
         public Dictionary<int, List<EventInfo>> TaskEvents => taskEvents;
+        /// <summary>
+        /// See <see cref="taskData"/> for more information
+        /// </summary>
         public List<TaskInfo> TaskData => taskData;
 
         #endregion

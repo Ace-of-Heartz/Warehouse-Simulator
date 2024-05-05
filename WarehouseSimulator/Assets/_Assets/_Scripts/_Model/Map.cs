@@ -8,11 +8,25 @@ namespace WarehouseSimulator.Model
 {
     public class Map
     {
+        /// <summary>
+        /// The map's representation in a 2D array
+        /// </summary>
         private TileType[,] mapRepresentaion;
+        /// <summary>
+        /// The maps size. X is the width, Y is the height
+        /// </summary>
         private Vector2Int mapSize;
 
+        /// <summary>
+        /// See <see cref="MapSize"/> for details
+        /// </summary>
         public Vector2Int MapSize => mapSize;
         
+        /// <summary>
+        /// Get the tile type at a specific position
+        /// </summary>
+        /// <param name="position">The position we are interested in</param>
+        /// <returns>The tile's type at that position or Wall if the position is out of bounds</returns>
         public TileType GetTileAt(Vector2Int position)
         {
             if (position.x < 0 || position.x >= mapSize.x || position.y < 0 || position.y >= mapSize.y)
@@ -20,6 +34,11 @@ namespace WarehouseSimulator.Model
             return mapRepresentaion[position.y, position.x];
         }
         
+        /// <summary>
+        /// Get the tile type at a specific position.
+        /// </summary>
+        /// <param name="i">The linear position we are interested in. The linear position is treated as 'linear-position = y * width + x</param>
+        /// <returns>The tile's type at that position or Wall if the position is out of bounds</returns>
         public TileType GetTileAt(int i)
         {
             if(i < 0 || i >= mapRepresentaion.Length)
@@ -27,6 +46,10 @@ namespace WarehouseSimulator.Model
             return mapRepresentaion[i / mapSize.x, i % mapSize.x];
         }
 
+        /// <summary>
+        /// Load the map from a file
+        /// </summary>
+        /// <param name="filePath">The path of the file</param>
         public void LoadMap(string filePath)
         {
             using StreamReader reader = new(filePath);
@@ -37,6 +60,13 @@ namespace WarehouseSimulator.Model
             CreateMap(lines);
         }
 
+        /// <summary>
+        /// Create the map from the input
+        /// </summary>
+        /// <param name="input">The description of the map as an array of strings.</param>
+        /// <exception cref="InvalidFileException">Thrown if the format of the file is incorrect</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the maps width or height are not integers</exception>
+        /// <remarks> Example elements of <paramref name="input"/>: ["height h", "width w", "map", "row 1", "row 2", ... , "row h"] </remarks>
         public void CreateMap(string[] input)
         {
             if (mapSize == Vector2Int.zero)
@@ -82,6 +112,10 @@ namespace WarehouseSimulator.Model
             }
         }
 
+        /// <summary>
+        /// Mark an empty tile as occupied by a robot
+        /// </summary>
+        /// <param name="dis">The position of the tile to be occupied</param>
         public void OccupyTile(Vector2Int dis)
         {
             if(GetTileAt(dis) == TileType.Empty)
@@ -89,6 +123,10 @@ namespace WarehouseSimulator.Model
                 mapRepresentaion[dis.y,dis.x] = TileType.RoboOccupied;
             }
         }
+        /// <summary>
+        /// Mark an occupied tile as empty
+        /// </summary>
+        /// <param name="dis">The position of the tile to be de-occupied</param>
         public void DeoccupyTile(Vector2Int dis)
         {
             if (GetTileAt(dis) == TileType.RoboOccupied)

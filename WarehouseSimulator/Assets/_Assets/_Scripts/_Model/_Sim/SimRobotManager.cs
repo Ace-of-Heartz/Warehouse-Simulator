@@ -193,6 +193,16 @@ namespace WarehouseSimulator.Model.Sim
             return (Error.None,null,null);
         }
 
+        /// <summary>
+        /// Check if the robots are gonna do something illegal
+        /// </summary>
+        /// <param name="firstRobot">The robot to check</param>
+        /// <param name="secondRobot">The other robot to check</param>
+        /// <returns>Tuple:
+        /// - Error: The type of error that might have happened
+        /// - SimRobot?: null if the Error is None. The value of <paramref name="firstRobot"/> otherwise
+        /// </returns>
+        /// <remarks>Wall collisions are ignored in this method</remarks>
         private (Error,SimRobot?) CheckingFuturePositions(SimRobot firstRobot, SimRobot secondRobot)
         {
             if (firstRobot.RobotData.m_id == secondRobot.RobotData.m_id) return (Error.None,null); 
