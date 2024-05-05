@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 using UnityEngine;
-using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model.Structs;
 
 namespace WarehouseSimulator.Model.PB
 {
     public class PbRobotManager
     {
+        /// <summary>
+        /// The list of all the robots in the playback
+        /// </summary>
         private List<PbRobot> _allRobots;
         
+        /// <summary>
+        /// Invoked when a robot is created.
+        /// </summary>
         [CanBeNull] public event EventHandler<RobotCreatedEventArgs> RobotAddedEvent;
 
+        /// <summary>
+        /// Constructor for the PbRobotManager class. Yes it is redundant. Yes it works. Yes this summary is necessary. And yes, have a good day.
+        /// </summary>
         public PbRobotManager()
         {
             _allRobots = new();
@@ -47,6 +53,11 @@ namespace WarehouseSimulator.Model.PB
             }
         }
 
+        
+        /// <summary>
+        /// Set the time to a specific state for all the robots.
+        /// </summary>
+        /// <param name="stateIndex">The current stateIndex</param>
         public void SetTimeTo(int stateIndex)
         {
             foreach (PbRobot robie in _allRobots)
