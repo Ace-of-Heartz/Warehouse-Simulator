@@ -91,16 +91,16 @@ namespace WarehouseSimulator.Model.Sim
             _centralController.AddPathPlanner(pathPlanner);
             _centralController.Preprocess(_map);
             _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
-            _centralController.PlanNextMovesForAllAsync(_map);
+            _centralController.PlanNextMovesForAllAsync();
         }
         
         public void Tick()
         {
             if (_simulationData.m_currentStep < _simulationData.m_maxStepAmount)
             {
-                _centralController.TimeToMove(_map,_simRobotManager);
+                _centralController.TimeToMove(_simRobotManager,_map);
                 _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
-                _centralController.PlanNextMovesForAllAsync(_map);
+                _centralController.PlanNextMovesForAllAsync();
                 
                 _simulationData.m_currentStep++;
                 _simulationData.m_goalsRemaining = _simGoalManager.GoalCount;

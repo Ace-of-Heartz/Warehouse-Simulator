@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Unity.Jobs;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -21,10 +22,7 @@ namespace WarehouseSimulator.Model.Sim
         
         private bool _isPreprocessDone;
         private bool _isPathPlanningDone;
-
-        private int _criticalWaitingFor = 3;
-        private int _robotsWaitingFor = 0;
-
+        
         private bool _solveDeadlocks = false;
         public bool SolveDeadlocks
         {
@@ -67,9 +65,7 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="simRobot">Simulation robot model</param>
         public void AddRobotToPlanner(SimRobot simRobot)
         {
-            var q = new Stack<RobotDoing>();
-            q.Push(RobotDoing.Wait);
-            _plannedActions.Add(simRobot, q);
+            _plannedActions.Add(simRobot, RobotDoing.Wait);
         }
         
         /// <summary>
@@ -86,27 +82,18 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         /// <param name="map">Map loaded in from config file</param>
         /// <param name="robieMan">SimRobotManager</param>
-        public async void TimeToMove(Map map, SimRobotManager robieMan)
+        public async void TimeToMove(SimRobotManager robieMan,Map map)
         {
             if (!(IsPathPlanningDone || IsPreprocessDone))
             {
-
                 
-                foreach (var (_,actions) in _plannedActions)
+                foreach (var robot in _plannedActions.Keys)
                 {
-                    actions.Push(RobotDoing.Timeout);
+                    _plannedActions[robot] = RobotDoing.Timeout;
                 }
             }
-            else
-            {
-                foreach (var (_, actions) in _plannedActions)
-                {
-                    if (actions.Count == 0) actions.Push(RobotDoing.Wait);
-                }
-            }
-
             (Error happened, SimRobot firstRobot, SimRobot secondRobot) results = await robieMan.CheckValidSteps(_plannedActions,map);
-
+            
             if (results.happened != Error.None)
             {
                 foreach (var e in _plannedActions)
@@ -116,54 +103,54 @@ namespace WarehouseSimulator.Model.Sim
                 
                 switch (results.happened)
                 {
-                    case Error.RAN_INTO_WALL:
-                        if (_criticalRobots.Keys.Contains(results.firstRobot))
-                        {
-                            _criticalRobots[results.firstRobot!] = null;
-                        }
-                        else
-                        {
-                            _criticalRobots.Add(results.firstRobot!,null);
-                        }
-                        break;
-                    case Error.RAN_INTO_PASSIVE_ROBOT:
-                        break;
-                    case Error.RAN_INTO_ACTIVE_ROBOT:
-                    case Error.TRIED_SWAPPING_PLACES:
-                        if (!ShiftCriticalRobots((results.firstRobot!, results.secondRobot!),
-                                results.secondRobot!.GridPosition, 
-                                results.firstRobot!.GridPosition))
-                        {
-                            if (!ShiftCriticalRobots((results.secondRobot, results.firstRobot),
-                                    results.firstRobot.GridPosition,
-                                    results.secondRobot.GridPosition))
-                            {
-                                _criticalRobots.Add(results.firstRobot,results.secondRobot.GridPosition);
-                                _plannedActions[results.secondRobot] = new Stack<RobotDoing>
-                                    (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
-                            }
-                        }
-
-                        break;
-                    case Error.RAN_INTO_FIELD_OCCUPATION_CONFLICT:
-                        if (!ShiftCriticalRobots((results.firstRobot!, results.secondRobot!),
-                                results.secondRobot!.NextPos, 
-                                results.firstRobot!.NextPos))
-                        {
-                            if (!ShiftCriticalRobots((results.secondRobot, results.firstRobot),
-                                    results.firstRobot.NextPos,
-                                    results.secondRobot.NextPos))
-                            {
-                                _criticalRobots.Add(results.firstRobot,results.secondRobot.NextPos);
-                                _plannedActions[results.secondRobot] = new Stack<RobotDoing>
-                                    (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
-                            }
-                        }
-                        break;
+                    // case Error.RAN_INTO_WALL:
+                    //     if (_criticalRobots.Keys.Contains(results.firstRobot))
+                    //     {
+                    //         _criticalRobots[results.firstRobot!] = null;
+                    //     }
+                    //     else
+                    //     {
+                    //         _criticalRobots.Add(results.firstRobot!,null);
+                    //     }
+                    //     break;
+                    // case Error.RAN_INTO_PASSIVE_ROBOT:
+                    //     break;
+                    // case Error.RAN_INTO_ACTIVE_ROBOT:
+                    // case Error.TRIED_SWAPPING_PLACES:
+                    //     if (!ShiftCriticalRobots((results.firstRobot!, results.secondRobot!),
+                    //             results.secondRobot!.GridPosition, 
+                    //             results.firstRobot!.GridPosition))
+                    //     {
+                    //         if (!ShiftCriticalRobots((results.secondRobot, results.firstRobot),
+                    //                 results.firstRobot.GridPosition,
+                    //                 results.secondRobot.GridPosition))
+                    //         {
+                    //             _criticalRobots.Add(results.firstRobot,results.secondRobot.GridPosition);
+                    //             _plannedActions[results.secondRobot] = new Stack<RobotDoing>
+                    //                 (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
+                    //         }
+                    //     }
+                    //
+                    //     break;
+                    // case Error.RAN_INTO_FIELD_OCCUPATION_CONFLICT:
+                    //     if (!ShiftCriticalRobots((results.firstRobot!, results.secondRobot!),
+                    //             results.secondRobot!.NextPos, 
+                    //             results.firstRobot!.NextPos))
+                    //     {
+                    //         if (!ShiftCriticalRobots((results.secondRobot, results.firstRobot),
+                    //                 results.firstRobot.NextPos,
+                    //                 results.secondRobot.NextPos))
+                    //         {
+                    //             _criticalRobots.Add(results.firstRobot,results.secondRobot.NextPos);
+                    //             _plannedActions[results.secondRobot] = new Stack<RobotDoing>
+                    //                 (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
+                    //         }
+                    //     }
+                    //     break;
                 }
-
-                if(SolveDeadlocks)
-                    ++_robotsWaitingFor;
+            
+                // if(SolveDeadlocks)
+                //     ++_robotsWaitingFor;
             }
             else
             {
@@ -171,17 +158,15 @@ namespace WarehouseSimulator.Model.Sim
                  {
                      robie.MakeStep(map);
                  }
-
-                 _robotsWaitingFor = 0;
+            
                  _criticalRobots.Clear();
             }
         }
-        
         /// <summary>
         /// Plan the move instructions for all robots present in the simulation.
         /// Async method.
         /// </summary>
-        public async void PlanNextMovesForAllAsync(Map map)
+        public async Task PlanNextMovesForAllAsync()
         {
             if ((_taskBeforeNextStep == null ? TaskStatus.WaitingToRun : _taskBeforeNextStep.Status) == TaskStatus.Running)
             {
@@ -189,20 +174,15 @@ namespace WarehouseSimulator.Model.Sim
             }
             
             IsPathPlanningDone = false;
+
+            var robots = _plannedActions.Keys.ToList();
             
-            List<(SimRobot,bool)> dirtyRobots = _plannedActions.Keys.ToList().Select(p => (p, _criticalRobots.Keys.ToList().Contains(p))).ToList();
-            _plannedActions = _pathPlanner.GetNextSteps(dirtyRobots);
             
-            _taskBeforeNextStep = Task.WhenAll();
+            _taskBeforeNextStep = Task.Run(() =>
+            {
+                _plannedActions = _pathPlanner.GetNextSteps(robots);
+            });
             await _taskBeforeNextStep;
-            
-
         }
-
-        
-        
-        
-        
-        
     }
 }

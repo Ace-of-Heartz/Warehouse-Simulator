@@ -38,16 +38,33 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         /// <param name="robots"></param>
         /// <returns></returns>
-        public Dictionary<SimRobot,RobotDoing> GetNextSteps(List<(SimRobot,bool)> robotsNDirt)
+        public Dictionary<SimRobot,RobotDoing> GetNextSteps(List<SimRobot> robots)
         {
+            
+            
             Dictionary<SimRobot,RobotDoing> instructions = new();
-            foreach(var (robot,isDirty) in robotsNDirt)
+            foreach(var robot in robots)
             {
-                if (isDirty)
+                if(robot.Goal != null)
                 {
-                    _cache[robot.Id] =  GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading);
+                    if (!_cache.ContainsKey(robot.Id))
+                    {
+                        _cache.Add(robot.Id, GetPath(robot.GridPosition, robot.Goal.GridPosition, robot.Heading));
+                    }
+                
+                    if (! (_cache[robot.Id].Count > 0))
+                    {
+                        _cache[robot.Id] = GetPath(robot.GridPosition, robot.Goal.GridPosition, robot.Heading);
+                    } 
+                    else
+                    {
+                        instructions.Add(robot,_cache[robot.Id].Pop());
+                    }
                 }
-                instructions.Add(robot,_cache[robot.Id].Pop());
+                else
+                {
+                    instructions.Add(robot,RobotDoing.Wait);
+                }
             }
 
             return instructions;
@@ -93,7 +110,7 @@ namespace WarehouseSimulator.Model.Sim
                     isFinishFound = true;
                     break;
                 }
-                foreach((var node,var dir,var inst) in (this as IPathPlanner).GetNeighbouringNodes(currentNode,currentDir))
+                foreach((var node,var dir,var inst) in PathPlannerUtility.GetNeighbouringNodes(currentNode,currentDir))
                 {
 
                     switch (inst)
