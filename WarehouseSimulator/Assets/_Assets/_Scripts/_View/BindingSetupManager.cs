@@ -197,7 +197,6 @@ namespace WarehouseSimulator.View
                         exitButton.clickable.clicked -= _pauseAction;
                         exitButton.clickable.clicked -= _toggleButtonFocusableAction;
                         
-                        // Debug.Log(man.PlaybackData.IsPaused);
                         SceneHandler.GetInstance().SetCurrentScene(0);
                         SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
                         break;
@@ -205,15 +204,21 @@ namespace WarehouseSimulator.View
                         _resumeAction();
                         _toggleButtonFocusableAction();
                         
-                        // Debug.Log(man.PlaybackData.IsPaused);
                         break;
                     default: 
                         throw new ArgumentOutOfRangeException();
+                        
                 }
             };
             SetupSceneSwitchButton(exitButton,onDone,"Exit playback?");
             exitButton.clickable.clicked += _pauseAction;
             exitButton.clickable.clicked += _toggleButtonFocusableAction;
+
+            man.OnPlaybackEnd += () =>
+            {
+                _pauseAction();
+            };
+            
         }
         
         #endregion
