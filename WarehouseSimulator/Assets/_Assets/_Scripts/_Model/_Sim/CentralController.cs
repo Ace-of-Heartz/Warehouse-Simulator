@@ -86,14 +86,23 @@ namespace WarehouseSimulator.Model.Sim
         {
             if (!(IsPathPlanningDone || IsPreprocessDone))
             {
+
                 
-                foreach (var robot in _plannedActions.Keys)
+                foreach (var (_,actions) in _plannedActions)
                 {
                     _plannedActions[robot] = RobotDoing.Timeout;
                 }
             }
+            else
+            {
+                foreach (var (_, actions) in _plannedActions)
+                {
+                    if (actions.Count == 0) actions.Push(RobotDoing.Wait);
+                }
+            }
+
             (Error happened, SimRobot firstRobot, SimRobot secondRobot) results = await robieMan.CheckValidSteps(_plannedActions,map);
-            
+
             if (results.happened != Error.None)
             {
                 foreach (var e in _plannedActions)
@@ -103,54 +112,54 @@ namespace WarehouseSimulator.Model.Sim
                 
                 switch (results.happened)
                 {
-                    // case Error.RAN_INTO_WALL:
-                    //     if (_criticalRobots.Keys.Contains(results.firstRobot))
-                    //     {
-                    //         _criticalRobots[results.firstRobot!] = null;
-                    //     }
-                    //     else
-                    //     {
-                    //         _criticalRobots.Add(results.firstRobot!,null);
-                    //     }
-                    //     break;
-                    // case Error.RAN_INTO_PASSIVE_ROBOT:
-                    //     break;
-                    // case Error.RAN_INTO_ACTIVE_ROBOT:
-                    // case Error.TRIED_SWAPPING_PLACES:
-                    //     if (!ShiftCriticalRobots((results.firstRobot!, results.secondRobot!),
-                    //             results.secondRobot!.GridPosition, 
-                    //             results.firstRobot!.GridPosition))
-                    //     {
-                    //         if (!ShiftCriticalRobots((results.secondRobot, results.firstRobot),
-                    //                 results.firstRobot.GridPosition,
-                    //                 results.secondRobot.GridPosition))
-                    //         {
-                    //             _criticalRobots.Add(results.firstRobot,results.secondRobot.GridPosition);
-                    //             _plannedActions[results.secondRobot] = new Stack<RobotDoing>
-                    //                 (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
-                    //         }
-                    //     }
-                    //
-                    //     break;
-                    // case Error.RAN_INTO_FIELD_OCCUPATION_CONFLICT:
-                    //     if (!ShiftCriticalRobots((results.firstRobot!, results.secondRobot!),
-                    //             results.secondRobot!.NextPos, 
-                    //             results.firstRobot!.NextPos))
-                    //     {
-                    //         if (!ShiftCriticalRobots((results.secondRobot, results.firstRobot),
-                    //                 results.firstRobot.NextPos,
-                    //                 results.secondRobot.NextPos))
-                    //         {
-                    //             _criticalRobots.Add(results.firstRobot,results.secondRobot.NextPos);
-                    //             _plannedActions[results.secondRobot] = new Stack<RobotDoing>
-                    //                 (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
-                    //         }
-                    //     }
-                    //     break;
+                    case Error.RAN_INTO_WALL:
+                        if (_criticalRobots.Keys.Contains(results.firstRobot))
+                        {
+                            _criticalRobots[results.firstRobot!] = null;
+                        }
+                        else
+                        {
+                            _criticalRobots.Add(results.firstRobot!,null);
+                        }
+                        break;
+                    case Error.RAN_INTO_PASSIVE_ROBOT:
+                        break;
+                    case Error.RAN_INTO_ACTIVE_ROBOT:
+                    case Error.TRIED_SWAPPING_PLACES:
+                        if (!ShiftCriticalRobots((results.firstRobot!, results.secondRobot!),
+                                results.secondRobot!.GridPosition, 
+                                results.firstRobot!.GridPosition))
+                        {
+                            if (!ShiftCriticalRobots((results.secondRobot, results.firstRobot),
+                                    results.firstRobot.GridPosition,
+                                    results.secondRobot.GridPosition))
+                            {
+                                _criticalRobots.Add(results.firstRobot,results.secondRobot.GridPosition);
+                                _plannedActions[results.secondRobot] = new Stack<RobotDoing>
+                                    (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
+                            }
+                        }
+
+                        break;
+                    case Error.RAN_INTO_FIELD_OCCUPATION_CONFLICT:
+                        if (!ShiftCriticalRobots((results.firstRobot!, results.secondRobot!),
+                                results.secondRobot!.NextPos, 
+                                results.firstRobot!.NextPos))
+                        {
+                            if (!ShiftCriticalRobots((results.secondRobot, results.firstRobot),
+                                    results.firstRobot.NextPos,
+                                    results.secondRobot.NextPos))
+                            {
+                                _criticalRobots.Add(results.firstRobot,results.secondRobot.NextPos);
+                                _plannedActions[results.secondRobot] = new Stack<RobotDoing>
+                                    (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
+                            }
+                        }
+                        break;
                 }
-            
-                // if(SolveDeadlocks)
-                //     ++_robotsWaitingFor;
+
+                if(SolveDeadlocks)
+                    ++_robotsWaitingFor;
             }
             else
             {
@@ -180,9 +189,106 @@ namespace WarehouseSimulator.Model.Sim
             
             _taskBeforeNextStep = Task.Run(() =>
             {
-                _plannedActions = _pathPlanner.GetNextSteps(robots);
-            });
+                tasks.Add(AddNoiseToSteps(map));
+            }
+            else
+            {
+                foreach (var robot in robots)
+                {
+                    if(_plannedActions[robot].Count == 0)
+                        tasks.Add(PlanNextMoves(robot,null,map));
+                    else if (_criticalRobots.Keys.Contains(robot))
+                    {
+                        tasks.Add(PlanNextMoves(robot,_criticalRobots[robot],map));
+                    }
+                }
+            }
+
+
+            _taskBeforeNextStep = Task.WhenAll(tasks);
             await _taskBeforeNextStep;
         }
+        /// <summary>
+        /// Plans a list of instructions for an individual robot with(out) taking the position of other robots into consideration. How rebellious.
+        /// </summary>
+        /// <param name="robot">The robot we plan the route for</param>
+        /// <param name="x">The x coordinate of the DO NOT STEP HERE position</param>
+        /// <param name="y">The y coordinate of the DO NOT STEP HERE position</param>
+        private async Task PlanNextMoves(SimRobot robot, Vector2Int? disallowedPosition, Map map)
+        {
+            
+            if (_plannedActions[robot] == null)
+            {
+                _plannedActions[robot] = new Stack<RobotDoing>();
+            }
+            
+            if (robot.RobotData.m_state == RobotBeing.Free)
+            {
+                _plannedActions[robot].Push(RobotDoing.Wait);
+            }
+            else
+            {
+                _plannedActions[robot] = _pathPlanner.GetPath(robot.GridPosition,robot.Goal.GridPosition,robot.Heading,disallowedPosition);
+            }
+        }
+
+        private bool ShiftCriticalRobots((SimRobot robieTheFirst, SimRobot robieTheSecond) robies,Vector2Int whereNoToStepFirst,Vector2Int whereNoToStepSecond)
+        {
+            bool beenHere = false;
+            if (_criticalRobots.Keys.Contains(robies.robieTheFirst) && _criticalRobots[robies.robieTheFirst] == whereNoToStepFirst) //if these robots previously tried to step already, but couldn't
+            {
+                _criticalRobots.Remove(robies.robieTheFirst); //we shift who is waiting and who is trying to replan the route
+                if (_criticalRobots.Keys.Contains(robies.robieTheSecond))
+                {
+                    _criticalRobots[robies.robieTheSecond] = whereNoToStepSecond;
+                }
+                else
+                {
+                    _criticalRobots.Add(robies.robieTheSecond, whereNoToStepSecond);
+                }
+                _plannedActions[robies.robieTheFirst] = new Stack<RobotDoing>
+                    (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
+                beenHere = true;
+            } 
+            else if (_criticalRobots.Keys.Contains(robies.robieTheFirst)) //if the dictionary already contains our key with but not our value, we overwrite it
+            {
+                _criticalRobots[robies.robieTheFirst] = whereNoToStepFirst;
+                _plannedActions[robies.robieTheSecond] = new Stack<RobotDoing>
+                    (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
+                beenHere = true;
+            }
+
+            return beenHere;
+        }
+
+        private async Task AddNoiseToSteps(Map map)
+        {
+            int r = 10;
+            int n = 0;
+            foreach (var robot in _plannedActions.Keys.ToList())
+            {
+
+                Vector2Int noise;
+                do
+                {
+                    noise = new Vector2Int(Random.Range(-r, r+1), Random.Range(-r, r+1));
+                } while (map.GetTileAt(noise) == TileType.Wall);
+                
+                if (robot.RobotData.m_state == RobotBeing.Free)
+                {
+                    _plannedActions[robot].Push(RobotDoing.Wait);
+                }
+                else
+                {
+                    _plannedActions[robot] = _pathPlanner.GetPath(robot.GridPosition,robot.GridPosition + noise,robot.Heading);
+                }
+            }
+            _robotsWaitingFor = 0;
+        }
+        
+        
+        
+        
+        
     }
 }

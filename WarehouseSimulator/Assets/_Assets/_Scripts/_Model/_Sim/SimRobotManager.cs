@@ -23,12 +23,11 @@ namespace WarehouseSimulator.Model.Sim
             _allRobots = new();
         }
         
-        private void AddRobot(int i, Vector2Int pos)
+        protected void AddRobot(SimRobot robie)
         {
-            SimRobot newR = new(i, pos);
-            _allRobots.Add(newR);
-            CustomLog.Instance.AddRobotStart(i, pos.x, pos.y, Direction.North);
-            RobotAddedEvent?.Invoke(this, new(newR));
+            _allRobots.Add(robie);
+            CustomLog.Instance.AddRobotStart(robie.Id, robie.GridPosition.x, robie.GridPosition.y, Direction.North);
+            RobotAddedEvent?.Invoke(this, new(robie));
         }
     
         public void AssignTasksToFreeRobots(SimGoalManager from)
@@ -81,7 +80,8 @@ namespace WarehouseSimulator.Model.Sim
 
                 Vector2Int nextRobPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
                 mapie.OccupyTile(nextRobPos);
-                AddRobot(nextid,nextRobPos);
+                SimRobot robie = new SimRobot(nextid,nextRobPos);
+                AddRobot(robie);
                 
                 nextid++;
             }
@@ -90,20 +90,18 @@ namespace WarehouseSimulator.Model.Sim
         /// <summary>
         /// Checks if the given steps are valid for the robots
         /// </summary>
-        /// <param name="actions">Array of (robot,action) tuples</param>
+        /// <param name="actions">Dictionary of (robot,action) key-value pairs</param>
         /// <param name="mapie">The map</param>
         /// <returns>
-        /// A ValueTask which has a value of a (Errors, SimRobot?, SimRobot?) tuple where the Erros value means what type of error might have happened
-        /// The first robot value represents the first robot included in the possible invalid step (if the step is valid, this will be null)
-        /// The second robot value represents the second robot included in the possible invalid step (if only one robot was included, or the step is valid, this will be null)
+        /// A Task which has a bool value, that is true if the step is valid, and false if it isn't
         /// </returns>
         /// <exception cref="ArgumentException">Is thrown when the length of the actions array isn't valid</exception>
         ///<example>
         ///     <code>
-        ///         (Error happened, SimRobot? robieTheFirst, SimRobot? robieTheSecond) results = await robieMan.CheckValidSteps(_plannedActions,map);
-        ///         if (results.happened != Errors.None)
+        ///         bool isValidStep = await robieMan.CheckValidSteps(_plannedActions,map);
+        ///         if (!isValidStep)
         ///         {
-        ///             //replan with the robies
+        ///             //replan with the robies if necessary
         ///         }
         ///         else
         ///         {
@@ -114,7 +112,7 @@ namespace WarehouseSimulator.Model.Sim
         ///         }
         ///     </code>
         ///</example>
-        public async Task<(Error,SimRobot?,SimRobot?)> CheckValidSteps(Dictionary<SimRobot, RobotDoing> actions,Map mapie)
+        public async Task<bool> CheckValidSteps(Dictionary<SimRobot, RobotDoing> actions,Map mapie)
         {
             if (actions.Count != _allRobots.Count)
             {
@@ -122,68 +120,68 @@ namespace WarehouseSimulator.Model.Sim
             }
             
             //var tasks = actions.Select(async pair => await Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value.Pop(),mapie)));
-            var tasks = actions.Select(pair => Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value,mapie)));
+            var tasks = actions.Select(pair => Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value.Peek(),mapie)));
             (bool success, SimRobot? whoTripped)[]? results = await Task.WhenAll(tasks);
 
-            (Error happened, SimRobot? hitter) error = (Error.None, null);
+            (bool happened, SimRobot? hitter) error = (false, null);
             try
             {
                 error.hitter = results.First(r => r.success == false).whoTripped;
             }
             catch (Exception) { /*ignored because this means there were no problems in the operations so far*/ }
 
-            if (error.hitter != null) return (Error.RAN_INTO_WALL, error.hitter, null);
-            
-            foreach (SimRobot robie in actions.Keys)
+            if (error.hitter != null) return false;
+
+            foreach (SimRobot robie in _allRobots)
             {
-                //var positionCheckTasks = _allRobots.Select(async thisrob => await Task.FromResult(CheckingFuturePositions(thisrob,robie)));
-                var positionCheckTasks = actions.Keys.Select(thisrob => Task.FromResult(CheckingFuturePositions(thisrob,robie)));
-                (Error error, SimRobot? whoCrashed)[]? maybeMistakes = await Task.WhenAll(positionCheckTasks);
-                error = (Error.None, null);
+                var positionCheckTasks = 
+                    _allRobots.Select(thisrob => Task.Run( () => CheckingFuturePositions(thisrob,robie)));
+                (bool errorHappened, SimRobot? whoCrashed)[]? maybeMistakes = await Task.WhenAll(positionCheckTasks);
+                error = (false, null);
                 try
                 {
-                    error = maybeMistakes.First(r => r.error != Error.None);
+                    error = maybeMistakes.First(r => r.errorHappened == true);
                 }
                 catch (Exception) { /*ignored because this means there were no problems in the operations so far*/ }
 
                 if (error.hitter != null)
                 {
                     CustomLog.Instance.AddError(robie.Id,error.hitter.Id);
-                    return (error.happened, robie, error.hitter);
+                    return false;
                 }
             }
 
-            // foreach (var dicc in actions)
-            // {
-            //     dicc.Value;
-            // }
+            foreach (var dicc in actions)
+            {
+                dicc.Value.Pop();
+            }
             
-            return (Error.None,null,null);
+            return true;
         }
 
-        private (Error,SimRobot?) CheckingFuturePositions(SimRobot firstRobot, SimRobot secondRobot)
+        private (bool,SimRobot?) CheckingFuturePositions(SimRobot firstRobie, SimRobot secondRobie)
         {
-            if (firstRobot.RobotData.m_id == secondRobot.RobotData.m_id) return (Error.None,null); 
+            if (firstRobie.RobotData.m_id == secondRobie.RobotData.m_id) return (true,null); 
             //if it's the same robot, we skip the step
 
-            if (secondRobot.NextPos == firstRobot.NextPos)
+            if (secondRobie.NextPos == firstRobie.NextPos)
             {
-                if (secondRobot.NextPos == secondRobot.GridPosition || firstRobot.NextPos == firstRobot.GridPosition)
+                if (secondRobie.NextPos == secondRobie.GridPosition || firstRobie.NextPos == firstRobie.GridPosition)
                 {
-                    if(secondRobot.State == RobotBeing.Free || firstRobot.State == RobotBeing.Free)
-                        return (Error.RAN_INTO_PASSIVE_ROBOT, firstRobot);
+                    if(secondRobie.State == RobotBeing.Free || firstRobie.State == RobotBeing.Free)
+                        return (false, firstRobie);
                     
-                    return (Error.RAN_INTO_ACTIVE_ROBOT, firstRobot);
+                    return (false, firstRobie);
                 }
-                return (Error.RAN_INTO_FIELD_OCCUPATION_CONFLICT, firstRobot);
+                return (false, firstRobie);
             }
             //we check whether there are matching future positions, because this would mean that the step is invalid
 
-            if (secondRobot.NextPos == firstRobot.RobotData.m_gridPosition
-                & firstRobot.NextPos == secondRobot.RobotData.m_gridPosition) return (Error.TRIED_SWAPPING_PLACES,firstRobot); 
+            if (secondRobie.NextPos == firstRobie.RobotData.m_gridPosition
+                & firstRobie.NextPos == secondRobie.RobotData.m_gridPosition) return (false,firstRobie); 
             //we check whether they want to step in each other's places ("jump over each other") because this would mean the step is invalid
             
-            return (Error.None,null);
+            return (true,null);
         }
     }
 }
