@@ -11,12 +11,12 @@
 
 ---
 
-| Links to Builds                                                                                                                                                                                                                                                                          |
-|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [![MacOS Build](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://trello.com/b/VtemS1SO/software-technology-bs)                                                                                                                         |
-| [![Linux Build](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://trello.com/b/VtemS1SO/software-technology-bs)                                                                                                                     |
-| [![Windows Build](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white)](https://trello.com/b/VtemS1SO/software-technology-bs)                                                                                                                    |
-| [![WebGL Build](https://img.shields.io/badge/version--webgl--%23990000?style=social&logo=webgl&logoColor=%23990000&logoSize=auto&label=WebGL%20Build&color=black&link=about%3Ablank)](https://csapat2-szofttech-ab-2024-group-02-f878cb4f1fb257c1f8d29daf2918.szofttech.gitlab-pages.hu) |
+
+ - [![MacOS Build](https://img.shields.io/badge/linux-FCC624?logoColor=black&label=build&logo=linux)](https://trello.com/b/VtemS1SO/software-technology-bs)                                                                                                                        
+ - [![Linux Build](https://img.shields.io/badge/windows-0078D6?&logo=windows&logoColor=white&label=build)](https://trello.com/b/VtemS1SO/software-technology-bs)                                                                                                                    
+ - [![Windows Build](https://img.shields.io/badge/mac--os-000000?&logo=apple&logoColor=white&label=build)](https://trello.com/b/VtemS1SO/software-technology-bs)                                                                                                                   
+
+- [![WebGL Build](https://img.shields.io/badge/web--gl-%23990000?&logo=webgl&logoColor=%23990000&logoSize=auto&label=build)](https://csapat2-szofttech-ab-2024-group-02-f878cb4f1fb257c1f8d29daf2918.szofttech.gitlab-pages.hu)
 
 
 ---
@@ -36,7 +36,7 @@ A warehouse simulation software made using Unity's framework. Simulate the path-
 ### How to use:
 1. Use the above links to download the build that's needed.
 2. Place the files in your chosen path.
-3. Run the executable file.
+3. Run the exectutable file.
 
 
 
