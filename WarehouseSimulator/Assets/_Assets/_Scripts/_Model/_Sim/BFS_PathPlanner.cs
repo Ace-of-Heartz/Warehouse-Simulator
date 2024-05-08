@@ -56,10 +56,9 @@ namespace WarehouseSimulator.Model.Sim
                     {
                         _cache[robot.Id] = GetPath(robot.GridPosition, robot.Goal.GridPosition, robot.Heading);
                     } 
-                    else
-                    {
-                        instructions.Add(robot,_cache[robot.Id].Pop());
-                    }
+                    
+                    instructions.Add(robot,_cache[robot.Id].Pop());
+                    
                 }
                 else
                 {
