@@ -42,7 +42,7 @@ namespace WarehouseSimulator.Model.PB
         #endregion
 
         /// <summary>
-        /// TODO: something funny
+        /// Event signaling the resurrection or imminent death of a goal (and he cometh in light and he cometh in darkness to save thee from damnation)
         /// </summary>
         [CanBeNull] public event EventHandler<bool> JesusEvent;
         
