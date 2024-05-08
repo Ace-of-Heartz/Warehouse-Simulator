@@ -4,6 +4,9 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model
 {
+    /// <summary>
+    /// Robot data for the robots in the warehouse.
+    /// </summary>
     [CreateAssetMenu(fileName = "ROBOT_DATA", menuName = "ROBOT_DATA", order = 0)]
     public class RobotData : ScriptableObject
     {

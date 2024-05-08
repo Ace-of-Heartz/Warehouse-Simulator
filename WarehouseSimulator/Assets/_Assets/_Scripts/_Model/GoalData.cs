@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace WarehouseSimulator.Model
 {
+    /// <summary>
+    /// Goal data for the goals in the warehouse.
+    /// </summary>
     [Serializable]
     [CreateAssetMenu(fileName = "GOAL_DATA", menuName = "GOAL_DATA", order = 1)]
     public class GoalData : ScriptableObject

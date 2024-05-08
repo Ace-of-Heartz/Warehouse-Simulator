@@ -35,7 +35,7 @@ namespace WarehouseSimulator.View
             }
             else if (g is PbGoal pbG)
             {
-                pbG.jesusEvent += (_,isAlive) => gameObject.SetActive(isAlive);
+                pbG.JesusEvent += (_,isAlive) => gameObject.SetActive(isAlive);
                 goalIdText.text = pbG.RoboId;
             }
         }

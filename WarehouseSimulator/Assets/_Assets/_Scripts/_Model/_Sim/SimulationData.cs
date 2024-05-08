@@ -2,6 +2,9 @@
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// Holds the data for the simulation
+    /// </summary>
     [CreateAssetMenu(fileName = "SIMULATION_DATA", menuName = "SIMULATION_DATA", order = 0)]
     public class SimulationData : ScriptableObject
     {
@@ -28,11 +31,6 @@ namespace WarehouseSimulator.Model.Sim
         /// The number of goals remaining in the simulation
         /// </summary>
         public int m_goalsRemaining;
-        // TODO: public int GoalsRemaining
-        // {
-        //     get => m_goalsRemaining;
-        //     set => m_goalsRemaining = value;
-        // }
         /// <summary>
         /// The time of a single simulation step in milliseconds
         /// </summary>

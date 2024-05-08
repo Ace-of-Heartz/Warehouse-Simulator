@@ -12,7 +12,7 @@ namespace WarehouseSimulator.Model
         #region Fields
 
         /// <summary>
-        /// TODO
+        /// The robot data for the robot
         /// </summary>
         private RobotData m_robotData;
         
@@ -21,7 +21,7 @@ namespace WarehouseSimulator.Model
         #region Properties
 
         /// <summary>
-        /// TODO:
+        /// Property for the robot data
         /// </summary>
         public RobotData RobotData => m_robotData;
         

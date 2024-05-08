@@ -12,7 +12,7 @@ namespace WarehouseSimulator.Model.Sim
     {
         #region Config Fields
         /// <summary>
-        /// TODO:
+        /// The simulation data for the simulation manager
         /// </summary>
         private SimulationData _simulationData;
         /// <summary>

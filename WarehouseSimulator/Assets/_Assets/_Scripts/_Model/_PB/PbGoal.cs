@@ -44,7 +44,7 @@ namespace WarehouseSimulator.Model.PB
         /// <summary>
         /// TODO: something funny
         /// </summary>
-        [CanBeNull] public event EventHandler<bool> jesusEvent;
+        [CanBeNull] public event EventHandler<bool> JesusEvent;
         
         
         /// <summary>
@@ -64,7 +64,7 @@ namespace WarehouseSimulator.Model.PB
         public void SetTimeTo(int stateIndex)
         {
             bool isAlive = _aliveFrom <= stateIndex && stateIndex < _aliveTo;
-            jesusEvent?.Invoke(this, isAlive);
+            JesusEvent?.Invoke(this, isAlive);
         }
 
         /// <summary>

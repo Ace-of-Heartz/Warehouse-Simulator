@@ -20,12 +20,12 @@ namespace WarehouseSimulator.Model.PB
         /// </summary>
         private PbGoalManager _pbGoalManager;
         /// <summary>
-        /// TODO
+        /// The playback data for the playback manager
         /// </summary>
         private PlaybackData _playbackData;
 
         /// <summary>
-        /// TODO:
+        /// The playback data for the playback manager. Get only
         /// </summary>
         public PlaybackData PlaybackData => _playbackData;
         /// <summary>

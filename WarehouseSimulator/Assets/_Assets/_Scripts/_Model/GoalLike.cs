@@ -9,14 +9,14 @@ namespace WarehouseSimulator.Model
     public abstract class GoalLike
     {
         /// <summary>
-        /// TODO:
+        /// The goal data for the goal
         /// </summary>
         private GoalData m_goalData;
         
         #region Properties
 
         /// <summary>
-        /// TODO
+        /// Property for the goal data
         /// </summary>
         public GoalData GoalData => m_goalData;
         
