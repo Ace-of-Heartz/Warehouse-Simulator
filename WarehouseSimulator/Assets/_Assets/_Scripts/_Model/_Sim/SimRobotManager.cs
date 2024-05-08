@@ -114,7 +114,7 @@ namespace WarehouseSimulator.Model.Sim
         ///         }
         ///     </code>
         ///</example>
-        public async Task<(Error,SimRobot?,SimRobot?)> CheckValidSteps(Dictionary<SimRobot, Stack<RobotDoing>> actions,Map mapie)
+        public async Task<(Error,SimRobot?,SimRobot?)> CheckValidSteps(Dictionary<SimRobot, RobotDoing> actions,Map mapie)
         {
             if (actions.Count != _allRobots.Count)
             {
@@ -122,7 +122,7 @@ namespace WarehouseSimulator.Model.Sim
             }
             
             //var tasks = actions.Select(async pair => await Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value.Pop(),mapie)));
-            var tasks = actions.Select(pair => Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value.Peek(),mapie)));
+            var tasks = actions.Select(pair => Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value,mapie)));
             (bool success, SimRobot? whoTripped)[]? results = await Task.WhenAll(tasks);
 
             (Error happened, SimRobot? hitter) error = (Error.None, null);
@@ -153,10 +153,10 @@ namespace WarehouseSimulator.Model.Sim
                 }
             }
 
-            foreach (var dicc in actions)
-            {
-                dicc.Value.Pop();
-            }
+            // foreach (var dicc in actions)
+            // {
+            //     dicc.Value;
+            // }
             
             return (Error.None,null,null);
         }

@@ -81,6 +81,8 @@ namespace WarehouseSimulator.Model
                 }
             }
         }
+        
+        
 
         public void OccupyTile(Vector2Int dis)
         {

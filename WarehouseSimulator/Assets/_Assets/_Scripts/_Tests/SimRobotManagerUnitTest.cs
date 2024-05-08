@@ -73,19 +73,19 @@ namespace _Assets._Scripts._Tests
             Assert.IsTrue(true);
         }
         
-        [UnityTest]
-        public IEnumerator CheckValidSteps_ResultingArgumentExceptionThrown()
-        { 
-            //Magic?
-            Dictionary<SimRobot, Stack<RobotDoing>> dicc = new();
-            dicc.Add(_robie,new Stack<RobotDoing>());
-
-            var runner = _robieMan.CheckValidSteps(dicc,_emptyMap);
-
-            yield return new WaitUntil(() => runner.IsCompleted);
-            
-            Assert.IsTrue(runner.IsFaulted);
-            Assert.IsTrue(runner.Exception?.InnerExceptions[0] is ArgumentException);
-        }
+        // [UnityTest]
+        // public IEnumerator CheckValidSteps_ResultingArgumentExceptionThrown()
+        // { 
+        //Magic?
+        // Dictionary<SimRobot, Stack<RobotDoing>> dicc = new();
+        // dicc.Add(_robie,new Stack<RobotDoing>());
+        //
+        // var runner = _robieMan.CheckValidSteps(dicc,_emptyMap);
+        //
+        // yield return new WaitUntil(() => runner.IsCompleted);
+        //
+        // Assert.IsTrue(runner.IsFaulted);
+        // Assert.IsTrue(runner.Exception?.InnerExceptions[0] is ArgumentException);
+        // }
     }
 }
