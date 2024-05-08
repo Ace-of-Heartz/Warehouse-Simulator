@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace WarehouseSimulator.Model.PB
 {
@@ -8,11 +9,18 @@ namespace WarehouseSimulator.Model.PB
         private PbRobotManager _pbRobotManager;
         private PbGoalManager _pbGoalManager;
         private PlaybackData _playbackData;
+        private Action _onPlaybackEnd;
 
+        
         public PlaybackData PlaybackData => _playbackData;
         public PbRobotManager PbRobotManager => _pbRobotManager;
         public PbGoalManager PbGoalManager => _pbGoalManager;
         public Map Map => _map;
+        public Action OnPlaybackEnd
+        {
+            get => _onPlaybackEnd;
+            set => _onPlaybackEnd= value;
+        }
 
         public PlaybackManager()
         {
@@ -43,7 +51,10 @@ namespace WarehouseSimulator.Model.PB
             if (stateIndex < 0 || stateIndex > _playbackData.MaxStepAmount)
             {
                 if (!PlaybackData.IsPaused)
-                    PlaybackData.ChangePauseState();//pause if out of bounds
+                {
+                    //PlaybackData.ChangePauseState();//pause if out of bounds
+                    OnPlaybackEnd?.Invoke();
+                }
                 
                 return;
             }
