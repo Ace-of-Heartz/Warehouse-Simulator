@@ -7,7 +7,7 @@ namespace WarehouseSimulator.Model
     public abstract class RobotLike
     {
         #region Fields
-
+        
         private RobotData m_robotData;
         
         #endregion
