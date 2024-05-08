@@ -63,7 +63,7 @@ namespace WarehouseSimulator.Model.Sim
             return (forwardNode,leftNode,rightNode);
         }
         
-                /// <summary>
+        /// <summary>
         /// Calculates the weight of a ndoe depending on the cost of the path already and a heuristic estimation of the upcoming path. 
         /// </summary>
         /// <param name="costOfPath"></param>
