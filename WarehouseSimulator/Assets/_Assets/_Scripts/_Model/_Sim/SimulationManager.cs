@@ -44,7 +44,7 @@ namespace WarehouseSimulator.Model.Sim
             };
         }
         
-        public void Setup(SimInputArgs simulationArgs)
+        public async void Setup(SimInputArgs simulationArgs)
         {
             CustomLog.Instance.SetActionModel("almafa");
             
@@ -87,20 +87,19 @@ namespace WarehouseSimulator.Model.Sim
                     throw new System.ArgumentException("Invalid search algorithm");
             }
             pathPlanner.SetMap(_map);
-            _centralController.SolveDeadlocks = simulationArgs.EnableDeadlockSolving;
             _centralController.AddPathPlanner(pathPlanner);
             _centralController.Preprocess(_map);
             _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
-            _centralController.PlanNextMovesForAllAsync();
+            await _centralController.PlanNextMovesForAllAsync();
         }
         
-        public void Tick()
+        public async void Tick()
         {
             if (_simulationData.m_currentStep < _simulationData.m_maxStepAmount)
             {
                 _centralController.TimeToMove(_simRobotManager,_map);
                 _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
-                _centralController.PlanNextMovesForAllAsync();
+                await _centralController.PlanNextMovesForAllAsync();
                 
                 _simulationData.m_currentStep++;
                 _simulationData.m_goalsRemaining = _simGoalManager.GoalCount;
