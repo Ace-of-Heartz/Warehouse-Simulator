@@ -8,6 +8,9 @@ using WarehouseSimulator.Model.Structs;
 
 namespace WarehouseSimulator.Model
 {
+    /// <summary>
+    /// Custom JSON logging for simulation
+    /// </summary>
     public class CustomLog
     {
         /// <summary>

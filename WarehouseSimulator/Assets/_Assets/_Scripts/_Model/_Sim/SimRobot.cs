@@ -5,6 +5,9 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// Model representation of a robot in the simulation
+    /// </summary>
     public class SimRobot : RobotLike
     {
         /// <summary>

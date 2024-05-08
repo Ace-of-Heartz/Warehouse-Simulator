@@ -1,5 +1,8 @@
 ﻿namespace WarehouseSimulator.Model.Structs
 {
+    /// <summary>
+    /// Represents a task. Used for logging
+    /// </summary>
     public struct TaskInfo
     {
         /// <summary>

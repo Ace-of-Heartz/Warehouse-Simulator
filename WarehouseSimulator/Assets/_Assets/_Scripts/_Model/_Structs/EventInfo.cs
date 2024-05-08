@@ -1,5 +1,8 @@
 ﻿namespace WarehouseSimulator.Model.Structs
 {
+    /// <summary>
+    /// Event information for a task. Used for logging
+    /// </summary>
     public struct EventInfo
     {
         /// <summary>

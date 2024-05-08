@@ -2,6 +2,9 @@ using System;
 
 namespace WarehouseSimulator.Model
 {
+    /// <summary>
+    /// Event arguments for when a goal is assigned.
+    /// </summary>
     public class GoalAssignedEventArgs : EventArgs
     {
         /// <summary>

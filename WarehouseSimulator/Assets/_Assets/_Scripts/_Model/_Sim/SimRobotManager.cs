@@ -9,6 +9,9 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// Manages all the robots in the simulation
+    /// </summary>
     public class SimRobotManager
     {
         /// <summary>

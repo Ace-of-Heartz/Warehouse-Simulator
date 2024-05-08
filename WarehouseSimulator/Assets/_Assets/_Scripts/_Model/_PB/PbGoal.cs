@@ -4,7 +4,9 @@ using UnityEngine;
 
 namespace WarehouseSimulator.Model.PB
 {
-
+    /// <summary>
+    /// Model representation of a goal during the playback
+    /// </summary>
     public class PbGoal : GoalLike
     {
         /// <summary>

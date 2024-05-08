@@ -6,6 +6,9 @@ using WarehouseSimulator.Model.Structs;
 
 namespace WarehouseSimulator.Model.PB
 {
+    /// <summary>
+    /// Manages all the robots in the playback
+    /// </summary>
     public class PbRobotManager
     {
         /// <summary>

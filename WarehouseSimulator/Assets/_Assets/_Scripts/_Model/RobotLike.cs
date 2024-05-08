@@ -4,6 +4,9 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model
 {
+    /// <summary>
+    /// Model base class for robots.
+    /// </summary>
     public abstract class RobotLike
     {
         #region Fields

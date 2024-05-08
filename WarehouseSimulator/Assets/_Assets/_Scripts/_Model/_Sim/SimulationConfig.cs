@@ -3,7 +3,9 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
-        
+    /// <summary>
+    /// Configuration for the simulation
+    /// </summary>
     [Serializable]
     public struct SimulationConfig
     {

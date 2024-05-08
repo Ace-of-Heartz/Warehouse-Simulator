@@ -2,6 +2,9 @@
 
 namespace WarehouseSimulator.Model.PB
 {
+    /// <summary>
+    /// Manages the playback
+    /// </summary>
     public class PlaybackManager
     {
         /// <summary>

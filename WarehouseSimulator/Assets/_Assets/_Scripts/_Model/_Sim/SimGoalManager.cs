@@ -7,6 +7,9 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// Manages all the goals in the simulation
+    /// </summary>
     public class SimGoalManager
     {
         /// <summary>

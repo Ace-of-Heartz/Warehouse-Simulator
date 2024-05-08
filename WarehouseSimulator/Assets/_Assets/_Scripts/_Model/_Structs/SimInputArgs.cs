@@ -2,6 +2,9 @@
 
 namespace WarehouseSimulator.Model
 {
+    /// <summary>
+    /// Simulation user configuration
+    /// </summary>
     public struct SimInputArgs
     {
         /// <summary>

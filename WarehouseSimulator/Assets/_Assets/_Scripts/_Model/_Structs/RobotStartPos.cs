@@ -2,6 +2,9 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Structs
 {
+    /// <summary>
+    /// Represents the starting position of a robot. Used for logging
+    /// </summary>
     public struct RobotStartPos
     {
         /// <summary>

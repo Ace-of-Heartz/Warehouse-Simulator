@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// Model representation of a goal in the simulation
+    /// </summary>
     public class SimGoal : GoalLike
     {
         /// <summary>

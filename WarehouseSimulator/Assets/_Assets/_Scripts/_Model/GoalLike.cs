@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace WarehouseSimulator.Model
 {
+    /// <summary>
+    /// Model base class for goals.
+    /// </summary>
     public abstract class GoalLike
     {
         /// <summary>

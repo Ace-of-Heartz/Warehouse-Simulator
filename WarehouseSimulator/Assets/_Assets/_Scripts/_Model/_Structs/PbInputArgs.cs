@@ -1,5 +1,8 @@
 ﻿namespace WarehouseSimulator.Model
 {
+    /// <summary>
+    /// Playback user configuration
+    /// </summary>
     public struct PbInputArgs
     {
         /// <summary>

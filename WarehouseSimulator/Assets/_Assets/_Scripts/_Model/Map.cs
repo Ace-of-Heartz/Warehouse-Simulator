@@ -6,6 +6,9 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model
 {
+    /// <summary>
+    /// Model representation of the map
+    /// </summary>
     public class Map
     {
         /// <summary>

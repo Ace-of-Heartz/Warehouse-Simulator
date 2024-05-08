@@ -1,5 +1,8 @@
 namespace WarehouseSimulator.Model.Structs
 {
+    /// <summary>
+    /// Represents an error in the simulation. Used for logging
+    /// </summary>
     public struct LogError
     {
         /// <summary>

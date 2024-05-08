@@ -5,6 +5,9 @@ using WarehouseSimulator.Model.Sim;
 
 namespace WarehouseSimulator.Model
 {
+    /// <summary>
+    /// Helper class for loading simulation configuration from a JSON file.
+    /// </summary>
     public static class ConfigIO
     {
         /// <summary>

@@ -5,6 +5,9 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// Manages the simulation
+    /// </summary>
     public class SimulationManager
     {
         #region Config Fields

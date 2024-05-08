@@ -2,6 +2,9 @@
 
 namespace WarehouseSimulator.Model
 {
+    /// <summary>
+    /// Custom exception for invalid files
+    /// </summary>
     public class InvalidFileException : Exception
     {
         /// <summary>

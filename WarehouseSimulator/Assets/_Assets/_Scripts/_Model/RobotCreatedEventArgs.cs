@@ -2,6 +2,9 @@ using System;
 
 namespace WarehouseSimulator.Model
 {
+    /// <summary>
+    /// Event arguments for when a robot is created.
+    /// </summary>
     public class RobotCreatedEventArgs : EventArgs
     {
         /// <summary>
