@@ -103,66 +103,21 @@ namespace WarehouseSimulator.Model.Sim
                     if (actions.Count == 0) actions.Push(RobotDoing.Wait);
                 }
             }
+            
+            Dictionary<SimRobot, RobotDoing> boop = new();
+            foreach (var plans in _plannedActions)
+            {
+                boop.Add(plans.Key,plans.Value.Pop());
+            }
+            
+            bool isValidStep = await robieMan.CheckValidSteps(boop,map);
 
-            (Error happened, SimRobot? firstRobot, SimRobot? secondRobot) results = await robieMan.CheckValidSteps(_plannedActions,map);
-
-            if (results.happened != Error.None)
+            if (!isValidStep)
             {
                 foreach (var e in _plannedActions)
                 {
                     CustomLog.Instance.AddRobotAction(e.Key.Id,RobotDoing.Wait);
                 }
-                
-                switch (results.happened)
-                {
-                    case Error.RAN_INTO_WALL:
-                        if (_criticalRobots.Keys.Contains(results.firstRobot))
-                        {
-                            _criticalRobots[results.firstRobot!] = null;
-                        }
-                        else
-                        {
-                            _criticalRobots.Add(results.firstRobot!,null);
-                        }
-                        break;
-                    case Error.RAN_INTO_PASSIVE_ROBOT:
-                        break;
-                    case Error.RAN_INTO_ACTIVE_ROBOT:
-                    case Error.TRIED_SWAPPING_PLACES:
-                        if (!ShiftCriticalRobots((results.firstRobot!, results.secondRobot!),
-                                results.secondRobot!.GridPosition, 
-                                results.firstRobot!.GridPosition))
-                        {
-                            if (!ShiftCriticalRobots((results.secondRobot, results.firstRobot),
-                                    results.firstRobot.GridPosition,
-                                    results.secondRobot.GridPosition))
-                            {
-                                _criticalRobots.Add(results.firstRobot,results.secondRobot.GridPosition);
-                                _plannedActions[results.secondRobot] = new Stack<RobotDoing>
-                                    (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
-                            }
-                        }
-
-                        break;
-                    case Error.RAN_INTO_FIELD_OCCUPATION_CONFLICT:
-                        if (!ShiftCriticalRobots((results.firstRobot!, results.secondRobot!),
-                                results.secondRobot!.NextPos, 
-                                results.firstRobot!.NextPos))
-                        {
-                            if (!ShiftCriticalRobots((results.secondRobot, results.firstRobot),
-                                    results.firstRobot.NextPos,
-                                    results.secondRobot.NextPos))
-                            {
-                                _criticalRobots.Add(results.firstRobot,results.secondRobot.NextPos);
-                                _plannedActions[results.secondRobot] = new Stack<RobotDoing>
-                                    (new []{RobotDoing.Wait,RobotDoing.Wait,RobotDoing.Wait});
-                            }
-                        }
-                        break;
-                }
-
-                if(SolveDeadlocks)
-                    ++_robotsWaitingFor;
             }
             else
             {
@@ -195,17 +150,17 @@ namespace WarehouseSimulator.Model.Sim
             
             if( _robotsWaitingFor > _criticalWaitingFor)
             {
-                tasks.Add(Task.Run(() => AddNoiseToSteps(map)));
+                tasks.Add(AddNoiseToSteps(map));
             }
             else
             {
                 foreach (var robot in robots)
                 {
                     if(_plannedActions[robot].Count == 0)
-                        tasks.Add(Task.Run(() => PlanNextMoves(robot,null)));
+                        tasks.Add(PlanNextMoves(robot,null));
                     else if (_criticalRobots.Keys.Contains(robot))
                     {
-                        tasks.Add(Task.Run(() => PlanNextMoves(robot,_criticalRobots[robot])));
+                        tasks.Add(PlanNextMoves(robot,_criticalRobots[robot]));
                     }
                 }
             }
@@ -220,7 +175,7 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         /// <param name="robot">The robot we plan the route for</param>
         /// <param name="disallowedPosition"></param>
-        private void PlanNextMoves(SimRobot robot, Vector2Int? disallowedPosition)
+        private async Task PlanNextMoves(SimRobot robot, Vector2Int? disallowedPosition)
         {
             
             if (_plannedActions[robot] == null)
@@ -287,7 +242,7 @@ namespace WarehouseSimulator.Model.Sim
             return beenHere;
         }
 
-        private void AddNoiseToSteps(Map map)
+        private async Task AddNoiseToSteps(Map map)
         {
             int r = 10;
             foreach (var robot in _plannedActions.Keys.ToList())
