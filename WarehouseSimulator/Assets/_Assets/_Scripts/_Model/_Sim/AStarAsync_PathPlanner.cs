@@ -28,14 +28,23 @@ namespace WarehouseSimulator.Model.Sim
 
         #region  Methods
         
+        /// <summary>
+        /// Set map for path planner
+        /// </summary>
+        /// <param name="map"></param>
         public void SetMap(Map map)
         {
             _map = map;
         }
         
-                public Dictionary<SimRobot, RobotDoing> GetNextSteps(List<SimRobot> robots)
+        /// <summary>
+        /// Gets the next steps for the list of robots to take.
+        /// </summary>
+        /// <param name="robots"></param>
+        /// <returns></returns>
+        public Dictionary<SimRobot, RobotDoing> GetNextSteps(List<SimRobot> robots)
         {
-            Task[] tasks = new[] { Task.CompletedTask };
+            List<Task> tasks = new();
             Dictionary<SimRobot, RobotDoing> instructions = new();
             foreach (var robot in robots)
             {
@@ -45,24 +54,25 @@ namespace WarehouseSimulator.Model.Sim
                     {
                         var task = Task.Run(() =>
                         {
+                            //Todo: Andris please help me with this
                             _cache.Add(robot.Id, GetPathAsync(robot.GridPosition, robot.Goal.GridPosition, robot.Heading).Result);
                         });
-                        tasks.Append(task);
+                        tasks.Add(task);
                     }
-
-                    if (!(_cache[robot.Id].Count > 0)) //If the stack is empty, recalculate the path
+                    else if (!(_cache[robot.Id].Count > 0)) //If the stack is empty, recalculate the path
                     {
                         var task = Task.Run(() =>
                         {
-                            _cache.Add(robot.Id, GetPathAsync(robot.GridPosition, robot.Goal.GridPosition, robot.Heading).Result);
+                            //Todo: Andris please help me with this
+                            _cache[robot.Id] = GetPathAsync(robot.GridPosition, robot.Goal.GridPosition, robot.Heading).Result;
                         });
-                        tasks.Append(task);
+                        tasks.Add(task);
                     }
                     
                 }
             }
 
-            Task.WhenAll(tasks);
+            Task.WaitAll(tasks.ToArray());
             
             foreach (var robot in robots)
             {
