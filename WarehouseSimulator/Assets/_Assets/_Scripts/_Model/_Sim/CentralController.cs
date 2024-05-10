@@ -168,9 +168,12 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         public async Task PlanNextMovesForAllAsync()
         {
-            if ((_taskBeforeNextStep == null ? TaskStatus.WaitingToRun : _taskBeforeNextStep.Status) == TaskStatus.Running)
+            if (_taskBeforeNextStep != null)
             {
-                _taskBeforeNextStep!.Wait();
+                if (!_taskBeforeNextStep.IsCompleted)
+                {
+                    _taskBeforeNextStep.Wait();
+                }
             }
             
             IsPathPlanningDone = false;

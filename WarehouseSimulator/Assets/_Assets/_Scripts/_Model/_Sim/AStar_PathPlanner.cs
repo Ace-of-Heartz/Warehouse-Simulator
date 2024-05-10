@@ -48,9 +48,14 @@ namespace WarehouseSimulator.Model.Sim
                         _cache[robot.Id] = GetPath(robot.GridPosition, robot.Goal.GridPosition, robot.Heading);
                     } 
                     
-                    
-                    instructions.Add(robot,_cache[robot.Id].Pop());
-                    
+                    try
+                    {
+                        instructions.Add(robot,_cache[robot.Id].Pop());
+                    } 
+                    catch (System.InvalidOperationException) //For when our GetPath can't find a path to the goal
+                    {
+                        instructions.Add(robot,RobotDoing.Wait);
+                    }
                 }
                 else
                 {
@@ -71,7 +76,7 @@ namespace WarehouseSimulator.Model.Sim
         /// <returns>
         ///     A stack of instructions for the robot to take. Top of the stack is the first instruction.
         /// </returns>
-        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction facing, Vector2Int? disallowedPosition = null)
+        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction facing)
         {
             Dictionary<
                     (Vector2Int, Direction)
@@ -115,7 +120,7 @@ namespace WarehouseSimulator.Model.Sim
                             if (b) //Never move forward to an already trod path
                             {
 
-                                if (_map.GetTileAt(node) == TileType.Wall || node == disallowedPosition)
+                                if (_map.GetTileAt(node) == TileType.Wall)
                                 {
                                     break; // Don't move into a wall
                                 }
