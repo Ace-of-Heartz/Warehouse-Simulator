@@ -33,6 +33,7 @@ namespace WarehouseSimulator.Model.Sim
         
         public Dictionary<SimRobot,RobotDoing> GetNextSteps(List<SimRobot> robots)
         {
+            Task[] tasks;
             Dictionary<SimRobot,RobotDoing> instructions = new();
             foreach(var robot in robots)
             {
@@ -48,9 +49,14 @@ namespace WarehouseSimulator.Model.Sim
                         _cache[robot.Id] = GetPath(robot.GridPosition, robot.Goal.GridPosition, robot.Heading);
                     } 
                     
-                    
-                    instructions.Add(robot,_cache[robot.Id].Pop());
-                    
+                    try
+                    {
+                        instructions.Add(robot,_cache[robot.Id].Pop());
+                    } 
+                    catch (System.InvalidOperationException) //For when our GetPath can't find a path to the goal
+                    {
+                        instructions.Add(robot,RobotDoing.Wait);
+                    }
                 }
                 else
                 {
@@ -69,9 +75,9 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="facing"></param>
         /// <param name="disallowedPosition"></param>
         /// <returns>
-        ///     A stack of instructions for the robot to take. Top of the stack is the first instruction.
+        /// A stack of instructions for the robot to take. Top of the stack is the first instruction.
         /// </returns>
-        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction facing, Vector2Int? disallowedPosition = null)
+        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction facing)
         {
             Dictionary<
                     (Vector2Int, Direction)
@@ -115,7 +121,7 @@ namespace WarehouseSimulator.Model.Sim
                             if (b) //Never move forward to an already trod path
                             {
 
-                                if (_map.GetTileAt(node) == TileType.Wall || node == disallowedPosition)
+                                if (_map.GetTileAt(node) == TileType.Wall)
                                 {
                                     break; // Don't move into a wall
                                 }
@@ -145,7 +151,7 @@ namespace WarehouseSimulator.Model.Sim
             if (!is_finish_found)
             {
                 //Debug.Log("Couldn't find finish for robot.");
-                return instructions; //Could not find finish -> don't do anything
+                return instructions; //We return an empty stack if we couldn't find the finish (which means it wasn't reachable for our robot)
             }
 
             currentNode = finish;
@@ -161,8 +167,6 @@ namespace WarehouseSimulator.Model.Sim
             return instructions;
 
         }
-        
-        
         #endregion
     }
 }

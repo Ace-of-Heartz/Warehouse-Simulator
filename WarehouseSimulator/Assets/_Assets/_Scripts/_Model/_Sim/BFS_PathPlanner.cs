@@ -57,8 +57,14 @@ namespace WarehouseSimulator.Model.Sim
                         _cache[robot.Id] = GetPath(robot.GridPosition, robot.Goal.GridPosition, robot.Heading);
                     } 
                     
-                    instructions.Add(robot,_cache[robot.Id].Pop());
-                    
+                    try
+                    {
+                        instructions.Add(robot,_cache[robot.Id].Pop());
+                    } 
+                    catch (System.InvalidOperationException) //For when our GetPath can't find a path to the goal
+                    {
+                        instructions.Add(robot,RobotDoing.Wait);
+                    }
                 }
                 else
                 {

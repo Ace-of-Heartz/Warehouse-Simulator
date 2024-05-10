@@ -336,9 +336,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 255ea629a46641d688aa24e9007eaa5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_complexMessageBox: {fileID: 9197481963319205126, guid: abde2e042b5d27c44988b6aee9a2ee8c, type: 3}
-  m_simpleMessageBox: {fileID: 9197481963319205126, guid: e728683faf54b1c4192adf01bd2a4b7b, type: 3}
-  m_oneWayMessageBox: {fileID: 9197481963319205126, guid: 2387fbbc2fa2ea0438161fca3e6ce1f2, type: 3}
+  m_complexMessageBox: {fileID: 9197481963319205126, guid: abde2e042b5d27c44988b6aee9a2ee8c,
+    type: 3}
+  m_simpleMessageBox: {fileID: 9197481963319205126, guid: e728683faf54b1c4192adf01bd2a4b7b,
+    type: 3}
+  m_oneWayMessageBox: {fileID: 9197481963319205126, guid: 2387fbbc2fa2ea0438161fca3e6ce1f2,
+    type: 3}
   m_UIDocumentsAndScenes:
   - m_id: 0
     m_scene: Assets/_Assets/_Scenes/MainMenuScene.unity
@@ -4184,7 +4187,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PanelSettings: {fileID: 11400000, guid: 52a063dc4c80f8047b5c8153cd37b405, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 02ec21865f67a734bb30073c43ad531e, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: 02ec21865f67a734bb30073c43ad531e,
+    type: 3}
   m_SortingOrder: 0
 --- !u!1 &966439720
 GameObject:
@@ -5919,7 +5923,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PanelSettings: {fileID: 11400000, guid: 52a063dc4c80f8047b5c8153cd37b405, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 51fa93610a31b764fb81795258ebb5d9, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: 51fa93610a31b764fb81795258ebb5d9,
+    type: 3}
   m_SortingOrder: 0
 --- !u!4 &1414759600
 Transform:
@@ -6545,6 +6550,8 @@ MonoBehaviour:
     - m_Text: A*
       m_Image: {fileID: 0}
     - m_Text: Cooperative A*
+      m_Image: {fileID: 0}
+    - m_Text: Async A*
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7638,7 +7645,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PanelSettings: {fileID: 11400000, guid: 52a063dc4c80f8047b5c8153cd37b405, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 21c66cc409c871f2d9d0aeb443c6398e, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: 21c66cc409c871f2d9d0aeb443c6398e,
+    type: 3}
   m_SortingOrder: 0
 --- !u!1 &1903315770
 GameObject:

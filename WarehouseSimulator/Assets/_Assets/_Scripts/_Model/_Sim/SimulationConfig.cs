@@ -43,14 +43,14 @@ namespace WarehouseSimulator.Model.Sim
         /// <summary>
         /// <see cref="taskAssignmentStrategy"/>, but as an enum
         /// </summary>
-        public TASK_ASSIGNMENT_STRATEGY TaskAssignmentStrategy
+        public TaskAssignmentStrategy TaskAssignmentStrategy
         {
             get
             {
                 return taskAssignmentStrategy switch
                 {
-                    "roundrobin" => TASK_ASSIGNMENT_STRATEGY.ROUNDROBIN,
-                    _ => TASK_ASSIGNMENT_STRATEGY.ROUNDROBIN // default
+                    "roundrobin" => TaskAssignmentStrategy.RoundRobin,
+                    _ => TaskAssignmentStrategy.RoundRobin // default
                 };
             }
         }

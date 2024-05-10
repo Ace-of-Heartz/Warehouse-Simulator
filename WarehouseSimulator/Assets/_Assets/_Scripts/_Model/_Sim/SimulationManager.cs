@@ -119,14 +119,17 @@ namespace WarehouseSimulator.Model.Sim
             IPathPlanner pathPlanner;
             switch (simulationArgs.SearchAlgorithm)
             {
-                case SEARCH_ALGORITHM.BFS:
+                case SearchAlgorithm.BFS:
                     pathPlanner = new BFS_PathPlanner();
                     break;
-                case SEARCH_ALGORITHM.A_STAR:
+                case SearchAlgorithm.AStar:
                     pathPlanner = new AStar_PathPlanner();
                     break;
-                case SEARCH_ALGORITHM.COOP_A_STAR:
+                case SearchAlgorithm.CoopAStar:
                     pathPlanner = new CoopAStar_PathPlanner();
+                    break;
+                case SearchAlgorithm.AStarAsync:
+                    pathPlanner = new AStarAsync_PathPlanner();
                     break;
                 default:
                     throw new ArgumentException("Invalid search algorithm");

@@ -1,29 +1,35 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
+using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model.Sim;
 
 namespace WarehouseSimulator.Model.Sim
 {
-    public class CoopAStar_PathPlanner : IPathPlanner
+    public class AStarAsync_PathPlanner : IPathPlanner
     {
         #region Fields
-        Map _map;
+        private Map _map;
         private Dictionary<int, Stack<RobotDoing>> _cache;
-        private Dictionary<uint,(HashSet<uint>,HashSet<Vector2Int>)> _visitedState;
-        
         #endregion
-        public CoopAStar_PathPlanner()
-        {
-            _cache = new();
-            _visitedState = new();
-        }
         
         /// <summary>
-        /// Sets the map for the path planner
+        /// Constructor for the AStarAsync_PathPlanner
+        /// </summary>
+        /// <param name="map"></param>
+        public AStarAsync_PathPlanner()
+        {
+            _cache = new();
+        }
+
+        #region  Methods
+        
+        /// <summary>
+        /// Set map for path planner
         /// </summary>
         /// <param name="map"></param>
         public void SetMap(Map map)
@@ -31,62 +37,72 @@ namespace WarehouseSimulator.Model.Sim
             _map = map;
         }
         
-        
-        
         /// <summary>
-        /// Gets the next steps for the list of robots to take. Each robot receives only the next step to take.
+        /// Gets the next steps for the list of robots to take.
         /// </summary>
         /// <param name="robots"></param>
-        /// <returns>
-        /// A stack of instructions for the robot to take. Top of the stack is the first instruction.
-        /// </returns>
-        public Dictionary<SimRobot,RobotDoing> GetNextSteps(List<SimRobot> robots)
+        /// <returns></returns>
+        public Dictionary<SimRobot, RobotDoing> GetNextSteps(List<SimRobot> robots)
         {
-            Dictionary<SimRobot,RobotDoing> instructions = new();
-            foreach(var robot in robots)
+            List<Task> tasks = new();
+            Dictionary<SimRobot, RobotDoing> instructions = new();
+            foreach (var robot in robots)
             {
-                if(robot.Goal != null)
+                if (robot.Goal != null)
                 {
-                    if (!_cache.ContainsKey(robot.Id))
+                    if (!_cache.ContainsKey(robot.Id)) //If the robot is not in the cache, add it and calculate the path
                     {
-                        _cache.Add(robot.Id, GetPath(robot.GridPosition, robot.Goal.GridPosition, robot.Heading));
+                        var task = Task.Run(() =>
+                        {
+                            //Todo: Andris please help me with this
+                            _cache.Add(robot.Id, GetPathAsync(robot.GridPosition, robot.Goal.GridPosition, robot.Heading).Result);
+                        });
+                        tasks.Add(task);
                     }
+                    else if (!(_cache[robot.Id].Count > 0)) //If the stack is empty, recalculate the path
+                    {
+                        var task = Task.Run(() =>
+                        {
+                            //Todo: Andris please help me with this
+                            _cache[robot.Id] = GetPathAsync(robot.GridPosition, robot.Goal.GridPosition, robot.Heading).Result;
+                        });
+                        tasks.Add(task);
+                    }
+                    
+                }
+            }
+
+            Task.WaitAll(tasks.ToArray());
+            
+            foreach (var robot in robots)
+            {
+                try
+                {
+                    instructions.Add(robot, _cache[robot.Id].Pop());
+                }
+                catch (System.InvalidOperationException) //For when our GetPath can't find a path to the goal
+                {
+                    instructions.Add(robot, RobotDoing.Wait);
+                }
                 
-                    if (! (_cache[robot.Id].Count > 0))
-                    {
-                        _cache[robot.Id] = GetPath(robot.GridPosition, robot.Goal.GridPosition, robot.Heading);
-                    } 
-                    
-                    try
-                    {
-                        instructions.Add(robot,_cache[robot.Id].Pop());
-                        
-                    } 
-                    catch (System.InvalidOperationException) //For when our GetPath can't find a path to the goal
-                    {
-                        instructions.Add(robot,RobotDoing.Wait);
-                    }
-                    
-                }
-                else
-                {
-                    instructions.Add(robot,RobotDoing.Wait);
-                }
             }
 
             return instructions;
         }
-        
-        /// <summary>
-        /// Actual path planning algorithm. Returns a stack of instructions for the robot to take.
+		
+		
+		
+		/// <summary>
+        /// Calculates the path for a robot to take from start to finish.
         /// </summary>
         /// <param name="start"></param>
         /// <param name="finish"></param>
         /// <param name="facing"></param>
         /// <param name="disallowedPosition"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction facing)
+        /// <returns>
+        /// A stack of instructions for the robot to take. Top of the stack is the first instruction.
+        /// </returns>
+        public Task<Stack<RobotDoing>> GetPathAsync(Vector2Int start, Vector2Int finish, Direction facing)
         {
             Dictionary<
                     (Vector2Int, Direction)
@@ -160,7 +176,8 @@ namespace WarehouseSimulator.Model.Sim
             if (!is_finish_found)
             {
                 //Debug.Log("Couldn't find finish for robot.");
-                return instructions; //Could not find finish -> don't do anything
+                return Task.FromResult(instructions); //We return an empty stack if we couldn't find the finish (which means it wasn't reachable for our robot)
+                
             }
 
             currentNode = finish;
@@ -168,37 +185,16 @@ namespace WarehouseSimulator.Model.Sim
             //Traceback path
             while ((currentNode,currentDir) != (start,facing))
             {
-                //TODO: Make this save the occupied tiles by the robot
+                    
                 instructions.Push(pathDict[(currentNode, currentDir)].Item2);
                 (currentNode, currentDir) = pathDict[(currentNode, currentDir)].Item1;
             }
             
-            return instructions;
-        }
+            return Task.FromResult(instructions);
 
-        private uint GetNextHashset(uint id)
-        {
-            bool needNewLayer = true;
-            uint res = 0;
-            
-            foreach(var k in _visitedState.Keys)
-            {
-                if (!_visitedState[k].Item1.Contains(id))
-                {
-                    needNewLayer = false;
-                    res = k;
-                    
-                }
-            }
-            
-            if (needNewLayer)
-            {
-                res = _visitedState.Keys.ToList().Max() + 1;
-                _visitedState.Add(res,(new(),new()));
-            }
-
-            return res;
         }
+        
+        #endregion
         
     }
 }
