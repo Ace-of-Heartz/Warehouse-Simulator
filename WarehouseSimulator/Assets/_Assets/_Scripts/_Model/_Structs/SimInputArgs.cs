@@ -31,9 +31,6 @@ namespace WarehouseSimulator.Model
         /// The search algorithm to use
         /// </summary>
         public SEARCH_ALGORITHM SearchAlgorithm;
-
-        //TODO:
-        public bool EnableDeadlockSolving;
         
         /// <summary>
         /// Checks if the input arguments are complete

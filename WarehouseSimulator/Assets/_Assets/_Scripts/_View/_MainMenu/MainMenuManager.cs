@@ -106,8 +106,6 @@ public class MainMenuManager : MonoBehaviour
             var res = GameObject.Find("Dropdown_SearchAlgorithm").GetComponent<TMP_Dropdown>().value;
             simInputArgs.SearchAlgorithm = res == 1 ? SEARCH_ALGORITHM.A_STAR :
                 res == 2 ? SEARCH_ALGORITHM.COOP_A_STAR : SEARCH_ALGORITHM.BFS;
-            simInputArgs.EnableDeadlockSolving = GameObject.Find("Toggle_EnableDeadlockSolve").GetComponent<UnityEngine.UI.Toggle>().isOn;
-
         }
         catch (Exception e)
         {

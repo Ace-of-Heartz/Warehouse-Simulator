@@ -93,7 +93,7 @@ namespace WarehouseSimulator.Model
         /// <param name="pos">The position from which we do the calculation</param>
         /// <param name="heading">The heading in which direction we 'move'</param>
         /// <returns>The position one step away</returns>
-        protected Vector2Int WhereToMove(Vector2Int pos, Direction heading)
+        protected static Vector2Int WhereToMove(Vector2Int pos, Direction heading)
         {
             switch (heading)
             {
