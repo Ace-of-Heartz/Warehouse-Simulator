@@ -33,7 +33,6 @@ namespace WarehouseSimulator.Model.Sim
         
         public Dictionary<SimRobot,RobotDoing> GetNextSteps(List<SimRobot> robots)
         {
-            Task[] tasks;
             Dictionary<SimRobot,RobotDoing> instructions = new();
             foreach(var robot in robots)
             {
