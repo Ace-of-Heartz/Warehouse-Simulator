@@ -1,9 +1,4 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.UIElements;
-using WarehouseSimulator.Model.Enums;
-using WarehouseSimulator.Model;
+﻿using UnityEngine;
 
 namespace WarehouseSimulator.View.Sim
 {

@@ -8,37 +8,101 @@ using WarehouseSimulator.Model.Structs;
 
 namespace WarehouseSimulator.Model
 {
+    /// <summary>
+    /// Custom JSON logging for simulation
+    /// </summary>
     public class CustomLog
     {
+        /// <summary>
+        /// The only instance of the CustomLog class
+        /// </summary>
         private static CustomLog instance;
+        /// <summary>
+        /// Singleton instance of the CustomLog class
+        /// </summary>
         public static CustomLog Instance => instance ??= new CustomLog();
+        /// <summary>
+        /// Private constructor for the singleton pattern
+        /// </summary>
         private CustomLog() { Init(); }
         
+        /// <summary>
+        /// The name of the rules used for moving the robots. Or whatever. This is not used anyway 
+        /// </summary>
         private string actionModel = null;
+        /// <summary>
+        /// Whether no errors occurred
+        /// </summary>
         private bool allValid = true;
+        /// <summary>
+        /// The number of robots
+        /// </summary>
         private int teamSize = 0;
+        /// <summary>
+        /// The starting position and heading of the robots
+        /// </summary>
         private List<RobotStartPos> startPos = null;
+        /// <summary>
+        /// The number of tasks finished during
+        /// </summary>
         private int taskCompletedCount = 0;
+        /// <summary>
+        /// The number of actions taken by all the robots collectively
+        /// </summary>
         private int sumOfCost = 0;
+        /// <summary>
+        /// The number of steps completed
+        /// </summary>
         private int stepsCompleted = 0;
+        /// <summary>
+        /// The actions taken by each robot. The key is the robot's id
+        /// </summary>
         private Dictionary<int, String> robotActions = null;
+        /// <summary>
+        /// The actions proposed by the planner to each robot. The key is the robot's id
+        /// </summary>
         private Dictionary<int, String> plannerActions = null;
+        /// <summary>
+        /// The times the planner took to respond with the next steps for each robot
+        /// </summary>
         private List<double> plannerTimes = null;
+        /// <summary>
+        /// A list of errors that occurred
+        /// </summary>
         private List<LogError> errors = null;
+        /// <summary>
+        /// The task events that occurred during the simulation (assigned or finished). The key is the robot's id that the event corresponds to
+        /// </summary>
         private Dictionary<int, List<EventInfo>> taskEvents = null;
+        /// <summary>
+        /// The positions of the goals
+        /// </summary>
         private List<TaskInfo> taskData = null;
 
         #region Property
 
-        public int TeamSize => teamSize;
+        /// <summary>
+        /// See <see cref="startPos"/> for more information
+        /// </summary>
         public List<RobotStartPos> StartPos => startPos;
+        /// <summary>
+        /// See <see cref="stepsCompleted"/> for more information
+        /// </summary>
         public int StepsCompleted => stepsCompleted;
-        public Dictionary<int, String> RobotActions => robotActions;
+        /// <summary>
+        /// See <see cref="taskEvents"/> for more information
+        /// </summary>
         public Dictionary<int, List<EventInfo>> TaskEvents => taskEvents;
+        /// <summary>
+        /// See <see cref="taskData"/> for more information
+        /// </summary>
         public List<TaskInfo> TaskData => taskData;
 
         #endregion
 
+        /// <summary>
+        /// Resets all the data in the CustomLog to their default values
+        /// </summary>
         public void Init()
         {
             actionModel = null;
@@ -56,6 +120,9 @@ namespace WarehouseSimulator.Model
             taskData = new List<TaskInfo>();
         }
 
+        /// <summary>
+        /// Loads dummy data into the CustomLog for testing
+        /// </summary>
         public void DummyData()
         {
             actionModel = "cica";
@@ -93,7 +160,7 @@ namespace WarehouseSimulator.Model
         /// <summary>
         /// Saves logged data to a file
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">The path of the log file</param>
         public void SaveLog(string path)
         {
             StringBuilder sb = new StringBuilder();
@@ -207,9 +274,10 @@ namespace WarehouseSimulator.Model
         }
         
         /// <summary>
-        /// Load log file. Throws Exception if the file is not in the correct format
+        /// Load the specified log file.
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">The path of the log file</param>
+        /// <exception cref="Exception">Thrown when the file is not in the correct format</exception>
         public void LoadLog(string path)
         {
             using StreamReader reader = new StreamReader(path);
@@ -351,11 +419,22 @@ namespace WarehouseSimulator.Model
         }
 
         
+        /// <summary>
+        /// Set the action model of the log. Whatever this means
+        /// </summary>
+        /// <param name="actionModel">The action model as string</param>
         public void SetActionModel(string actionModel)
         {
             this.actionModel = actionModel;
         }
         
+        /// <summary>
+        /// Add a robot start to the log
+        /// </summary>
+        /// <param name="id">The robot id</param>
+        /// <param name="x">The x coordinate of the start position</param>
+        /// <param name="y">The x coordinate of the start position</param>
+        /// <param name="heading">The initial heading</param>
         public void AddRobotStart(int id, int x, int y, Direction heading)
         {
             startPos.Add(new RobotStartPos(x, y, heading));
@@ -365,6 +444,12 @@ namespace WarehouseSimulator.Model
             teamSize++;
         }
         
+        /// <summary>
+        /// Add a task event to the log
+        /// </summary>
+        /// <param name="robotId">The robot id corresponding to the event</param>
+        /// <param name="taskId">The task id corresponding to the event</param>
+        /// <param name="action">Whether the event is "finished" or "assigned"</param>
         public void AddTaskEvent(int robotId, int taskId, string action)
         {
             if(action == "finished")
@@ -372,38 +457,78 @@ namespace WarehouseSimulator.Model
             taskEvents[robotId].Add(new EventInfo(taskId, stepsCompleted + 1, action));//assume current step to be the next step
         }
         
+        /// <summary>
+        /// Add a new task start position to the log
+        /// </summary>
+        /// <param name="taskId">The task's id</param>
+        /// <param name="x">The x coordinate</param>
+        /// <param name="y">The y coordinate</param>
         public void AddTaskData(int taskId, int x, int y)
         {
             taskData.Add(new TaskInfo(taskId, x, y));
         }
         
+        /// <summary>
+        /// A simulation step has been completed
+        /// Call this cautiously, as the internal step counter is used to determine the current step 
+        /// </summary>
         public void SimulationStepCompleted()
         {
             stepsCompleted++;
         }
         
+        /// <summary>
+        /// Add a new error to the log
+        /// </summary>
+        /// <param name="robot1">The first robot's id involved or -1 if no robot was involved</param>
+        /// <param name="robot2">The second robot's id involved or -1 if only one robot is involved </param>
         public void AddError(int robot1, int robot2)
         {
-            errors.Add(new LogError(robot1, robot2, stepsCompleted + 1, "Invalid move"));
+            string desc;
+            if (robot1 == robot2 && robot1 == -1)
+                desc = "Timeout";
+            else 
+                desc = "Invalid move";
+            
+            errors.Add(new LogError(robot1, robot2, stepsCompleted + 1, desc));
             allValid = false;
         }
         
+        /// <summary>
+        /// Add a new robot action performed to the log
+        /// </summary>
+        /// <param name="robot">The robot's id that performed the action</param>
+        /// <param name="action">The action the robot actually performed</param>
         public void AddRobotAction(int robot, RobotDoing action)
         {
             sumOfCost++;
             robotActions[robot] += RobotActionToString(action);
         }
         
+        /// <summary>
+        /// Add a new planner action to the log
+        /// </summary>
+        /// <param name="robot">The robot's id, that the action is assigned</param>
+        /// <param name="action">The action requested</param>
         public void AddPlannerAction(int robot, RobotDoing action)
         {
             plannerActions[robot] += RobotActionToString(action);
         }
         
+        /// <summary>
+        /// Add a new planner time to the log
+        /// </summary>
+        /// <param name="time">The time the planner took to respond with the next steps in seconds</param>
         public void AddPlannerTime(double time)
         {
             plannerTimes.Add(time);
         }
 
+        /// <summary>
+        /// Gets all the actions of a single robot
+        /// </summary>
+        /// <param name="roboId">The robot's id we are interested in</param>
+        /// <returns>A list of actions actually performed by the robot</returns>
         public List<RobotDoing> GetAllActions(int roboId)
         { 
             List<RobotDoing> res = new();
@@ -417,6 +542,12 @@ namespace WarehouseSimulator.Model
             return res;
         }
 
+        /// <summary>
+        /// Converts a char to a RobotDoing enum
+        /// </summary>
+        /// <param name="action">The char representations of the action</param>
+        /// <returns>An action from the <see cref="RobotDoing"/> enum</returns>
+        /// <exception cref="InvalidFileException">The <paramref name="action"/> is invalid</exception>
         private RobotDoing CharToRobotAction(char action)
         {
             switch (action)
@@ -436,7 +567,11 @@ namespace WarehouseSimulator.Model
                                                    "\n\"F\",\"C\",\"R\",\"W\",\"T\"");
             }
         }
-
+        /// <summary>
+        /// Converts a RobotDoing enum to a string representation
+        /// </summary>
+        /// <param name="action">The action</param>
+        /// <returns>A string containing a single character representing the action or empty string if the input is invalid</returns>
         private string RobotActionToString(RobotDoing action)
         {
             switch (action)
@@ -456,6 +591,11 @@ namespace WarehouseSimulator.Model
             }
         }
 
+        /// <summary>
+        /// Inserts commas between the characters of a string
+        /// </summary>
+        /// <param name="s">The original string</param>
+        /// <returns>The transformed string</returns>
         private string ActionStringAddCommas(string s)
         {
             StringBuilder sb = new();
@@ -468,6 +608,11 @@ namespace WarehouseSimulator.Model
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Removes commas from a string 
+        /// </summary>
+        /// <param name="s">The string with commas</param>
+        /// <returns>The string with no commas</returns>
         private string CommafiedActionStringToActionString(string s)
         {
             return s.Replace(",", "");

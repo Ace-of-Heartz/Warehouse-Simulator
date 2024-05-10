@@ -1,8 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UIElements;
 using WarehouseSimulator.Model.PB;
-using WarehouseSimulator.View;
 
 namespace WarehouseSimulator.View.Playback
 {

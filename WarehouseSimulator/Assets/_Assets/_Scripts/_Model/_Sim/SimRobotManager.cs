@@ -9,15 +9,33 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// Manages all the robots in the simulation
+    /// </summary>
     public class SimRobotManager
     {
+        /// <summary>
+        /// The list of all the robots
+        /// </summary>
         protected List<SimRobot> _allRobots;
         
+        /// <summary>
+        /// The number of robots in the simulation
+        /// </summary>
         public int RobotCount => _allRobots.Count;
 
+        /// <summary>
+        /// Invoked when a robot is added to the simulation
+        /// </summary>
         public event EventHandler<RobotCreatedEventArgs>? RobotAddedEvent;
+        /// <summary>
+        /// Invoked when a goal is assigned to a robot
+        /// </summary>
         public event EventHandler<GoalAssignedEventArgs>? GoalAssignedEvent;
 
+        /// <summary>
+        /// Constructor for the SimRobotManager class. Yes it is redundant. Yes it works. Yes this summary is necessary. And yes, have a good day.
+        /// </summary>
         public SimRobotManager()
         {
             _allRobots = new();
@@ -30,6 +48,10 @@ namespace WarehouseSimulator.Model.Sim
             RobotAddedEvent?.Invoke(this, new(robie));
         }
     
+        /// <summary>
+        /// Assigns tasks to the free robots
+        /// </summary>
+        /// <param name="from">The <see cref="SimGoalManager"/> that the where the goals come from</param>
         public void AssignTasksToFreeRobots(SimGoalManager from)
         {
             foreach (var robie in _allRobots)
@@ -43,6 +65,14 @@ namespace WarehouseSimulator.Model.Sim
                 }
             }
         }
+        
+        /// <summary>
+        /// Loads the robots from a file
+        /// </summary>
+        /// <param name="from">The path of the file</param>
+        /// <param name="mapie">The map where the robots are to be added</param>
+        /// <param name="robotN">The number of robots requested</param>
+        /// <exception cref="InvalidFileException">Thrown if the file is incorrect</exception>
         public void RoboRead(string from, Map mapie, int robotN)
         {
             using StreamReader rid = new(from);
