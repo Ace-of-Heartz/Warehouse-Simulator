@@ -105,10 +105,10 @@ public class MainMenuManager : MonoBehaviour
             simInputArgs.EventLogPath = GameObject.Find("InputField_SimPathToEventLog").GetComponent<TMP_InputField>().text;
             var res = GameObject.Find("Dropdown_SearchAlgorithm").GetComponent<TMP_Dropdown>().value;
             simInputArgs.SearchAlgorithm =
-                res == 0 ? SEARCH_ALGORITHM.BFS :
-                res == 1 ? SEARCH_ALGORITHM.A_STAR :
-                res == 2 ? SEARCH_ALGORITHM.COOP_A_STAR :
-                SEARCH_ALGORITHM.A_STAR_ASYNC;
+                res == 0 ? SearchAlgorithm.BFS :
+                res == 1 ? SearchAlgorithm.AStar :
+                res == 2 ? SearchAlgorithm.CoopAStar :
+                SearchAlgorithm.AStarAsync;
 
         }
         catch (Exception e)

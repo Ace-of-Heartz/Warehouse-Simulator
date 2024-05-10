@@ -30,7 +30,7 @@ namespace WarehouseSimulator.Model
         /// <summary>
         /// The search algorithm to use
         /// </summary>
-        public SEARCH_ALGORITHM SearchAlgorithm;
+        public SearchAlgorithm SearchAlgorithm;
         
         /// <summary>
         /// Checks if the input arguments are complete
