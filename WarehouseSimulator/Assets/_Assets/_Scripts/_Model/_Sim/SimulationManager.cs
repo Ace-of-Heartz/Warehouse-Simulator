@@ -83,11 +83,13 @@ namespace WarehouseSimulator.Model.Sim
                 case SEARCH_ALGORITHM.COOP_A_STAR:
                     pathPlanner = new CoopAStar_PathPlanner();
                     break;
+                case SEARCH_ALGORITHM.A_STAR_ASYNC:
+                    pathPlanner = new AStarAsync_PathPlanner();
+                    break;
                 default:
                     throw new System.ArgumentException("Invalid search algorithm");
             }
             pathPlanner.SetMap(_map);
-            _centralController.SolveDeadlocks = simulationArgs.EnableDeadlockSolving;
             _centralController.AddPathPlanner(pathPlanner);
             _centralController.Preprocess(_map);
             _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);

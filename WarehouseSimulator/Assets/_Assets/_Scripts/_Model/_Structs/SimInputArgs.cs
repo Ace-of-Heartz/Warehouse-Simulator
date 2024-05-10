@@ -11,7 +11,6 @@ namespace WarehouseSimulator.Model
         public string EventLogPath;
         public SEARCH_ALGORITHM SearchAlgorithm;
 
-        public bool EnableDeadlockSolving;
         
         public bool IsComplete()
         {
