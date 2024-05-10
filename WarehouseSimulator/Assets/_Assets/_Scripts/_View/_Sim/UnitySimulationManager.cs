@@ -99,6 +99,7 @@ namespace WarehouseSimulator.View.Sim
             timeToNextTickCountdown = simulationManager.SimulationData._stepTime / 1000.0f;
             
             GameObject.Find("UIGlobalManager").GetComponent<BindingSetupManager>().SetupSimBinding(simulationManager);
+            //TODO: Fix the binding when we start this from the simulation
         }
 
         void Update()
