@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WarehouseSimulator.Model;
@@ -59,11 +60,28 @@ namespace WarehouseSimulator.View.Sim
             {
                 if (DebugMode)
                 {
+                    var simulationConfig = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(debugSimInputArgs.ConfigFilePath));
+                    simulationConfig.basePath = Path.GetDirectoryName(debugSimInputArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
+
                     DebugSetup();
-                    simulationManager.Setup(debugSimInputArgs);
+                    
+                    MainMenuManager.pbInputArgs.MapFilePath = simulationConfig.basePath + simulationConfig.mapFile;
+                    
+                    simulationManager.Setup(debugSimInputArgs,simulationConfig);
+
                 }
                 else
-                    simulationManager.Setup(MainMenuManager.simInputArgs);
+                {
+                    var simulationArgs = MainMenuManager.simInputArgs;
+                    SimulationConfig simulationConfig = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(simulationArgs.ConfigFilePath)); 
+                    simulationConfig.basePath = Path.GetDirectoryName(simulationArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
+                    
+                    MainMenuManager.pbInputArgs.MapFilePath = simulationConfig.basePath + simulationConfig.mapFile;
+
+                    simulationManager.Setup(simulationArgs,simulationConfig);
+                    
+                }
+                    
             }
             catch (Exception e)
             {
@@ -78,7 +96,7 @@ namespace WarehouseSimulator.View.Sim
             unityMap.AssignMap(simulationManager.Map);
             unityMap.GenerateMap();
             
-            timeToNextTickCountdown = simulationManager.SimulationData.m_stepTime / 1000.0f;
+            timeToNextTickCountdown = simulationManager.SimulationData._stepTime / 1000.0f;
             
             GameObject.Find("UIGlobalManager").GetComponent<BindingSetupManager>().SetupSimBinding(simulationManager);
         }
@@ -93,7 +111,7 @@ namespace WarehouseSimulator.View.Sim
             if (timeToNextTickCountdown <= 0)
             {
                 simulationManager.Tick();
-                timeToNextTickCountdown= simulationManager.SimulationData.m_stepTime / 1000.0f;
+                timeToNextTickCountdown= simulationManager.SimulationData._stepTime / 1000.0f;
             }
         }
 
@@ -122,7 +140,7 @@ namespace WarehouseSimulator.View.Sim
             {
                 GameObject rob  = Instantiate(robie);
                 UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
-                robieManager.MyThingies(simRobie,unityMap,simulationManager.SimulationData.m_stepTime);
+                robieManager.MyThingies(simRobie,unityMap,simulationManager.SimulationData._stepTime);
             }
             else
             {

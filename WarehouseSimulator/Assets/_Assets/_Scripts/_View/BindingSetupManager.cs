@@ -23,12 +23,29 @@ namespace WarehouseSimulator.View
         public void SetupSimBinding(SimulationManager man)
         {
             var doc = SceneHandler.GetDocOfID(1);
-            var button = doc.rootVisualElement
+            var abortButton = doc.rootVisualElement
                 .Q("SimulationCanvas")
                 .Q("BottomBar")
                 .Q("BottomRight")
                 .Q("ButtonBox")
                 .Q<Button>("Button_Abort");
+            var startPBButton = doc.rootVisualElement
+                .Q("SimulationCanvas")
+                .Q("BottomBar")
+                .Q("BottomRight")
+                .Q("ButtonBox")
+                .Q<Button>("Button_StartPB");
+
+            
+            Action startPBAction = () =>
+            {
+                if (man.SimulationData._isFinished)
+                {
+                    SceneHandler.GetInstance().SetCurrentScene(2);
+                    SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
+                }
+            };
+            startPBButton.clickable.clicked += startPBAction;
             
             
             Action<MessageBoxResponse> onDone = (response) =>
@@ -41,7 +58,7 @@ namespace WarehouseSimulator.View
                 }
             };
             
-            SetupSceneSwitchButton(button,onDone,"Abort simulation?");
+            SetupSceneSwitchButton(abortButton,onDone,"Abort simulation?");
             
             var progressBar = doc.rootVisualElement
                 .Q("SimulationCanvas")
@@ -59,7 +76,7 @@ namespace WarehouseSimulator.View
                 .Q("BottomCenter")
                 .Q<Label>("MaxStepProgressLabel");
            
-            SetupStepsProgressBar(maxProgressLabel,progressLabel,progressBar,man.SimulationData.m_maxStepAmount);
+            SetupStepsProgressBar(maxProgressLabel,progressLabel,progressBar,man.SimulationData._maxStepAmount);
         
             var goalAddButton = doc.rootVisualElement
                 .Q("SimulationCanvas")
@@ -196,6 +213,7 @@ namespace WarehouseSimulator.View
                         resumeButton.clickable.clicked -= _resumeAction;
                         exitButton.clickable.clicked -= _pauseAction;
                         exitButton.clickable.clicked -= _toggleButtonFocusableAction;
+
                         
                         SceneHandler.GetInstance().SetCurrentScene(0);
                         SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
