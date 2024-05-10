@@ -1,5 +1,8 @@
 ﻿namespace WarehouseSimulator.Model.Enums
 {
+    /// <summary>
+    /// 4 way cardinal direction enum.
+    /// </summary>
     public enum Direction
     {
         North = 0,

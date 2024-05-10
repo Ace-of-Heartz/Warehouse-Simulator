@@ -499,6 +499,7 @@ MonoBehaviour:
   golie: {fileID: 3784796534712091687, guid: 199d7d99c4258d9469c2e64440d029b9, type: 3}
   unityMap: {fileID: 481690534}
   DebugMode: 0
+  playbackData: {fileID: 0}
 --- !u!114 &2044409173
 MonoBehaviour:
   m_ObjectHideFlags: 0

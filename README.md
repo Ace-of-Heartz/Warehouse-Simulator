@@ -3,9 +3,21 @@
 |                  |                                                                                                                                                                                                             |
 |------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
 | Production CI/CD |[![pipeline status](https://szofttech.inf.elte.hu/szofttech-ab-2024/group-02/csapat2/badges/production/pipeline.svg)](https://szofttech.inf.elte.hu/szofttech-ab-2024/group-02/csapat2/-/commits/production) |
-| WebGL Build      |                                                                                                                                                                                                | 
-| Other Builds     |                                                                                                                                                                                                    |   
 | Documentation    |                                                                                                                                                                                                     |
+| Linux Build      |                                                                                                                                                                                                     |
+| Windows Build    |                                                                                                                                                                                                     |
+| MacOS Build      |                                                                                                                                                                                                     |
+| WebGL Build      |                                                                                                                                                                                                     |
+
+---
+
+
+ - [![MacOS Build](https://img.shields.io/badge/linux-FCC624?logoColor=black&label=build&logo=linux)](https://trello.com/b/VtemS1SO/software-technology-bs)                                                                                                                        
+ - [![Linux Build](https://img.shields.io/badge/windows-0078D6?&logo=windows&logoColor=white&label=build)](https://trello.com/b/VtemS1SO/software-technology-bs)                                                                                                                    
+ - [![Windows Build](https://img.shields.io/badge/mac--os-000000?&logo=apple&logoColor=white&label=build)](https://trello.com/b/VtemS1SO/software-technology-bs)                                                                                                                   
+
+- [![WebGL Build](https://img.shields.io/badge/web--gl-%23990000?&logo=webgl&logoColor=%23990000&logoSize=auto&label=build)](https://csapat2-szofttech-ab-2024-group-02-f878cb4f1fb257c1f8d29daf2918.szofttech.gitlab-pages.hu)
+
 
 ---
 
@@ -18,6 +30,15 @@ A warehouse simulation software made using Unity's framework. Simulate the path-
 - Configure the number of steps, planning time and preparation for more precise control over the simulation.
 - Record and save the events during the simulation.
 - Playback a past simulation with more careful controls for analyzing the sequence of events.
+
+---
+
+### How to use:
+1. Use the above links to download the build that's needed.
+2. Place the files in your chosen path.
+3. Run the exectutable file.
+
+
 
 ---
 
