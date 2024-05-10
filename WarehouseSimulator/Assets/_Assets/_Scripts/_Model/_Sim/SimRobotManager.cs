@@ -41,6 +41,10 @@ namespace WarehouseSimulator.Model.Sim
             _allRobots = new();
         }
         
+        /// <summary>
+        /// Adds a robot to the simulation
+        /// </summary>
+        /// <param name="robie">The robot to add</param>
         protected void AddRobot(SimRobot robie)
         {
             _allRobots.Add(robie);
@@ -182,6 +186,16 @@ namespace WarehouseSimulator.Model.Sim
             return true;
         }
 
+        /// <summary>
+        /// Check if the robots are gonna do something illegal
+        /// </summary>
+        /// <param name="firstRobie">The robot to check</param>
+        /// <param name="secondRobie">The other robot to check</param>
+        /// <returns>Tuple:
+        /// - bool: if they are doing something illegal
+        /// - SimRobot: <paramref name="firstRobie"/> if bool is true, null if false
+        /// </returns>
+        /// <remarks>Wall collisions are ignored in this method</remarks>
         private (bool,SimRobot?) CheckingFuturePositions(SimRobot firstRobie, SimRobot secondRobie)
         {
             if (firstRobie.RobotData.m_id == secondRobie.RobotData.m_id) return (true,null); 
