@@ -8,18 +8,42 @@ using WarehouseSimulator.View.MainMenu;
 
 public class UnityPlaybackManager : MonoBehaviour
 {
+    /// <summary>
+    /// The prefab for the robot
+    /// </summary>
     [SerializeField] private GameObject robie;
+    /// <summary>
+    /// The prefab for the goal
+    /// </summary>
     [SerializeField] private GameObject golie;
     
+    /// <summary>
+    /// The reference to the map
+    /// </summary>
     [SerializeField]
     private UnityMap unityMap;
     
+    /// <summary>
+    /// The model part of the playback manager
+    /// </summary>
     private PlaybackManager playbackManager;
     
+    /// <summary>
+    /// Debug Mode. Kind of broken cause of UI.
+    /// </summary>
     public bool DebugMode = false;
+    /// <summary>
+    /// Debug arguments for the simulation
+    /// </summary>
     public PbInputArgs debugPbInputArgs = new PbInputArgs();
+    /// <summary>
+    /// Holds the playback data
+    /// </summary>
     public PlaybackData playbackData;
     
+    /// <summary>
+    /// The time in seconds until the next tick
+    /// </summary>
     private float timeToNextTickCountdown = 0;
 
     private void Start()
@@ -56,14 +80,21 @@ public class UnityPlaybackManager : MonoBehaviour
         
         GameObject.Find("UIGlobalManager")?.GetComponent<BindingSetupManager>().SetupPlaybackBinding(playbackManager);
     }
-
+    /// <summary>
+    /// Setup <see cref="debugPbInputArgs"/> data
+    /// </summary>
     void DebugSetup()
     {
         debugPbInputArgs.MapFilePath = "/Users/gergogalig/Library/CloudStorage/OneDrive-EotvosLorandTudomanyegyetem/FourthSemester/Szofttech/sample_files/maps/warehouse.map";
         debugPbInputArgs.EventLogPath = "/Users/gergogalig/Library/CloudStorage/OneDrive-EotvosLorandTudomanyegyetem/FourthSemester/Szofttech/sample_files/warehouse_100_log.json";
     }
     
-    
+    /// <summary>
+    /// Add a new Unity robot to the playback
+    /// </summary>
+    /// <param name="sender">unused</param>
+    /// <param name="e">Contains the model part of the robot</param>
+    /// <exception cref="ArgumentException">Thrown if we try to add an incorrect robot</exception>
     private void AddUnityPbRobot(object sender, RobotCreatedEventArgs e)
     {
         if (e.Robot is PbRobot pbRobie)
@@ -80,6 +111,11 @@ public class UnityPlaybackManager : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Add a new Unity goal to the playback
+    /// </summary>
+    /// <param name="sender">unused</param>
+    /// <param name="e">Contains the model part of the goal</param>
     private void AddUnityGoal(object sender, GoalAssignedEventArgs e)
     {
         if (e.Goal is PbGoal pbGolie)

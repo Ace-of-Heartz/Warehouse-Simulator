@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model.Sim;
 using TMPro;
-using Unity.Properties;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model;
 
@@ -14,27 +10,51 @@ namespace WarehouseSimulator.View
     {
         #region Fields
         
+        /// <summary>
+        /// Holds the data of the robot
+        /// </summary>
         private RobotData m_robotData;
         
+        /// <summary>
+        /// The model representation of the robot
+        /// </summary>
         private RobotLike _roboModel;
         
+        /// <summary>
+        /// Reference to the text that shows the robot id
+        /// </summary>
         [SerializeField]
         private TextMeshPro id;
 
+        /// <summary>
+        /// The animation speed of the robot
+        /// </summary>
         private float _speed;
 
+        /// <summary>
+        /// The visuals of the robot
+        /// </summary>
         [SerializeField] private GameObject _texture;
+        /// <summary>
+        /// Reference to the map
+        /// </summary>
         private UnityMap _mapie;
 
         #endregion
         
         #region Properties
 
+        /// <summary>
+        /// Gets the robot data
+        /// </summary>
         public RobotData RobotData
         {
             get => m_robotData;
         }
         
+        /// <summary>
+        /// Check if the robot is a simulation robot
+        /// </summary>
         public bool IsSimRobot 
         {
             get => _roboModel is SimRobot;
@@ -70,6 +90,12 @@ namespace WarehouseSimulator.View
             }
         }
 
+        /// <summary>
+        /// Initializes the fields
+        /// </summary>
+        /// <param name="dis">The model representation of the robot</param>
+        /// <param name="dat">The reference to the map</param>
+        /// <param name="speedMultiplier">The animaiton speed</param>
         public void MyThingies(RobotLike dis, UnityMap dat, float speedMultiplier)
         {
             _roboModel = dis;

@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Sim;
@@ -12,10 +8,19 @@ namespace WarehouseSimulator.View
 {
     public class UnityGoal : MonoBehaviour
     {
+        /// <summary>
+        /// The goal model that is being represented by this object
+        /// </summary>
         private GoalLike _goalModel;
+        /// <summary>
+        /// The text that shows the goal id
+        /// </summary>
         [SerializeField]
         private TextMeshPro goalIdText;
 
+        /// <summary>
+        /// Reference to the map
+        /// </summary>
         private UnityMap _mapie;
 
         /// <summary>

@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using Assets.Scripts.View.MainMenu;
 using JetBrains.Annotations;
-using UnityEditor;
 using UnityEngine;
 using SimpleFileBrowser;
-using UnityEngine.Serialization;
 
 
 namespace WarehouseSimulator.View.MainMenu
