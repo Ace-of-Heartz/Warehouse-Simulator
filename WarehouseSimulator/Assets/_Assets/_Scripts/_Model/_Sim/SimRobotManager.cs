@@ -15,14 +15,14 @@ namespace WarehouseSimulator.Model.Sim
     public class SimRobotManager
     {
         /// <summary>
-        /// The list of all the robots
+        /// The array of all the robots
         /// </summary>
-        protected List<SimRobot> _allRobots;
+        protected SimRobot[] AllRobots;
         
         /// <summary>
         /// The number of robots in the simulation
         /// </summary>
-        public int RobotCount => _allRobots.Count;
+        public int RobotCount => AllRobots.Length;
 
         /// <summary>
         /// Invoked when a robot is added to the simulation
@@ -38,16 +38,17 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         public SimRobotManager()
         {
-            _allRobots = new();
+            AllRobots = new SimRobot[10];
         }
         
         /// <summary>
         /// Adds a robot to the simulation
         /// </summary>
         /// <param name="robie">The robot to add</param>
-        protected void AddRobot(SimRobot robie)
+        /// <param name="idx">The index where to add the robot</param>
+        protected void AddRobot(SimRobot robie, int idx)
         {
-            _allRobots.Add(robie);
+            AllRobots[idx] = robie;
             CustomLog.Instance.AddRobotStart(robie.Id, robie.GridPosition.x, robie.GridPosition.y, Direction.North);
             RobotAddedEvent?.Invoke(this, new(robie));
         }
@@ -58,7 +59,7 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="from">The <see cref="SimGoalManager"/> that the where the goals come from</param>
         public void AssignTasksToFreeRobots(SimGoalManager from)
         {
-            foreach (var robie in _allRobots)
+            foreach (var robie in AllRobots)
             {
                 if (robie.State == RobotBeing.Free)
                 {
@@ -84,7 +85,7 @@ namespace WarehouseSimulator.Model.Sim
             {
                 throw new InvalidFileException("Invalid .agents file format:\n First line not a number");
             }
-
+            
             if (robn != robotN)
             {
                 throw new InvalidFileException($"Invalid .agents file format:\n The number of robots given in the Configuration File ({robotN}) does not equal the number of robots given in the Agents File ({robn})");
@@ -94,8 +95,9 @@ namespace WarehouseSimulator.Model.Sim
             {
                 throw new InvalidFileException($"Invalid .agents file format:\n The number of agents (currently: {robn}) cannot be less than zero!");
             }
-            
-            int nextid = 0;
+
+            AllRobots = new SimRobot[robn];
+            int nextid = 0; //same as next position in the array
             for (int i = 0; i < robn; i++)
             {   
                 string? line = rid.ReadLine();
@@ -111,11 +113,11 @@ namespace WarehouseSimulator.Model.Sim
                 {
                     throw new InvalidFileException($"Invalid .agents file format:\n {nextid + 2}. line does not provide a valid position");
                 }
-
+                
                 Vector2Int nextRobPos = new(linPos % mapie.MapSize.x, linPos / mapie.MapSize.x);
                 mapie.OccupyTile(nextRobPos);
                 SimRobot robie = new SimRobot(nextid,nextRobPos);
-                AddRobot(robie);
+                AddRobot(robie,nextid);
                 
                 nextid++;
             }
@@ -152,7 +154,7 @@ namespace WarehouseSimulator.Model.Sim
             
             if (actions.Count != _allRobots.Count)
             {
-                throw new ArgumentException($"Error in checking valid steps, the number of robots ({actions.Count}) given actions does not equal the number of all robots {_allRobots.Count}");
+                throw new ArgumentException($"Error in checking valid steps, the number of robots ({actions.Count}) given actions does not equal the number of all robots {AllRobots.Length}");
             }
             
             var tasks = actions.Select(pair => Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value,mapie)));
@@ -165,8 +167,12 @@ namespace WarehouseSimulator.Model.Sim
 
             foreach (SimRobot robie in _allRobots)
             {
+                SimRobot robie = AllRobots[i];
+                int numberOfRemainingRobies = AllRobots.Length - (i+1);
+                SimRobot[] compareRobs = new SimRobot[numberOfRemainingRobies];
+                Array.Copy(AllRobots,i+1,compareRobs,0,numberOfRemainingRobies);
                 var positionCheckTasks = 
-                    _allRobots.Select(thisrob => Task.Run( () => CheckingFuturePositions(thisrob,robie)));
+                    compareRobs.Select(thisrob => Task.Run( () => CheckingFuturePositions(thisrob,robie)));
                 (bool errorHappened, SimRobot? whoCrashed)[]? maybeMistakes = await Task.WhenAll(positionCheckTasks);
                 if (maybeMistakes is not null)
                 {
