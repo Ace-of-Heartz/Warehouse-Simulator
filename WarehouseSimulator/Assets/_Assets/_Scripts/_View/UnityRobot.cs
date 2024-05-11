@@ -1,8 +1,10 @@
+using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model.Sim;
 using TMPro;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model;
+using WarehouseSimulator.Model.PB;
 
 namespace WarehouseSimulator.View
 {
@@ -27,11 +29,6 @@ namespace WarehouseSimulator.View
         private TextMeshPro id;
 
         /// <summary>
-        /// The animation speed of the robot
-        /// </summary>
-        private float _speed;
-
-        /// <summary>
         /// The visuals of the robot
         /// </summary>
         [SerializeField] private GameObject _texture;
@@ -39,6 +36,15 @@ namespace WarehouseSimulator.View
         /// Reference to the map
         /// </summary>
         private UnityMap _mapie;
+        
+        /// <summary>
+        /// Playback manager reference for animation speed
+        /// </summary>
+        private PlaybackManager _playbackManager;
+        /// <summary>
+        /// Simulation manager reference for animation speed
+        /// </summary>
+        private SimulationManager _simulationManager;
 
         #endregion
         
@@ -64,30 +70,34 @@ namespace WarehouseSimulator.View
         // Update is called once per frame
         void Update()
         {
+            float animTime = GetAnimationFrameTime();
+            float lerpProgress = Time.deltaTime * 4 * 1000 / animTime;
+            
+            //position
             Vector3 oldPos = transform.position; 
             Vector3 newPos = _mapie.GetWorldPosition(_roboModel.GridPosition);
-            //if (oldPos != newPos) transform.position = Vector3.Lerp(oldPos, newPos, Time.deltaTime * _speed);
-            if (oldPos != newPos) transform.position = newPos;
+            if (oldPos != newPos)
+                transform.position = Vector3.Lerp(oldPos, newPos, lerpProgress);
 
+            //rotation
             Direction newRot = _roboModel.Heading;
-            switch (newRot)
-            {
+            float targetAngle = 0;
+            switch(newRot) {
                 case Direction.North:
-                    _texture.transform.rotation = Quaternion.Euler(0, 0, 0);
-
+                    targetAngle = 0;
                     break;
                 case Direction.East:
-                    _texture.transform.rotation = Quaternion.Euler(0, 0, -90);
-
+                    targetAngle = -90;
                     break;
                 case Direction.South:
-                    _texture.transform.rotation = Quaternion.Euler(0, 0, 180);
-
+                    targetAngle = 180;
                     break;
                 case Direction.West:
-                    _texture.transform.rotation = Quaternion.Euler(0, 0, 90);
+                    targetAngle = 90;
                     break;
             }
+            float interpolatedAngle = Mathf.LerpAngle(_texture.transform.eulerAngles.z, targetAngle, lerpProgress);
+            _texture.transform.eulerAngles = new Vector3(0, 0, interpolatedAngle);
         }
 
         /// <summary>
@@ -95,15 +105,35 @@ namespace WarehouseSimulator.View
         /// </summary>
         /// <param name="dis">The model representation of the robot</param>
         /// <param name="dat">The reference to the map</param>
-        /// <param name="speedMultiplier">The animaiton speed</param>
-        public void MyThingies(RobotLike dis, UnityMap dat, float speedMultiplier)
+        /// <param name="pbMan">The playback manager reference, or null if we are not in playback</param>
+        /// <param name="simMan">The simulation manager reference, or null if we are not in simulation</param>
+        public void MyThingies(RobotLike dis, UnityMap dat, [CanBeNull] PlaybackManager pbMan, [CanBeNull] SimulationManager simMan)
         {
             _roboModel = dis;
             _mapie = dat;
-            _speed = speedMultiplier;
             transform.position = _mapie.GetWorldPosition(_roboModel.GridPosition);
             id.text = _roboModel.ShownId.ToString();
             m_robotData = _roboModel.RobotData;
+            _playbackManager = pbMan;
+            _simulationManager = simMan;
+        }
+
+        /// <summary>
+        /// Get the time in milliseconds for the animation
+        /// </summary>
+        /// <returns>Time that can be taken up by animation</returns>
+        float GetAnimationFrameTime()
+        {
+            if (_simulationManager is not null)
+            {
+                return _simulationManager.SimulationData.m_stepTime;
+            }
+            
+            if (_playbackManager is not null)
+            {
+                return PlaybackData.DEFAULT_PLAYBACK_TIME_MS / _playbackManager.PlaybackData.PlaybackSpeed;
+            }
+            return 1000; // 1 second is default
         }
     }
 }    
