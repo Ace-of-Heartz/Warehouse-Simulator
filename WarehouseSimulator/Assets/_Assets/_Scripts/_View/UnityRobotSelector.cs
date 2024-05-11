@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace WarehouseSimulator.View.Sim
+namespace WarehouseSimulator.View
 {
     public class UnityRobotSelector : MonoBehaviour
     {
