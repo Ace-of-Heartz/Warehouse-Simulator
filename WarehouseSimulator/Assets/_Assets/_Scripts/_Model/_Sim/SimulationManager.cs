@@ -1,7 +1,9 @@
 using System;
 using System.IO;
+using PlasticGui;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
+
 
 namespace WarehouseSimulator.Model.Sim
 {
@@ -89,31 +91,32 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="simulationArgs">The configuration of the simulation </param>
         /// <exception cref="ArgumentException">Thrown if the selected search algorithm is invalid</exception>
         /// <exception cref="Exception">Thrown if any other error occurs during setup. This exception can take many forms, so good luck debugging.</exception>
-        public async void Setup(SimInputArgs simulationArgs)
+        public async void Setup(SimInputArgs simulationArgs,SimulationConfig config)
         {
             CustomLog.Instance.SetActionModel("almafa");
             
-            _simulationData.m_maxStepAmount = simulationArgs.NumberOfSteps;
-            _simulationData.m_currentStep = 0;
-            _simulationData.m_robotAmount = 0;
-            _simulationData.m_goalAmount = 0;
-            _simulationData.m_goalsRemaining = 0;
-            _simulationData.m_stepTime = simulationArgs.IntervalOfSteps;
-            _simulationData.m_preprocessTime = simulationArgs.PreparationTime;
-            _simulationData.m_isFinished = false;
+            _simulationData._maxStepAmount = simulationArgs.NumberOfSteps;
+            _simulationData._currentStep = 0;
+            _simulationData._robotAmount = 0;
+            _simulationData._goalAmount = 0;
+            _simulationData._goalsRemaining = 0;
+            _simulationData._stepTime = simulationArgs.IntervalOfSteps;
+            _simulationData._preprocessTime = simulationArgs.PreparationTime;
+            _simulationData._isFinished = false;
             
             _logFilePath = simulationArgs.EventLogPath;
             
-            SimulationConfig config = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(simulationArgs.ConfigFilePath));
             config.basePath = Path.GetDirectoryName(simulationArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
+
+            
             
             _map.LoadMap(config.basePath + config.mapFile);
             _simGoalManager.ReadGoals(config.basePath + config.taskFile, _map);
             _simRobotManager.RoboRead(config.basePath + config.agentFile, _map,config.teamSize);
             
-            _simulationData.m_robotAmount = _simRobotManager.RobotCount;
-            _simulationData.m_goalAmount = _simGoalManager.GoalCount;
-            _simulationData.m_goalsRemaining = _simulationData.m_goalAmount;
+            _simulationData._robotAmount = _simRobotManager.RobotCount;
+            _simulationData._goalAmount = _simGoalManager.GoalCount;
+            _simulationData._goalsRemaining = _simulationData._goalAmount;
 
 
             IPathPlanner pathPlanner;
@@ -145,14 +148,14 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         public async void Tick()
         {
-            if (_simulationData.m_currentStep < _simulationData.m_maxStepAmount)
+            if (_simulationData._currentStep < _simulationData._maxStepAmount)
             {
                 _centralController.TimeToMove(_simRobotManager,_map);
                 _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
                 await _centralController.PlanNextMovesForAllAsync();
                 
-                _simulationData.m_currentStep++;
-                _simulationData.m_goalsRemaining = _simGoalManager.GoalCount;
+                _simulationData._currentStep++;
+                _simulationData._goalsRemaining = _simGoalManager.GoalCount;
                 CustomLog.Instance.SimulationStepCompleted();
             }
             else
@@ -166,7 +169,7 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         private void Finished()
         {
-            _simulationData.m_isFinished = true;
+            _simulationData._isFinished = true;
             CustomLog.Instance.SaveLog(_logFilePath);
         }
     }

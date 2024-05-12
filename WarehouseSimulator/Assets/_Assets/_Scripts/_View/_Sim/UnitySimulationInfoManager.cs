@@ -33,8 +33,8 @@ namespace WarehouseSimulator.View.Sim
         
         private void Update()
         {
-            _stepProgressBar.value = _simulationData.m_currentStep;
-            _stepProgressLabel.text = $"{_simulationData.m_currentStep}";
+            _stepProgressBar.value = _simulationData._currentStep;
+            _stepProgressLabel.text = $"{_simulationData._currentStep}";
         }
     }
 }

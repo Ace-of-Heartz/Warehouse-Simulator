@@ -80,6 +80,7 @@ public class MainMenuManager : MonoBehaviour
     public void StartSim()
     {
         CompleteSimInputArgs();
+
         if (!simInputArgs.IsComplete())
             throw new ArgumentException();
         else
@@ -98,11 +99,15 @@ public class MainMenuManager : MonoBehaviour
     {
         try
         {
+            var eventLogPath = GameObject.Find("InputField_SimPathToEventLog").GetComponent<TMP_InputField>().text;
+
+            pbInputArgs.EventLogPath = eventLogPath;
+            
             simInputArgs.ConfigFilePath = GameObject.Find("InputField_SimConfigFileLocation").GetComponent<TMP_InputField>().text;
             simInputArgs.NumberOfSteps = int.Parse(GameObject.Find("InputField_NumberOfSteps").GetComponent<TMP_InputField>().text);
             simInputArgs.IntervalOfSteps = int.Parse(GameObject.Find("InputField_IntervalOfSteps").GetComponent<TMP_InputField>().text);
             simInputArgs.PreparationTime = int.Parse(GameObject.Find("InputField_PreparationTime").GetComponent<TMP_InputField>().text);
-            simInputArgs.EventLogPath = GameObject.Find("InputField_SimPathToEventLog").GetComponent<TMP_InputField>().text;
+            simInputArgs.EventLogPath = eventLogPath;
             var res = GameObject.Find("Dropdown_SearchAlgorithm").GetComponent<TMP_Dropdown>().value;
             simInputArgs.SearchAlgorithm =
                 res == 0 ? SearchAlgorithm.BFS :
@@ -160,6 +165,8 @@ public class MainMenuManager : MonoBehaviour
             //Debug.Log("Fatal error occured at input parsing for playback.");
         }
     }
+
+
     
     /// <summary>
     /// Exits the program

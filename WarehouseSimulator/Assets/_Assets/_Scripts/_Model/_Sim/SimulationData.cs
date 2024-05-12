@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace WarehouseSimulator.Model.Sim
 {
@@ -11,37 +12,37 @@ namespace WarehouseSimulator.Model.Sim
         /// <summary>
         /// The number of steps the simulation will run for
         /// </summary>
-        public int m_maxStepAmount;
+        public int _maxStepAmount;
         /// <summary>
         /// The current step the simulation is on
         /// </summary>
-        public int m_currentStep;
+        public int _currentStep;
         /// <summary>
         /// The number of robots in the simulation
         /// </summary>
-        public int m_robotAmount;
+        public int _robotAmount;
         /// <summary>
         /// The number of goals in total
         /// <remarks>
         /// This number is set after the goals are loaded from the file. Any goals added interactively are not counted.
         /// </remarks>
         /// </summary>
-        public int m_goalAmount;
+        public int _goalAmount;
         /// <summary>
         /// The number of goals remaining in the simulation
         /// </summary>
-        public int m_goalsRemaining;
+        public int _goalsRemaining;
         /// <summary>
         /// The time of a single simulation step in milliseconds
         /// </summary>
-        public int m_stepTime;
+        public int _stepTime;
         /// <summary>
         /// The time for path preprocessing in milliseconds
         /// </summary>
-        public int m_preprocessTime;
+        public int _preprocessTime;
         /// <summary>
         /// Whether the simulation is completed
         /// </summary>
-        public bool m_isFinished;
+        public bool _isFinished;
     }
 }
