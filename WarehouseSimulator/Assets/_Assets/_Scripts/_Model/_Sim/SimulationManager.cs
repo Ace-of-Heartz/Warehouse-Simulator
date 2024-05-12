@@ -131,6 +131,9 @@ namespace WarehouseSimulator.Model.Sim
                 case SearchAlgorithm.AStarAsync:
                     pathPlanner = new AStarAsync_PathPlanner();
                     break;
+                case SearchAlgorithm.BFSAsync:
+                    pathPlanner = new BFSAsync_PathPlanner();
+                    break;
                 default:
                     throw new ArgumentException("Invalid search algorithm");
             }
