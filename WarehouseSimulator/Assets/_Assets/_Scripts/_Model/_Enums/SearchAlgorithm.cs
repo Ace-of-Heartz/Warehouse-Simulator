@@ -7,6 +7,7 @@
     public enum SearchAlgorithm
     {
         BFS,
+        BFSAsync,
         AStar,
         AStarAsync,
         CoopAStar
