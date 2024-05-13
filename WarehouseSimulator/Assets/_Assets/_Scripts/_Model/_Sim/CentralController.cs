@@ -94,6 +94,8 @@ namespace WarehouseSimulator.Model.Sim
                 {
                     CustomLog.Instance.AddRobotAction(e.Key.Id,RobotDoing.Wait);
                 }
+                //clear path planner cache after and error
+                _pathPlanner!.ClearCache();
             }
             else
             {
