@@ -120,9 +120,12 @@ namespace WarehouseSimulator.Model.Sim
             IsPathPlanningDone = false;
 
             var robots = _plannedActions.Keys.ToList();
-            
+            float startTime = UnityEngine.Time.time;
             _taskBeforeNextStep = Task.Run(() => Task.FromResult(_pathPlanner!.GetNextSteps(robots)));
             _plannedActions = await _taskBeforeNextStep;
+            float endTime = UnityEngine.Time.time;
+            float timeTakenSeconds = endTime - startTime;
+            CustomLog.Instance.AddPlannerTime(timeTakenSeconds);
         }
     }
 }
