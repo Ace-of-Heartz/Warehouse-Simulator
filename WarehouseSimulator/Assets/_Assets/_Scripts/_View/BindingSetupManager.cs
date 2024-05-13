@@ -43,6 +43,7 @@ namespace WarehouseSimulator.View
                 {
                     SceneHandler.GetInstance().SetCurrentScene(2);
                     SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
+                    UIMessageManager.GetInstance().SetUIDocument(SceneHandler.GetInstance().CurrentDoc);
                 }
             };
             startPBButton.clickable.clicked += startPBAction;
@@ -157,13 +158,15 @@ namespace WarehouseSimulator.View
 
             _pauseAction = () =>
             {
-                man.PlaybackData.ChangePauseState();
+                if(!man.PlaybackData.IsPaused)
+                    man.PlaybackData.ChangePauseState();
                 resumeButton.style.display = DisplayStyle.Flex;
                 pauseButton.style.display = DisplayStyle.None;
             };
             _resumeAction = () =>
             {
-                man.PlaybackData.ChangePauseState();
+                if(man.PlaybackData.IsPaused)
+                    man.PlaybackData.ChangePauseState();
                 resumeButton.style.display = DisplayStyle.None;
                 pauseButton.style.display = DisplayStyle.Flex;
             };
