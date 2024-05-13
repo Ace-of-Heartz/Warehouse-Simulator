@@ -141,7 +141,7 @@ namespace WarehouseSimulator.View.Sim
             {
                 GameObject rob  = Instantiate(robie);
                 UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
-                robieManager.MyThingies(simRobie,unityMap,simulationManager.SimulationData._stepTime);
+                robieManager.MyThingies(simRobie, unityMap, null, simulationManager);
             }
             else
             {
