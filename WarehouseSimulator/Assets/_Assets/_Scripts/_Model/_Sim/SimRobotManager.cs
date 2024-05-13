@@ -148,42 +148,41 @@ namespace WarehouseSimulator.Model.Sim
         ///</example>
         public async Task<bool> CheckValidSteps(Dictionary<SimRobot, RobotDoing> actions,Map mapie)
         {
+            bool hasErrorHappened = false;
+            
             if (actions.Count != _allRobots.Count)
             {
                 throw new ArgumentException($"Error in checking valid steps, the number of robots ({actions.Count}) given actions does not equal the number of all robots {_allRobots.Count}");
             }
             
             var tasks = actions.Select(pair => Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value,mapie)));
-            (bool success, SimRobot? whoTripped)[]? results = await Task.WhenAll(tasks);
-
-            (bool happened, SimRobot? hitter) error = (false, null);
-            try
+            (bool success, SimRobot? whoTripped)[] results = await Task.WhenAll(tasks);
+            if(results.Any(r => r.success == false))
             {
-                error.hitter = results.First(r => r.success == false).whoTripped;
+                // Debug.Log("Wall collision: " + results.First(r => r.success == false).whoTripped?.Id);
+                hasErrorHappened =  true;
             }
-            catch (Exception) { /*ignored because this means there were no problems in the operations so far*/ }
-
-            if (error.hitter != null) return false;
 
             foreach (SimRobot robie in _allRobots)
             {
                 var positionCheckTasks = 
                     _allRobots.Select(thisrob => Task.Run( () => CheckingFuturePositions(thisrob,robie)));
                 (bool errorHappened, SimRobot? whoCrashed)[]? maybeMistakes = await Task.WhenAll(positionCheckTasks);
-                error = (false, null);
-                try
+                if (maybeMistakes is not null)
                 {
-                    error = maybeMistakes.First(r => r.errorHappened == true);
-                }
-                catch (Exception) { /*ignored because this means there were no problems in the operations so far*/ }
-
-                if (error.hitter != null)
-                {
-                    CustomLog.Instance.AddError(robie.Id,error.hitter.Id);
-                    return false;
+                    foreach ((bool isOk, SimRobot? whoCrashed) in maybeMistakes)
+                    {
+                        if (!isOk)
+                        {
+                            // Debug.Log("crash");
+                            hasErrorHappened = true;
+                            var id = whoCrashed!.Id;
+                            CustomLog.Instance.AddError(robie.Id, id);
+                        }
+                    }
                 }
             }
-            return true;
+            return !hasErrorHappened;
         }
 
         /// <summary>
@@ -192,8 +191,8 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="firstRobie">The robot to check</param>
         /// <param name="secondRobie">The other robot to check</param>
         /// <returns>Tuple:
-        /// - bool: if they are doing something illegal
-        /// - SimRobot: <paramref name="firstRobie"/> if bool is true, null if false
+        /// - bool: if they are doing everything right
+        /// - SimRobot: <paramref name="firstRobie"/> if bool is false, null if true
         /// </returns>
         /// <remarks>Wall collisions are ignored in this method</remarks>
         private (bool,SimRobot?) CheckingFuturePositions(SimRobot firstRobie, SimRobot secondRobie)
