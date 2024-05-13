@@ -126,7 +126,7 @@ namespace WarehouseSimulator.View
         {
             if (_simulationManager is not null)
             {
-                return _simulationManager.SimulationData.m_stepTime;
+                return _simulationManager.SimulationData._stepTime;
             }
             
             if (_playbackManager is not null)
