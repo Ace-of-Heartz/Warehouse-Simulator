@@ -6,6 +6,9 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// The brain of the simulation. It supervises all robot movements
+    /// </summary>
     public class CentralController
     {
         
@@ -41,6 +44,10 @@ namespace WarehouseSimulator.Model.Sim
             _isPreprocessDone = false;
         }
         
+        /// <summary>
+        /// Assign a path planner to be used for path planning
+        /// </summary>
+        /// <param name="pathPlanner">The custom planner</param>
         public void AddPathPlanner(IPathPlanner pathPlanner)
         {
             _pathPlanner = pathPlanner;

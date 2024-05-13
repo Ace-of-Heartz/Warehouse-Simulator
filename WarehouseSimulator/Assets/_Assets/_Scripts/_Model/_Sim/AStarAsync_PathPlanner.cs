@@ -1,15 +1,14 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
-using WarehouseSimulator.Model.Sim;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// A* path planner with asynchronous path planning
+    /// </summary>
     public class AStarAsync_PathPlanner : IPathPlanner
     {
         #region Fields

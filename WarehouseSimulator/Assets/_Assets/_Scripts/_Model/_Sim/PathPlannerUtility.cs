@@ -4,6 +4,9 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// Utility class for the path planner
+    /// </summary>
     public static class PathPlannerUtility
     {
          /// <summary>

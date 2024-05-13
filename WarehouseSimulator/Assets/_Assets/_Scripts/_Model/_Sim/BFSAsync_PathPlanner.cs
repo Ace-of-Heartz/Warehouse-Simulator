@@ -2,12 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
-using WarehouseSimulator.Model.Sim;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// Breadth First Search Path Planner implementation with async
+    /// </summary>
     public class BFSAsync_PathPlanner : IPathPlanner
     {
         #region Fields

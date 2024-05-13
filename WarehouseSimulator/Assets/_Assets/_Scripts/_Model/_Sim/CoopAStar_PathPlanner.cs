@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
-using WarehouseSimulator.Model.Sim;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// Cooperative A* path planner
+    /// </summary>
     public class CoopAStar_PathPlanner : IPathPlanner
     {
         #region Fields

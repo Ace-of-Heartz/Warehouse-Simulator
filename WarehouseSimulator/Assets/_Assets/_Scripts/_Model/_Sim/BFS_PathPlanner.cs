@@ -5,6 +5,9 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// Breadth First Search Path Planner implementation
+    /// </summary>
     public class BFS_PathPlanner : IPathPlanner
     {
         #region Fields

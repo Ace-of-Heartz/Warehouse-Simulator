@@ -8,6 +8,9 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// A* path planner
+    /// </summary>
     public class AStar_PathPlanner : IPathPlanner
     {
         #region Fields
