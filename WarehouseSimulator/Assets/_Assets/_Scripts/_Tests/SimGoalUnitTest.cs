@@ -6,7 +6,7 @@ using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model.Sim;
 
-namespace _Assets._Scripts.Tests
+namespace WarehouseSimulator.Model.Sim.Tests
 {
     [TestFixture]
     public class SimGoalUnitTest

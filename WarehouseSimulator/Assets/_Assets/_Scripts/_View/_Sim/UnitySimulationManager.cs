@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WarehouseSimulator.Model;
@@ -8,21 +9,52 @@ using WarehouseSimulator.View.MainMenu;
 
 namespace WarehouseSimulator.View.Sim
 {
+    /// <summary>
+    /// Unity part of the simulation manager
+    /// </summary>
     public class UnitySimulationManager : MonoBehaviour
     {
+        /// <summary>
+        /// Robot prefab
+        /// </summary>
         [SerializeField] private GameObject robie;
+        /// <summary>
+        /// Goal prefab
+        /// </summary>
         [SerializeField] private GameObject golie;
 
-        
+        /// <summary>
+        /// Map reference
+        /// </summary>
         [SerializeField]
         private UnityMap unityMap;
     
+        /// <summary>
+        /// Model part of the simulation manager
+        /// </summary>
         private SimulationManager simulationManager;
+        /// <summary>
+        /// Getter for the simulation data
+        /// </summary>
         public SimulationData SimulationData => simulationManager.SimulationData; //TODO: To this safer
+        /// <summary>
+        /// Debug Mode. Kind of broken cause of UI.
+        /// </summary>
         public bool DebugMode = false;
+        /// <summary>
+        /// Debug arguments for the simulation
+        /// </summary>
         public SimInputArgs debugSimInputArgs = new SimInputArgs();
 
+        /// <summary>
+        /// Time in seconds until the next tick
+        /// </summary>
         private float timeToNextTickCountdown = 0;
+        
+        /// <summary>
+        /// Whether the first path planning is done or not
+        /// </summary>
+        private bool firstPlanningDone = false;
         
         void Start()
         {
@@ -33,11 +65,28 @@ namespace WarehouseSimulator.View.Sim
             {
                 if (DebugMode)
                 {
+                    var simulationConfig = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(debugSimInputArgs.ConfigFilePath));
+                    simulationConfig.basePath = Path.GetDirectoryName(debugSimInputArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
+
                     DebugSetup();
-                    simulationManager.Setup(debugSimInputArgs);
+                    
+                    MainMenuManager.pbInputArgs.MapFilePath = simulationConfig.basePath + simulationConfig.mapFile;
+                    
+                    simulationManager.Setup(debugSimInputArgs,simulationConfig);
+
                 }
                 else
-                    simulationManager.Setup(MainMenuManager.simInputArgs);
+                {
+                    var simulationArgs = MainMenuManager.simInputArgs;
+                    SimulationConfig simulationConfig = ConfigIO.ParseFromJson(ConfigIO.GetJsonContent(simulationArgs.ConfigFilePath)); 
+                    simulationConfig.basePath = Path.GetDirectoryName(simulationArgs.ConfigFilePath) + Path.DirectorySeparatorChar;
+                    
+                    MainMenuManager.pbInputArgs.MapFilePath = simulationConfig.basePath + simulationConfig.mapFile;
+
+                    simulationManager.Setup(simulationArgs,simulationConfig);
+                    
+                }
+                    
             }
             catch (Exception e)
             {
@@ -52,9 +101,10 @@ namespace WarehouseSimulator.View.Sim
             unityMap.AssignMap(simulationManager.Map);
             unityMap.GenerateMap();
             
-            timeToNextTickCountdown = simulationManager.SimulationData.m_stepTime / 1000.0f;
+            timeToNextTickCountdown = simulationManager.SimulationData._stepTime / 1000.0f;
             
             GameObject.Find("UIGlobalManager").GetComponent<BindingSetupManager>().SetupSimBinding(simulationManager);
+            //TODO: Fix the binding when we start this from the simulation
         }
 
         void Update()
@@ -66,11 +116,22 @@ namespace WarehouseSimulator.View.Sim
             timeToNextTickCountdown -= Time.deltaTime;
             if (timeToNextTickCountdown <= 0)
             {
-                simulationManager.Tick();
-                timeToNextTickCountdown= simulationManager.SimulationData.m_stepTime / 1000.0f;
+                if (firstPlanningDone)
+                {
+                    simulationManager.Tick();
+                }
+                else
+                {
+                    simulationManager.FirstPlanning();
+                    firstPlanningDone = true;
+                }
+                timeToNextTickCountdown= simulationManager.SimulationData._stepTime / 1000.0f;
             }
         }
 
+        /// <summary>
+        /// Setup <see cref="debugSimInputArgs"/> data
+        /// </summary>
         void DebugSetup()
         {
             debugSimInputArgs.ConfigFilePath = "/Users/gergogalig/Library/CloudStorage/OneDrive-EotvosLorandTudomanyegyetem/FourthSemester/Szofttech/sample_files/warehouse_100_config.json";
@@ -78,16 +139,22 @@ namespace WarehouseSimulator.View.Sim
             debugSimInputArgs.IntervalOfSteps = 800;
             debugSimInputArgs.NumberOfSteps = 100;
             debugSimInputArgs.EventLogPath = "/Users/gergogalig/Desktop/log.log";
-            debugSimInputArgs.SearchAlgorithm = SEARCH_ALGORITHM.BFS;
+            debugSimInputArgs.SearchAlgorithm = SearchAlgorithm.BFS;
         }
 
+        /// <summary>
+        /// Add a new Unity robot to the simulation
+        /// </summary>
+        /// <param name="sender">unused</param>
+        /// <param name="e">Contains the model part of the robot</param>
+        /// <exception cref="ArgumentException">Thrown if we try to add an incorrect robot</exception>
         private void AddUnitySimRobot(object sender, RobotCreatedEventArgs e)
         {
             if (e.Robot is SimRobot simRobie)
             {
                 GameObject rob  = Instantiate(robie);
                 UnityRobot robieManager  = rob.GetComponent<UnityRobot>();
-                robieManager.MyThingies(simRobie,unityMap,simulationManager.SimulationData.m_stepTime);
+                robieManager.MyThingies(simRobie, unityMap, null, simulationManager);
             }
             else
             {
@@ -97,6 +164,11 @@ namespace WarehouseSimulator.View.Sim
             }
         }
         
+        /// <summary>
+        /// Add a new Unity goal to the simulation
+        /// </summary>
+        /// <param name="sender">unused</param>
+        /// <param name="e">Contains the model part of the goal</param>
         private void AddUnityGoal(object sender, GoalAssignedEventArgs e)
         {
             if (e.Goal is SimGoal simGolie)

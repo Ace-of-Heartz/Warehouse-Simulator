@@ -1,19 +1,22 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UIElements;
 using WarehouseSimulator.Model.PB;
-using WarehouseSimulator.View;
 
 namespace WarehouseSimulator.View.Playback
 {
     public class UnityPlaybackInfoManager : MonoBehaviour
     {
+        #region Fields
         private UnsignedIntegerField _frameInputField;
         private Label _stepProgressLabel;
         private ProgressBar _stepProgressBar;
-        
         private PlaybackData _playbackData;
+        #endregion
         
+        #region Unity Methods
+        /// <summary>
+        /// Initializes the playback info manager
+        /// </summary>
         private void Start()
         {
             
@@ -39,6 +42,9 @@ namespace WarehouseSimulator.View.Playback
             _playbackData = this.GetComponentInParent<UnityPlaybackManager>().playbackData;
         }
 
+        /// <summary>
+        /// Updates the playback info per frame
+        /// </summary>
         private void Update()
         {
 
@@ -46,5 +52,6 @@ namespace WarehouseSimulator.View.Playback
             _stepProgressLabel.text = $"{_playbackData.CurrentStep}";
             _frameInputField.value = (uint) _playbackData.CurrentStep;
         }
+        #endregion
     }
 }

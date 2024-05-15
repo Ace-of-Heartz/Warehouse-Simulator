@@ -1,93 +1,70 @@
-# csapat2
+# ELTE Warehouse Simulator
+
+---
 
 
+|                  |                                                                                                                                                                                                                                      |
+|------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| Production CI/CD |             [![pipeline status](https://szofttech.inf.elte.hu/szofttech-ab-2024/group-02/csapat2/badges/production/pipeline.svg)](https://szofttech.inf.elte.hu/szofttech-ab-2024/group-02/csapat2/-/commits/production)             |
+| Linux Build      |                               [![Linux Build](https://img.shields.io/badge/linux-0078D6?&logo=linux&logoColor=white&label=build&color=#FCC624)](https://trello.com/b/VtemS1SO/software-technology-bs)                                |
+| Windows Build    |                                   [![Windows Build](https://img.shields.io/badge/windows-0078D6?&logo=windows&logoColor=white&label=build)](https://trello.com/b/VtemS1SO/software-technology-bs)                                    |
+| MacOS Build      |                                     [![MacOS Build](https://img.shields.io/badge/mac--os-000000?&logo=apple&logoColor=white&label=build)](https://trello.com/b/VtemS1SO/software-technology-bs)                                      |
+| WebGL Build      |    [![WebGL Build](https://img.shields.io/badge/web--gl-%23990000?&logo=webgl&logoColor=%23990000&logoSize=auto&label=build)](https://csapat2-szofttech-ab-2024-group-02-f878cb4f1fb257c1f8d29daf2918.szofttech.gitlab-pages.hu)     |
 
-## Getting started
+---
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### Description
 
-## Add your files
+A warehouse simulation software made using Unity's framework. Simulate the path-finding of robots to their respective goals and log all events, for example collision errors, that might occur during the simulation.   \
+**List of features:**
+- Simulate the path planning of robots using an arbitrary layout of the warehouse, number of robots and number of goals.
+- Use predefined path-finding algorithms for running multiple simulations.
+- Configure the number of steps, planning time and preparation for more precise control over the simulation.
+- Record and save the events during the simulation.
+- Playback a past simulation with more careful controls for analyzing the sequence of events.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+---
 
-```
-cd existing_repo
-git remote add origin https://szofttech.inf.elte.hu/szofttech-ab-2024/group-02/csapat2.git
-git branch -M master
-git push -uf origin master
-```
+## The User Interface
 
-## Integrate with your tools
+<img src="docs/pics/mainmenu.png" alt="Playback" width=33%>
+<img src="docs/pics/simulation.png" alt="Playback" width=33%  >
+<img src="docs/pics/playback.png" alt="Playback" width=66%>
 
-- [ ] [Set up project integrations](https://szofttech.inf.elte.hu/szofttech-ab-2024/group-02/csapat2/-/settings/integrations)
 
-## Collaborate with your team
+---
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+### How to run program:
+1. Use the above links to download the build that's needed for your purposes.
+2. Place the files in your chosen path.
+3. Run the executable file.
 
-## Test and Deploy
 
-Use the built-in continuous integration in GitLab.
+### How to run __Simulation__:
+1. Click on the Config File Location input field and search for a valid config file.
+2. Enter the desired parameters for the simulation.
+3. Click on the Event Log Location input field and search for a valid location for saving the event log created after the simulation is over.
+4. Pick the desired search algorithm for the robots to use.
+5. __Start Simulation__
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+### How to run __Playback__:
+1. Click on the Map File Location input field and search for a valid map file.
+2. Click on the Event Log Location input field and search for a valid event log file.
 
-***
+---
 
-# Editing this README
+### Authors and acknowledgment:
+Main and only contributors to this project:
+- Szabó-Mayer "Blaaa" András
+- Gálig Gergő
+- Ferenci Ákos 
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+---
 
-## Suggestions for a good README
+### Roadmap & Issues:
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+For the development of this project we have decided to use our own Trello board for managing issues and sharing the roadmap ahead of us.  
+[![Trello](https://img.shields.io/badge/Trello-0052CC?style=for-the-badge&logo=trello&logoColor=white)](https://trello.com/b/VtemS1SO/software-technology-bs)
 
-## Name
-Choose a self-explaining name for your project.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.

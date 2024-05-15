@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 
 namespace WarehouseSimulator.View
@@ -63,15 +60,5 @@ namespace WarehouseSimulator.View
         
     }
 
-    [Serializable]
-    struct SceneNDoc
-    {
-        [FormerlySerializedAs("id")] [SerializeField] 
-        public uint m_id;
-        [SerializeField]
-        public string m_scene;
-        [SerializeField]
-        public UIDocument m_doc;
 
-    } 
 }

@@ -1,18 +1,21 @@
-﻿using System;
+﻿using UnityEngine;
 
-using UnityEngine;
-using UnityEngine.UIElements;
-using WarehouseSimulator.Model.Enums;
-using WarehouseSimulator.Model;
-
-namespace WarehouseSimulator.View.Sim
+namespace WarehouseSimulator.View
 {
     public class UnityRobotSelector : MonoBehaviour
     {
+        #region Fields
+        /// <summary>
+        /// The UnityRobot that this selector is responsible for
+        /// </summary>
         public UnityRobot m_unityRobot;
-
+        #endregion
         
-
+        #region Methods
+        /// <summary>
+        /// Selects the robot and displays it in the robot display panel
+        /// </summary>
+        /// <exception cref="IncorrectSceneException"></exception>
         public void SelectRobot()
         {
             // Debug.Log($"Kerfus-{m_unityRobot.RobotData.m_id} reporting for duty!");
@@ -23,14 +26,7 @@ namespace WarehouseSimulator.View.Sim
             }
 
             GameObject.Find("RobotDisplayManager").GetComponent<UnityRobotDisplayer>().SetRobot(m_unityRobot);
-            
-            
-            
-            
-            
-
-
-
         }
+        #endregion
     }
 }

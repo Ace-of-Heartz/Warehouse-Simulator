@@ -5,10 +5,14 @@ using WarehouseSimulator.Model.Enums;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// Breadth First Search Path Planner implementation
+    /// </summary>
     public class BFS_PathPlanner : IPathPlanner
     {
         #region Fields
-        private readonly Map _map;
+        private Map _map;
+        private Dictionary<int, Stack<RobotDoing>> _cache;
         #endregion
         
         
@@ -16,11 +20,63 @@ namespace WarehouseSimulator.Model.Sim
         /// Constructor of BFS_PathPlanner class
         /// </summary>
         /// <param name="map">Map loaded in from config file</param>
-        public BFS_PathPlanner(Map map)
+        public BFS_PathPlanner()
+        {
+            _cache = new();
+        }
+
+        #region Methods
+        
+        /// <summary>
+        /// Set map for path planner
+        /// </summary>
+        /// <param name="map"></param>
+        public void SetMap(Map map)
         {
             _map = map;
-        } 
-            
+        }
+        
+        /// <summary>
+        /// Gets the next steps for the list of robots to take.
+        /// </summary>
+        /// <param name="robots"></param>
+        /// <returns></returns>
+        public Dictionary<SimRobot,RobotDoing> GetNextSteps(List<SimRobot> robots)
+        {
+            Dictionary<SimRobot,RobotDoing> instructions = new();
+            foreach(var robot in robots)
+            {
+                if(robot.Goal != null)
+                {
+                    if (!_cache.ContainsKey(robot.Id))
+                    {
+                        _cache.Add(robot.Id, GetPath(robot.GridPosition, robot.Goal.GridPosition, robot.Heading));
+                    }
+                
+                    if (! (_cache[robot.Id].Count > 0))
+                    {
+                        _cache[robot.Id] = GetPath(robot.GridPosition, robot.Goal.GridPosition, robot.Heading);
+                    } 
+                    
+                    try
+                    {
+                        instructions.Add(robot,_cache[robot.Id].Pop());
+                    } 
+                    catch (System.InvalidOperationException) //For when our GetPath can't find a path to the goal
+                    {
+                        instructions.Add(robot,RobotDoing.Wait);
+                    }
+                }
+                else
+                {
+                    instructions.Add(robot,RobotDoing.Wait);
+                }
+            }
+
+            return instructions;
+        }
+        
+
         /// <summary>
         /// Gets the shortest path from a starting position to a finish position, with the initial direction in mind.
         /// Can check additionally check for occupied tiles instead of only walls.
@@ -60,7 +116,7 @@ namespace WarehouseSimulator.Model.Sim
                     isFinishFound = true;
                     break;
                 }
-                foreach((var node,var dir,var inst) in (this as IPathPlanner).GetNeighbouringNodes(currentNode,currentDir))
+                foreach((var node,var dir,var inst) in PathPlannerUtility.GetNeighbouringNodes(currentNode,currentDir))
                 {
 
                     switch (inst)
@@ -113,13 +169,6 @@ namespace WarehouseSimulator.Model.Sim
 
             return instructions;
         }
-        
-
-
-        
-
-
-
-
+        #endregion
     }
 }

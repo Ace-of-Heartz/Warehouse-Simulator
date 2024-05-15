@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
@@ -7,31 +6,56 @@ namespace WarehouseSimulator.View
 {
     public class UnityMap : MonoBehaviour
     {
+        /// <summary>
+        /// Prefab to a single map tile
+        /// </summary>
         [SerializeField]
         private GameObject tilePrefab;
 
-        [SerializeField] private Color wallColor = Color.grey;
-        [SerializeField] private Color emptyColor = Color.green;
-
+        /// <summary>
+        /// Sprite for the wall
+        /// </summary>
         [SerializeField] private Sprite wallSprite;
+        /// <summary>
+        /// Sprite for the empty tile
+        /// </summary>
         [SerializeField] private Sprite emptySprite;
         
+        /// <summary>
+        /// The grid of the map. Used to calculate the position of the tiles
+        /// </summary>
         private Grid gridComponent;
 
+        /// <summary>
+        /// The model part of the map
+        /// </summary>
         private Map map;
         
-        public Vector2 GetMapCentrer()
+        /// <summary>
+        /// Gets the center of the map in world coordinates
+        /// </summary>
+        /// <returns></returns>
+        public Vector2 GetMapCenter()
         {
             if(map is null) return Vector2.zero;
             
             return gridComponent.GetCellCenterWorld(new Vector3Int(map.MapSize.x / 2, -(map.MapSize.y / 2), 0));
         }
         
+        /// <summary>
+        /// Gets the world position of a cell
+        /// </summary>
+        /// <param name="pos">The integer positions of the cell. (0, 0) is the top left, x increases to the right and y increases downwards</param>
+        /// <returns></returns>
         public Vector3 GetWorldPosition(Vector2Int pos)
         {
             return gridComponent.GetCellCenterWorld(new Vector3Int(pos.x, -pos.y, 0));
         }
         
+        /// <summary>
+        /// Gets the size of the map
+        /// </summary>
+        /// <returns>The size of the map as a Vector2</returns>
         public Vector2 GetMapSize()
         {
             if(map is null) return Vector2.zero;
@@ -44,11 +68,18 @@ namespace WarehouseSimulator.View
             gridComponent = GetComponent<Grid>();
         }
         
+        /// <summary>
+        /// Assign the model part of the map
+        /// </summary>
+        /// <param name="map"></param>
         public void AssignMap(Map map)
         {
             this.map = map;
         }
 
+        /// <summary>
+        /// Generate the tiles of the map based on the model representation
+        /// </summary>
         public void GenerateMap()
         {
             for (int i = 0; i < map.MapSize.x; i++)
