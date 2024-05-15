@@ -57,7 +57,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 2
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
@@ -82,6 +82,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: -1189305962144984914}
+        m_TargetAssemblyTypeName: WarehouseSimulator.View.UnityRobot, WarehouseSimulatorView
+        m_MethodName: EasterEgg
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 4101234251431224827}
         m_TargetAssemblyTypeName: WarehouseSimulator.View.Sim.UnityRobotSelector,
           Assembly-CSharp
@@ -360,6 +372,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: {fileID: 4013554327934894358}
   _texture: {fileID: 1347552671087316802}
+  _easterEggSprite: {fileID: 21300000, guid: 0467e2694bfee4286b5126f574657e35, type: 3}
+  _alternativeEasterEggSprite: {fileID: 21300000, guid: c78a24495d7fd4a62ab3126dee523d66, type: 3}
+  _originalSprite: {fileID: 21300000, guid: aa13950d6c8856f43a529b821e22207a, type: 3}
+  _alternativeSprite: {fileID: 21300000, guid: 4cba23da20e07534c9ccad72394500d4, type: 3}
 --- !u!114 &4101234251431224827
 MonoBehaviour:
   m_ObjectHideFlags: 0

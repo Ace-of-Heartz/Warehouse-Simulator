@@ -2,13 +2,15 @@ using JetBrains.Annotations;
 using UnityEngine;
 using WarehouseSimulator.Model.Sim;
 using TMPro;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using WarehouseSimulator.Model.Enums;
 using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.PB;
 
 namespace WarehouseSimulator.View
 {
-    public class UnityRobot : MonoBehaviour
+    public class UnityRobot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         #region Fields
         
@@ -32,6 +34,22 @@ namespace WarehouseSimulator.View
         /// The visuals of the robot
         /// </summary>
         [SerializeField] private GameObject _texture;
+        /// <summary>
+        /// Easter egg sprite
+        /// </summary>
+        [SerializeField] private Sprite _easterEggSprite;
+        /// <summary>
+        /// Easter egg sprite alternative
+        /// </summary>
+        [SerializeField] private Sprite _alternativeEasterEggSprite;
+        /// <summary>
+        /// Default sprite
+        /// </summary>
+        [SerializeField] private Sprite _originalSprite;
+        /// <summary>
+        /// Alternative sprite for hover
+        /// </summary>
+        [SerializeField] private Sprite _alternativeSprite;
         /// <summary>
         /// Reference to the map
         /// </summary>
@@ -67,7 +85,11 @@ namespace WarehouseSimulator.View
         }
         #endregion
 
-        // Update is called once per frame
+        private void Start()
+        {
+            _texture.GetComponent<Image>().sprite = _originalSprite;
+        }
+
         void Update()
         {
             float animTime = GetAnimationFrameTime();
@@ -134,6 +156,49 @@ namespace WarehouseSimulator.View
                 return PlaybackData.DEFAULT_PLAYBACK_TIME_MS / _playbackManager.PlaybackData.PlaybackSpeed;
             }
             return 1000; // 1 second is default
+        }
+
+
+        private float lastPressTime = -1;
+        private int pressCount = 0;
+        private bool isEasterEggActive = false;
+        public void EasterEgg()
+        {
+            if (Time.time - lastPressTime < 1.0f)
+            {
+                pressCount++;
+                if (pressCount >= 3)
+                {
+                    //activate easter egg
+                    _texture.GetComponent<Image>().sprite = _easterEggSprite;
+                    isEasterEggActive = true;
+                    
+                    // reset after 5 seconds
+                    Invoke(nameof(ResetEasterEgg), 5);
+                }
+            }
+            else
+            {
+                pressCount = 1;
+            }
+            
+            lastPressTime = Time.time;
+        }
+        
+        private void ResetEasterEgg()
+        {
+            _texture.GetComponent<Image>().sprite = _originalSprite;
+            isEasterEggActive = false;
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            _texture.GetComponent<Image>().sprite = isEasterEggActive ? _alternativeEasterEggSprite : _alternativeSprite;
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            _texture.GetComponent<Image>().sprite = isEasterEggActive ? _easterEggSprite : _originalSprite;
         }
     }
 }    
