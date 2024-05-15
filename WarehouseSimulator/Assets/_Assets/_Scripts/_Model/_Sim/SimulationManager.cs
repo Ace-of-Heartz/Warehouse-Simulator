@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Codice.Client.BaseCommands.FastImport;
 using PlasticGui;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
@@ -151,6 +152,8 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         public async void Tick()
         {
+            Debug.Log($"Tick thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
+            Debug.Log("Boop");
             if (_simulationData._currentStep < _simulationData._maxStepAmount)
             {
                 _centralController.TimeToMove(_simRobotManager,_map);

@@ -115,8 +115,6 @@ public class MainMenuManager : MonoBehaviour
                 res == 2 ? SearchAlgorithm.CoopAStar :
                 res == 3 ? SearchAlgorithm.BFSAsync : 
                 SearchAlgorithm.AStarAsync;
-            
-
         }
         catch (Exception e)
         {

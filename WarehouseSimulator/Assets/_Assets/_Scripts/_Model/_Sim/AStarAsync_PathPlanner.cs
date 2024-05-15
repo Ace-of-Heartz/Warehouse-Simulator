@@ -35,14 +35,6 @@ namespace WarehouseSimulator.Model.Sim
         {
             _map = map;
         }
-
-        /// <summary>
-        /// Clear the cache of the path planner
-        /// </summary>
-        public void ClearCache()
-        {
-            _cache.Clear();
-        }
         
         /// <summary>
         /// Gets the next steps for the list of robots to take.
@@ -51,6 +43,7 @@ namespace WarehouseSimulator.Model.Sim
         /// <returns></returns>
         public Dictionary<SimRobot, RobotDoing> GetNextSteps(List<SimRobot> robots) 
         {
+            Debug.Log($"A* async main thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
             foreach (var robot in robots)
             {
                 if(!_cache.ContainsKey(robot.Id))
@@ -110,6 +103,7 @@ namespace WarehouseSimulator.Model.Sim
         /// </returns>
         public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction facing)
         {
+            Debug.Log($"A* async get path thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
             Dictionary<
                     (Vector2Int, Direction)
                     ,

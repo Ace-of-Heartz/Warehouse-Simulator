@@ -1,22 +1,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
-using WarehouseSimulator.Model.Sim;
 using ArgumentException = System.ArgumentException;
 
 namespace WarehouseSimulator.Model.Sim.Tests
 {
     public class TestingRobotManager : SimRobotManager
     {
-        public new void AddRobot(SimRobot robie)
+        public void AddRobot(SimRobot robie, int indx, int n = 2)
         {
-            base.AddRobot(robie);
+            if (AllRobots.Length != n)
+            {
+                AllRobots = new SimRobot[n];
+            }
+            base.AddRobot(robie, indx);
         }
     }
 
@@ -47,9 +48,9 @@ namespace WarehouseSimulator.Model.Sim.Tests
         {
             _robieMan.GoalAssignedEvent += Handler;
             _golieMan.AddNewGoal(Vector2Int.one, _33Map);
-            _robieMan.AddRobot(_robie);
+            _robieMan.AddRobot(_robie,0);
             SimRobot robieTwo = new(69, Vector2Int.up);
-            _robieMan.AddRobot(robieTwo);
+            _robieMan.AddRobot(robieTwo,1);
             _robieMan.AssignTasksToFreeRobots(_golieMan);
 
             void Handler(object sender, EventArgs e)
@@ -62,9 +63,9 @@ namespace WarehouseSimulator.Model.Sim.Tests
         public void AssignTasksToFreeRobots_ResultingEventNotInvoked()
         {
             _robieMan.GoalAssignedEvent += Handler;
-            _robieMan.AddRobot(_robie);
+            _robieMan.AddRobot(_robie,0);
             SimRobot robieTwo = new(666,Vector2Int.one);
-            _robieMan.AddRobot(robieTwo);
+            _robieMan.AddRobot(robieTwo,1);
             _robieMan.AssignTasksToFreeRobots(_golieMan);
 
             void Handler(object sender, EventArgs e)
@@ -98,10 +99,10 @@ namespace WarehouseSimulator.Model.Sim.Tests
         {
             Dictionary<SimRobot, RobotDoing> dicc =
                 new() { { _robie, whatToDo } };
-            _robieMan.AddRobot(_robie);
+            _robieMan.AddRobot(_robie,0);
 
             SimRobot robieTwo = new SimRobot(1, new Vector2Int(2, 2));
-            _robieMan.AddRobot(robieTwo);
+            _robieMan.AddRobot(robieTwo,1);
             dicc.Add(robieTwo, whatToDo);
 
             var tasks = _robieMan.CheckValidSteps(dicc, _33Map);
@@ -120,7 +121,7 @@ namespace WarehouseSimulator.Model.Sim.Tests
             _33Map.CreateMap(input);
             Dictionary<SimRobot, RobotDoing> dicc =
                 new() { { _robie, RobotDoing.Forward } };
-            _robieMan.AddRobot(_robie);
+            _robieMan.AddRobot(_robie,0,1);
 
             var tasks = _robieMan.CheckValidSteps(dicc, _33Map);
 
@@ -133,15 +134,34 @@ namespace WarehouseSimulator.Model.Sim.Tests
         [UnityTest]
         public IEnumerator CheckValidSteps_ResultingError_BecauseRobotsWantedToStepToTheSameField()
         {
+            _robieMan = new();
             Dictionary<SimRobot, RobotDoing> dicc =
                 new() { { _robie, RobotDoing.Forward } };
-            _robieMan.AddRobot(_robie);
-            SimRobot robieTwo = new(1, new Vector2Int(0, 0), Direction.West);
+            _robieMan.AddRobot(_robie,0);
+            SimRobot robieTwo = new(1, new Vector2Int(0, 0), Direction.East);
             
             dicc.Add(robieTwo,RobotDoing.Forward);
-            _robieMan.AddRobot(robieTwo);
+            _robieMan.AddRobot(robieTwo,1);
             var tasks = _robieMan.CheckValidSteps(dicc, _33Map);
 
+            yield return new WaitUntil(() => tasks.IsCompleted);
+            bool isValidStep = tasks.Result;
+            Assert.IsFalse(tasks.IsFaulted);
+            Assert.AreEqual(false, isValidStep);   
+        }
+        
+        [UnityTest]
+        public IEnumerator CheckValidSteps_ResultingError_BecauseRobotsWantedJumpOverEachOther()
+        {
+            Dictionary<SimRobot, RobotDoing> dicc =
+                new() { { _robie, RobotDoing.Forward } };
+            _robieMan.AddRobot(_robie,0);
+            
+            SimRobot robieTwo = new(1, new Vector2Int(1, 0), Direction.South);
+            dicc.Add(robieTwo,RobotDoing.Forward);
+            _robieMan.AddRobot(robieTwo,1);
+            var tasks = _robieMan.CheckValidSteps(dicc, _33Map);
+            
             yield return new WaitUntil(() => tasks.IsCompleted);
             bool isValidStep = tasks.Result;
             Assert.IsFalse(tasks.IsFaulted);

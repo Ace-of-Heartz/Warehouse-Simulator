@@ -35,14 +35,6 @@ namespace WarehouseSimulator.Model.Sim
         {
             _map = map;
         }
-
-        /// <summary>
-        /// Clear the cache of the path planner
-        /// </summary>
-        public void ClearCache()
-        {
-            _cache.Clear();
-        }
         
         /// <summary>
         /// Gets the next steps for the list of robots to take.
@@ -51,8 +43,8 @@ namespace WarehouseSimulator.Model.Sim
         /// <returns></returns>
         public Dictionary<SimRobot,RobotDoing> GetNextSteps(List<SimRobot> robots)
         {
-            
-            
+            Debug.Log($"BFS thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
+
             Dictionary<SimRobot,RobotDoing> instructions = new();
             foreach(var robot in robots)
             {
