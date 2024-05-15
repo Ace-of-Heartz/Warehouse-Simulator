@@ -33,14 +33,6 @@ namespace WarehouseSimulator.Model.Sim
         {
             _map = map;
         }
-
-        /// <summary>
-        /// Clear the cache of the path planner
-        /// </summary>
-        public void ClearCache()
-        {
-            _cache.Clear();
-        }
         
         public Dictionary<SimRobot,RobotDoing> GetNextSteps(List<SimRobot> robots)
         {

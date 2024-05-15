@@ -29,11 +29,5 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         /// <param name="map"></param>
         void SetMap(Map map);
-
-        /// <summary>
-        /// Clear the cache of the path planner
-        /// </summary>
-        void ClearCache();
-
     }
 }

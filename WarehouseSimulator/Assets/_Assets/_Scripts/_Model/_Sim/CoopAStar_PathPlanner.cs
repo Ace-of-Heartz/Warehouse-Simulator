@@ -31,17 +31,6 @@ namespace WarehouseSimulator.Model.Sim
         {
             _map = map;
         }
-
-        /// <summary>
-        /// Clear the cache of the path planner
-        /// </summary>
-        public void ClearCache()
-        {
-            _cache.Clear();
-        }
-        
-        
-        
         /// <summary>
         /// Gets the next steps for the list of robots to take. Each robot receives only the next step to take.
         /// </summary>
