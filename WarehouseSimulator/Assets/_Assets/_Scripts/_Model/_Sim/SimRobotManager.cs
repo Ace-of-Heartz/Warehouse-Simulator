@@ -161,7 +161,6 @@ namespace WarehouseSimulator.Model.Sim
             (bool success, SimRobot? whoTripped)[] results = await Task.WhenAll(tasks);
             if(results.Any(r => r.success == false))
             {
-                // Debug.Log("Wall collision: " + results.First(r => r.success == false).whoTripped?.Id);
                 hasErrorHappened =  true;
             }
 
@@ -180,7 +179,6 @@ namespace WarehouseSimulator.Model.Sim
                     {
                         if (!isOk)
                         {
-                            // Debug.Log("crash");
                             hasErrorHappened = true;
                             var id = whoCrashed!.Id;
                             CustomLog.Instance.AddError(robie.Id, id);
