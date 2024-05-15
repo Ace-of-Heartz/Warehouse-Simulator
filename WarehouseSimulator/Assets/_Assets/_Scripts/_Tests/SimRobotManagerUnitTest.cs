@@ -11,12 +11,8 @@ namespace WarehouseSimulator.Model.Sim.Tests
 {
     public class TestingRobotManager : SimRobotManager
     {
-        public void AddRobot(SimRobot robie, int indx, int n=2)
+        public new void AddRobot(SimRobot robie, int indx)
         {
-            if (AllRobots.Length != n)
-            {
-                AllRobots = new SimRobot[n];
-            }
             base.AddRobot(robie, indx);
         }
     }
@@ -121,7 +117,7 @@ namespace WarehouseSimulator.Model.Sim.Tests
             _33Map.CreateMap(input);
             Dictionary<SimRobot, RobotDoing> dicc =
                 new() { { _robie, RobotDoing.Forward } };
-            _robieMan.AddRobot(_robie,0,1);
+            _robieMan.AddRobot(_robie,1);
 
             var tasks = _robieMan.CheckValidSteps(dicc, _33Map);
 
@@ -138,7 +134,7 @@ namespace WarehouseSimulator.Model.Sim.Tests
             Dictionary<SimRobot, RobotDoing> dicc =
                 new() { { _robie, RobotDoing.Forward } };
             _robieMan.AddRobot(_robie,0);
-            SimRobot robieTwo = new(1, new Vector2Int(0, 0), Direction.East);
+            SimRobot robieTwo = new(1, new Vector2Int(0, 0), Direction.West);
             
             dicc.Add(robieTwo,RobotDoing.Forward);
             _robieMan.AddRobot(robieTwo,1);
