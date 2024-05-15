@@ -157,11 +157,11 @@ namespace WarehouseSimulator.Model.Sim
                 throw new ArgumentException($"Error in checking valid steps, the number of robots ({actions.Count}) given actions does not equal the number of all robots {AllRobots.Length}");
             }
             
-            var tasks = actions.Select(pair => Task.FromResult(pair.Key.TryPerformActionRequested(pair.Value,mapie)));
+            var tasks = actions.Select(pair => Task.Run(() => pair.Key.TryPerformActionRequested(pair.Value,mapie)));
             (bool success, SimRobot? whoTripped)[] results = await Task.WhenAll(tasks);
             if(results.Any(r => r.success == false))
             {
-                hasErrorHappened =  true;
+                hasErrorHappened = true;
             }
 
             for (int i = 0; i < AllRobots.Length; ++i)
@@ -186,7 +186,7 @@ namespace WarehouseSimulator.Model.Sim
                     }
                 }
             }
-            return !hasErrorHappened;
+            return hasErrorHappened;
         }
 
         /// <summary>

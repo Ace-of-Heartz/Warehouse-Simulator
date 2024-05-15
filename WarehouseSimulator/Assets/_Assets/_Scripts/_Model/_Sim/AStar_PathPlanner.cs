@@ -36,7 +36,6 @@ namespace WarehouseSimulator.Model.Sim
         
         public Dictionary<SimRobot,RobotDoing> GetNextSteps(List<SimRobot> robots)
         {
-            Debug.Log($"A star thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
             Dictionary<SimRobot,RobotDoing> instructions = new();
             foreach(var robot in robots)
             {

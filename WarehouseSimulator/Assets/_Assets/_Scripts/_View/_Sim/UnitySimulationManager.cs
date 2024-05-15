@@ -51,6 +51,11 @@ namespace WarehouseSimulator.View.Sim
         /// </summary>
         private float timeToNextTickCountdown = 0;
         
+        /// <summary>
+        /// Whether the first path planning is done or not
+        /// </summary>
+        private bool firstPlanningDone = false;
+        
         void Start()
         {
             simulationManager = new SimulationManager();
@@ -111,7 +116,15 @@ namespace WarehouseSimulator.View.Sim
             timeToNextTickCountdown -= Time.deltaTime;
             if (timeToNextTickCountdown <= 0)
             {
-                simulationManager.Tick();
+                if (firstPlanningDone)
+                {
+                    simulationManager.Tick();
+                }
+                else
+                {
+                    simulationManager.FirstPlanning();
+                    firstPlanningDone = true;
+                }
                 timeToNextTickCountdown= simulationManager.SimulationData._stepTime / 1000.0f;
             }
         }

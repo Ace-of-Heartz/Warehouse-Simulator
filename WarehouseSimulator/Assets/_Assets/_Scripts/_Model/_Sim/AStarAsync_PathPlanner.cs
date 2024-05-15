@@ -43,7 +43,6 @@ namespace WarehouseSimulator.Model.Sim
         /// <returns></returns>
         public Dictionary<SimRobot, RobotDoing> GetNextSteps(List<SimRobot> robots) 
         {
-            Debug.Log($"A* async main thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
             foreach (var robot in robots)
             {
                 if(!_cache.ContainsKey(robot.Id))
@@ -103,7 +102,6 @@ namespace WarehouseSimulator.Model.Sim
         /// </returns>
         public Stack<RobotDoing> GetPath(Vector2Int start, Vector2Int finish, Direction facing)
         {
-            Debug.Log($"A* async get path thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
             Dictionary<
                     (Vector2Int, Direction)
                     ,

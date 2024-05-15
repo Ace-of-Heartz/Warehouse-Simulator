@@ -1,7 +1,5 @@
 using System;
 using System.IO;
-using Codice.Client.BaseCommands.FastImport;
-using PlasticGui;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
 
@@ -77,7 +75,7 @@ namespace WarehouseSimulator.Model.Sim
             CustomLog.Instance.Init();
             
             //event for adding robot to path planning
-            _simRobotManager.RobotAddedEvent += (sender, args) =>
+            _simRobotManager.RobotAddedEvent += (_, args) =>
             {
                 if (args.Robot is SimRobot robie)
                 {
@@ -90,9 +88,10 @@ namespace WarehouseSimulator.Model.Sim
         /// Sets up the simulation.
         /// </summary>
         /// <param name="simulationArgs">The configuration of the simulation </param>
+        /// <param name="config">The configuration data</param>
         /// <exception cref="ArgumentException">Thrown if the selected search algorithm is invalid</exception>
         /// <exception cref="Exception">Thrown if any other error occurs during setup. This exception can take many forms, so good luck debugging.</exception>
-        public async void Setup(SimInputArgs simulationArgs,SimulationConfig config)
+        public void Setup(SimInputArgs simulationArgs,SimulationConfig config)
         {
             CustomLog.Instance.SetActionModel("almafa");
             
@@ -145,6 +144,10 @@ namespace WarehouseSimulator.Model.Sim
             _centralController.AddPathPlanner(pathPlanner);
             _centralController.Preprocess(_map);
             _simRobotManager.AssignTasksToFreeRobots(_simGoalManager);
+        }
+
+        public async void FirstPlanning()
+        {
             await _centralController.PlanNextMovesForAllAsync();
         }
         /// <summary>
@@ -152,8 +155,6 @@ namespace WarehouseSimulator.Model.Sim
         /// </summary>
         public async void Tick()
         {
-            Debug.Log($"Tick thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
-            Debug.Log("Boop");
             if (_simulationData._currentStep < _simulationData._maxStepAmount)
             {
                 _centralController.TimeToMove(_simRobotManager,_map);

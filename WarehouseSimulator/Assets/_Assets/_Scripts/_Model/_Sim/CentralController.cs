@@ -81,14 +81,14 @@ namespace WarehouseSimulator.Model.Sim
         {
             if (!IsPathPlanningDone || !IsPreprocessDone)
             { 
-                foreach (var robot in _plannedActions.Keys)
+                foreach (var robot in _plannedActions.Keys.ToList())
                 {
                     _plannedActions[robot] = RobotDoing.Timeout;
                 }
             }
-            bool isValidStep = await robieMan.CheckValidSteps(_plannedActions,map);
+            bool isNotValidStep = await robieMan.CheckValidSteps(_plannedActions,map);
             
-            if (!isValidStep)
+            if (isNotValidStep)
             {
                 foreach (var e in _plannedActions)
                 {

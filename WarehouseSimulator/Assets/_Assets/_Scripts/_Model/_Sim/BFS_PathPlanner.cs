@@ -43,8 +43,6 @@ namespace WarehouseSimulator.Model.Sim
         /// <returns></returns>
         public Dictionary<SimRobot,RobotDoing> GetNextSteps(List<SimRobot> robots)
         {
-            Debug.Log($"BFS thread: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
-
             Dictionary<SimRobot,RobotDoing> instructions = new();
             foreach(var robot in robots)
             {
