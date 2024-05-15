@@ -79,7 +79,7 @@ namespace WarehouseSimulator.Model.Sim
         /// <param name="robieMan">SimRobotManager</param>
         public async void TimeToMove(SimRobotManager robieMan,Map map)
         {
-            if (!(IsPathPlanningDone || IsPreprocessDone))
+            if (!IsPathPlanningDone || !IsPreprocessDone)
             { 
                 foreach (var robot in _plannedActions.Keys)
                 {
@@ -125,6 +125,7 @@ namespace WarehouseSimulator.Model.Sim
             float endTime = UnityEngine.Time.time;
             float timeTakenSeconds = endTime - startTime;
             CustomLog.Instance.AddPlannerTime(timeTakenSeconds);
+            IsPathPlanningDone = true;
         }
     }
 }
