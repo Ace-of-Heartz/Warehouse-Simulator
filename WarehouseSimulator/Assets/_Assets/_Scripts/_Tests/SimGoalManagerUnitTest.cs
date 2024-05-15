@@ -4,7 +4,7 @@ using UnityEngine;
 using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Sim;
 
-namespace _Assets._Scripts._Tests
+namespace WarehouseSimulator.Model.Sim.Tests
 {
     [TestFixture]
     public class SimGoalManagerUnitTest
@@ -38,11 +38,12 @@ namespace _Assets._Scripts._Tests
         }
 
         [TestCase(-1, -1)]
-        [TestCase(2, 2)]
+        [TestCase(1, 1)]
         public void AddNewGoal_ResultingExceptionThrown(int x, int y)
         {
             string[] input = {"h 3","w 3","map","...",".@.","..."};
             _33Map = new();
+            _33Map.CreateMap(input);
             Assert.Throws<ArgumentException>(() => _golieMan.AddNewGoal(new Vector2Int(x, y), _33Map));
         }
 

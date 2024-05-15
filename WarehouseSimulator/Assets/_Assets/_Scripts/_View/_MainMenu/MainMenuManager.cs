@@ -11,12 +11,17 @@ namespace WarehouseSimulator.View.MainMenu {
 public class MainMenuManager : MonoBehaviour
 {
 
+    #region Static Fields
     public static SimInputArgs simInputArgs;
     public static PbInputArgs pbInputArgs;
+    #endregion
 
+    #region Fields
     public List<TMP_InputField> inputFieldsForSim;
     public List<TMP_InputField> inputFieldsForPb;
-
+    #endregion
+    
+    #region Unity Methods
     private void Start()
     {
         
@@ -40,7 +45,9 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
-
+    #endregion
+    
+    #region Methods
 
     private void UpdatePbInputStatus()
     {
@@ -73,6 +80,7 @@ public class MainMenuManager : MonoBehaviour
     public void StartSim()
     {
         CompleteSimInputArgs();
+
         if (!simInputArgs.IsComplete())
             throw new ArgumentException();
         else
@@ -91,16 +99,22 @@ public class MainMenuManager : MonoBehaviour
     {
         try
         {
+            var eventLogPath = GameObject.Find("InputField_SimPathToEventLog").GetComponent<TMP_InputField>().text;
+
+            pbInputArgs.EventLogPath = eventLogPath;
+            
             simInputArgs.ConfigFilePath = GameObject.Find("InputField_SimConfigFileLocation").GetComponent<TMP_InputField>().text;
             simInputArgs.NumberOfSteps = int.Parse(GameObject.Find("InputField_NumberOfSteps").GetComponent<TMP_InputField>().text);
             simInputArgs.IntervalOfSteps = int.Parse(GameObject.Find("InputField_IntervalOfSteps").GetComponent<TMP_InputField>().text);
             simInputArgs.PreparationTime = int.Parse(GameObject.Find("InputField_PreparationTime").GetComponent<TMP_InputField>().text);
-            simInputArgs.EventLogPath = GameObject.Find("InputField_SimPathToEventLog").GetComponent<TMP_InputField>().text;
+            simInputArgs.EventLogPath = eventLogPath;
             var res = GameObject.Find("Dropdown_SearchAlgorithm").GetComponent<TMP_Dropdown>().value;
-            simInputArgs.SearchAlgorithm = res == 1 ? SEARCH_ALGORITHM.A_STAR :
-                res == 2 ? SEARCH_ALGORITHM.COOP_A_STAR : SEARCH_ALGORITHM.BFS;
-            simInputArgs.EnableDeadlockSolving = GameObject.Find("Toggle_EnableDeadlockSolve").GetComponent<UnityEngine.UI.Toggle>().isOn;
-
+            simInputArgs.SearchAlgorithm =
+                res == 0 ? SearchAlgorithm.BFS :
+                res == 1 ? SearchAlgorithm.AStar :
+                res == 2 ? SearchAlgorithm.CoopAStar :
+                res == 3 ? SearchAlgorithm.BFSAsync : 
+                SearchAlgorithm.AStarAsync;
         }
         catch (Exception e)
         {
@@ -151,6 +165,8 @@ public class MainMenuManager : MonoBehaviour
             //Debug.Log("Fatal error occured at input parsing for playback.");
         }
     }
+
+
     
     /// <summary>
     /// Exits the program
@@ -175,6 +191,7 @@ public class MainMenuManager : MonoBehaviour
         
     }
     
+    #endregion
 
 }
 

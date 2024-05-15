@@ -6,43 +6,23 @@ namespace WarehouseSimulator.View
 {
     public class UnityRobotDisplayer : MonoBehaviour
     {
+        #region Fields
         private UnityRobot _selectedRobot;
         private VisualElement _robotDisplay;
+        #endregion 
         
-        public UnityRobot SelectedRobot
-        {
-            get => _selectedRobot;
-        }
-
-        public void SetRobot(UnityRobot robot)
-        {
-            _selectedRobot = robot;
-            
-            SetOneTimeInfo();
-        }
-
-        private void SetOneTimeInfo()
-        {
-            _robotDisplay.Q<IntegerField>("IDField").value = _selectedRobot.RobotData.m_shownId;
-            
-            if (_selectedRobot.IsSimRobot)
-            {
-                _robotDisplay.Q("StateField").style.display = DisplayStyle.Flex;
-            }
-            else
-            {
-                _robotDisplay.Q("StateField").style.display = DisplayStyle.None;   
-            }
-        }
-        
+        #region Unity Methods
+        /// <summary>
+        ///     Initializes the robot display visual element.
+        /// </summary>
         private void Start()
         {
             _robotDisplay = SceneHandler.GetInstance().CurrentDoc.rootVisualElement.Q("RobotPanel");
-            
-            
-
         }
-
+        
+        /// <summary>
+        ///     Updates the robot display visual element.
+        /// </summary>
         private void Update()
         {
             //Updating properties . . . .
@@ -77,5 +57,46 @@ namespace WarehouseSimulator.View
                 _robotDisplay.Q("GoalDisplay").Q("GoalPanel").Q<Vector2IntField>().value = _selectedRobot.RobotData.m_goal.GridPosition;
             }
         }
+        #endregion
+        
+        #region C# Methods
+        /// <summary>
+        ///     Gets the currently selected robot.
+        /// </summary>
+        public UnityRobot SelectedRobot
+        {
+            get => _selectedRobot;
+        }
+
+        /// <summary>
+        ///     Sets the robot to be displayed and sets the one time info.
+        /// </summary>
+        /// <param name="robot"></param>
+        public void SetRobot(UnityRobot robot)
+        {
+            _selectedRobot = robot;
+            
+            SetOneTimeInfo();
+        }
+
+        /// <summary>
+        ///     Sets the one time info for the robot and settings for the display.
+        /// </summary>
+        private void SetOneTimeInfo()
+        {
+            _robotDisplay.Q<IntegerField>("IDField").value = _selectedRobot.RobotData.m_shownId;
+            
+            if (_selectedRobot.IsSimRobot)
+            {
+                _robotDisplay.Q("StateField").style.display = DisplayStyle.Flex;
+            }
+            else
+            {
+                _robotDisplay.Q("StateField").style.display = DisplayStyle.None;   
+            }
+        }
+        #endregion
+        
+        
     }
 }

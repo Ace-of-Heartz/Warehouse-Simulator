@@ -2,12 +2,23 @@
 using System;
 using UnityEngine;
 using WarehouseSimulator.Model.Enums;
-using WarehouseSimulator.Model;
 
 namespace WarehouseSimulator.Model.Sim
 {
+    /// <summary>
+    /// Model representation of a robot in the simulation
+    /// </summary>
     public class SimRobot : RobotLike
     {
+        /// <summary>
+        /// The next state of the robot proposed by the planner
+        /// <remarks>
+        /// This tuple is used to store the next state of the robot as proposed by the planner.
+        /// - nextPos: The next position of the robot on the grid.
+        /// - nextHeading: The next heading direction of the robot.
+        /// - what: The next action the robot is supposed to perform.
+        /// </remarks>
+        /// </summary>
         private (Vector2Int nextPos, Direction nextHeading,RobotDoing what) _nexties;
 
         /// <summary>
@@ -28,8 +39,17 @@ namespace WarehouseSimulator.Model.Sim
             _nexties = (new(-1, -1),nextHeading: Direction.North,RobotDoing.Wait);
         }
 
+        /// <summary>
+        /// Gets the next proposed position of the robot
+        /// </summary>
         public Vector2Int NextPos => _nexties.nextPos;
         
+        /// <summary>
+        /// Assigns a goal to the robot
+        /// </summary>
+        /// <param name="goTo">The goal assigned</param>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="goTo"/> is null</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the robot is not free of tasks</exception>
         public void AssignGoal(SimGoal? goTo)
         {
             if (goTo is null)
@@ -55,14 +75,28 @@ namespace WarehouseSimulator.Model.Sim
             }
             
         }
-
+        
+        /// <summary>
+        /// Tries to perform the action requested by the planner, if successful, the <see cref="_nexties"/> will store this proposed location
+        /// The current state is not affected by this method.
+        /// We check only for collisions with walls in this method.
+        /// </summary>
+        /// <param name="watt">The action requested</param>
+        /// <param name="mapie">The map on which the simulation is running</param>
+        /// <returns>Tuple:
+        /// - bool: True if proposed action is OK, false if not
+        /// - SimRobot: null if the bool is True. This robot if the proposed action is not OK
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="mapie"/> is null</exception>
         public (bool,SimRobot?) TryPerformActionRequested(RobotDoing watt, Map mapie)
         {
             CustomLog.Instance.AddPlannerAction(Id,watt);
+            if (watt == RobotDoing.Timeout)
+            {
+                watt = RobotDoing.Wait;
+            }
             
-            if (watt == RobotDoing.Timeout) watt = RobotDoing.Wait;
-            
-            _nexties= (RobotData.m_gridPosition,RobotData.m_heading,watt);
+            _nexties= (GridPosition,RobotData.m_heading,watt);
             if (mapie == null)
             {
                 throw new ArgumentNullException($"The argument: {nameof(mapie)} as the map does not exist");
@@ -91,6 +125,10 @@ namespace WarehouseSimulator.Model.Sim
             return (true,null);
         }
 
+        /// <summary>
+        /// Transitions the robot to the next state stored in <see cref="_nexties"/>
+        /// </summary>
+        /// <param name="mipieMap">The map on which the simulation is running</param>
         public void MakeStep(Map mipieMap)
         {
             CustomLog.Instance.AddRobotAction(Id,_nexties.what);
@@ -107,6 +145,9 @@ namespace WarehouseSimulator.Model.Sim
             RobotData.m_heading = _nexties.nextHeading;
         }
         
+        /// <summary>
+        /// The goal assigned to the robot is completed
+        /// </summary>
         private void GoalCompleted()
         {
             if (Goal is SimGoal simgolie)
