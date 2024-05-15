@@ -152,7 +152,7 @@ namespace WarehouseSimulator.Model.Sim
         {
             bool hasErrorHappened = false;
             
-            if (actions.Count != _allRobots.Count)
+            if (actions.Count != AllRobots.Length)
             {
                 throw new ArgumentException($"Error in checking valid steps, the number of robots ({actions.Count}) given actions does not equal the number of all robots {AllRobots.Length}");
             }
@@ -165,7 +165,7 @@ namespace WarehouseSimulator.Model.Sim
                 hasErrorHappened =  true;
             }
 
-            foreach (SimRobot robie in _allRobots)
+            for (int i = 0; i < AllRobots.Length; ++i)
             {
                 SimRobot robie = AllRobots[i];
                 int numberOfRemainingRobies = AllRobots.Length - (i+1);

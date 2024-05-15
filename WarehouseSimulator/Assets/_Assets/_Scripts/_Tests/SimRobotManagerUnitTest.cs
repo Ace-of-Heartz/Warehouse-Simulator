@@ -1,21 +1,22 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-using WarehouseSimulator.Model;
 using WarehouseSimulator.Model.Enums;
-using WarehouseSimulator.Model.Sim;
 using ArgumentException = System.ArgumentException;
 
 namespace WarehouseSimulator.Model.Sim.Tests
 {
     public class TestingRobotManager : SimRobotManager
     {
-        public new void AddRobot(SimRobot robie, int indx)
+        public void AddRobot(SimRobot robie, int indx, int n=2)
         {
+            if (AllRobots.Length != n)
+            {
+                AllRobots = new SimRobot[n];
+            }
             base.AddRobot(robie, indx);
         }
     }
@@ -120,7 +121,7 @@ namespace WarehouseSimulator.Model.Sim.Tests
             _33Map.CreateMap(input);
             Dictionary<SimRobot, RobotDoing> dicc =
                 new() { { _robie, RobotDoing.Forward } };
-            _robieMan.AddRobot(_robie,1);
+            _robieMan.AddRobot(_robie,0,1);
 
             var tasks = _robieMan.CheckValidSteps(dicc, _33Map);
 
@@ -133,15 +134,34 @@ namespace WarehouseSimulator.Model.Sim.Tests
         [UnityTest]
         public IEnumerator CheckValidSteps_ResultingError_BecauseRobotsWantedToStepToTheSameField()
         {
+            _robieMan = new();
             Dictionary<SimRobot, RobotDoing> dicc =
                 new() { { _robie, RobotDoing.Forward } };
             _robieMan.AddRobot(_robie,0);
-            SimRobot robieTwo = new(1, new Vector2Int(0, 0), Direction.West);
+            SimRobot robieTwo = new(1, new Vector2Int(0, 0), Direction.East);
             
             dicc.Add(robieTwo,RobotDoing.Forward);
             _robieMan.AddRobot(robieTwo,1);
             var tasks = _robieMan.CheckValidSteps(dicc, _33Map);
 
+            yield return new WaitUntil(() => tasks.IsCompleted);
+            bool isValidStep = tasks.Result;
+            Assert.IsFalse(tasks.IsFaulted);
+            Assert.AreEqual(false, isValidStep);   
+        }
+        
+        [UnityTest]
+        public IEnumerator CheckValidSteps_ResultingError_BecauseRobotsWantedJumpOverEachOther() //TO BE CHECKED
+        {
+            Dictionary<SimRobot, RobotDoing> dicc =
+                new() { { _robie, RobotDoing.Forward } };
+            _robieMan.AddRobot(_robie,0);
+            
+            SimRobot robieTwo = new(1, new Vector2Int(1, 0), Direction.South);
+            dicc.Add(robieTwo,RobotDoing.Forward);
+            _robieMan.AddRobot(robieTwo,1);
+            var tasks = _robieMan.CheckValidSteps(dicc, _33Map);
+            
             yield return new WaitUntil(() => tasks.IsCompleted);
             bool isValidStep = tasks.Result;
             Assert.IsFalse(tasks.IsFaulted);

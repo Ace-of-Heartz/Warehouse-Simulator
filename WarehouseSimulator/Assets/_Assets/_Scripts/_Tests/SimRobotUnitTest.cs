@@ -18,6 +18,7 @@ namespace WarehouseSimulator.Model.Sim.Tests
         private Map? _33Map;
         private SimRobot? _robie;
         private SimGoal? _golie;
+        private int i;
         [SetUp]
         public void Setup()
         {
@@ -30,6 +31,7 @@ namespace WarehouseSimulator.Model.Sim.Tests
             CustomLog.Instance.Init();
             CustomLog.Instance.AddRobotStart(_robie.Id,_robie.GridPosition.x,_robie.GridPosition.y,_robie.Heading);
             CustomLog.Instance.AddTaskData(_golie.GoalID,_golie.GridPosition.x,_golie.GridPosition.y);
+            i = 0;
         }
         
         [TestCase(0,Direction.North,RobotBeing.InTask)]
