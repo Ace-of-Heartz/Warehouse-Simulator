@@ -94,7 +94,7 @@ namespace WarehouseSimulator.Model.Sim.Tests
         private static RobotDoing[] _vars =
             { RobotDoing.Forward, RobotDoing.Wait, RobotDoing.Timeout, RobotDoing.Rotate90, RobotDoing.RotateNeg90 };
 
-        /*[UnityTest]
+        [UnityTest]
         public IEnumerator CheckValidStep_ResultingNoError([ValueSource(nameof(_vars))] RobotDoing whatToDo)
         {
             Dictionary<SimRobot, RobotDoing> dicc =
