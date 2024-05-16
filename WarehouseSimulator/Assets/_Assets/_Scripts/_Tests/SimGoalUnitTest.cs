@@ -35,7 +35,7 @@ namespace WarehouseSimulator.Model.Sim.Tests
         public void AssignedTo_ResultingFieldChange()
         {
             _golie!.AssignedTo(_robie);
-            Assert.AreEqual(_robie,_golie.SimRobot);
+            Assert.AreEqual(_robie,_golie.Robot);
         }
         
         [Test]

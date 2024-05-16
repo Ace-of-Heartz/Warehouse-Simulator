@@ -56,6 +56,7 @@ namespace WarehouseSimulator.View
                     SceneHandler.GetInstance().SetCurrentScene(0);
                     SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
                     
+                    UIMessageManager.GetInstance().SetUIDocument(SceneHandler.GetInstance().CurrentDoc);
                 }
             };
             
@@ -220,6 +221,7 @@ namespace WarehouseSimulator.View
                         
                         SceneHandler.GetInstance().SetCurrentScene(0);
                         SceneManager.LoadScene(SceneHandler.GetInstance().CurrentScene);
+                        UIMessageManager.GetInstance().SetUIDocument(SceneHandler.GetInstance().CurrentDoc);
                         break;
                     case MessageBoxResponse.CANCELED:
                         _resumeAction();
