@@ -38,7 +38,7 @@ namespace WarehouseSimulator.Model
         /// <summary>
         /// The robot corresponding to the goal.
         /// </summary>
-        public RobotLike SimRobot => m_goalData.m_robot;
+        public RobotLike Robot => m_goalData.m_robot;
 
         #endregion
 

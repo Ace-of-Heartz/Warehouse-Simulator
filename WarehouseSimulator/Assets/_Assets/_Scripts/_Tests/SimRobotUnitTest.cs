@@ -57,7 +57,6 @@ namespace WarehouseSimulator.Model.Sim.Tests
         [Test]
         public void AssignGoal_ResultingCorrectBehaviour()
         {
-            //CustomLog.Instance.AddRobotStart(_robie.Id,_robie.GridPosition.x,_robie.GridPosition.y,_robie.Heading);
             _robie!.AssignGoal(_golie!);
             
             Assert.AreEqual(_golie,_robie.Goal);
