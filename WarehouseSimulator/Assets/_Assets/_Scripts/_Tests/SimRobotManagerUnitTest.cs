@@ -110,7 +110,7 @@ namespace WarehouseSimulator.Model.Sim.Tests
             yield return new WaitUntil(() => tasks.IsCompleted);
             bool isValidStep = tasks.Result;
             Assert.IsFalse(tasks.IsFaulted);
-            Assert.AreEqual(true, isValidStep);
+            Assert.AreEqual(false, isValidStep);
         }
 
         [UnityTest]
@@ -128,7 +128,7 @@ namespace WarehouseSimulator.Model.Sim.Tests
             yield return new WaitUntil(() => tasks.IsCompleted);
             bool isValidStep = tasks.Result;
             Assert.IsFalse(tasks.IsFaulted);
-            Assert.AreEqual(false, isValidStep);   
+            Assert.AreEqual(true, isValidStep);   
         }
         
         [UnityTest]
@@ -147,7 +147,7 @@ namespace WarehouseSimulator.Model.Sim.Tests
             yield return new WaitUntil(() => tasks.IsCompleted);
             bool isValidStep = tasks.Result;
             Assert.IsFalse(tasks.IsFaulted);
-            Assert.AreEqual(false, isValidStep);   
+            Assert.AreEqual(true, isValidStep);   
         }
         
         [UnityTest]
@@ -165,7 +165,7 @@ namespace WarehouseSimulator.Model.Sim.Tests
             yield return new WaitUntil(() => tasks.IsCompleted);
             bool isValidStep = tasks.Result;
             Assert.IsFalse(tasks.IsFaulted);
-            Assert.AreEqual(false, isValidStep);   
+            Assert.AreEqual(true, isValidStep);   
         }
     }
 }

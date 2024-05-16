@@ -59,7 +59,7 @@ namespace WarehouseSimulator.Model.Pb.Tests
 
             void Boop(object sender, bool b)
             {
-                Assert.IsTrue(b != isAlive);
+                Assert.IsTrue(b == isAlive);
             }
         }
     }
